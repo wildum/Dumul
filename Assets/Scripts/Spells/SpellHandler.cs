@@ -36,12 +36,16 @@ static class SpellHandler
 
     public static void handleOneHandSpell(HandPresence hand, Dictionary<SpellEnum, float> cdMap)
     {
-        if (onRelease(hand))
+        ControlState gripState = hand.computeGripState();
+        if (isJustPressed(gripState))
         {
-            Debug.Log("ready to throw a spell");
+            hand.startTrail();
+        }
+        else if (isJustReleased(gripState))
+        {
+            hand.stopTrail();
             if (isSpellAvailable(SpellEnum.Fireball, Fireball.CD_FIREBALL, cdMap))
             {
-                Debug.Log("throw a spell");
                 createFireball(hand.transform);
                 cdMap[SpellEnum.Fireball] = 0.0f;
             }
@@ -53,9 +57,14 @@ static class SpellHandler
         return cdMap.ContainsKey(spell) && cdMap[spell] > spellCd;
     }
 
-    public static bool onRelease(HandPresence hand)
+    public static bool isJustReleased(ControlState state)
     {
-        return hand.getGripState() == ControlState.JustReleased;
+        return state == ControlState.JustReleased;
+    }
+
+    public static bool isJustPressed(ControlState state)
+    {
+        return state == ControlState.JustPressed;
     }
 
     public static void createFireball(Transform t)

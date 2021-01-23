@@ -21,13 +21,12 @@ public class Control
         state = ControlState.Released;
     }
 
-    public ControlState getState()
+    public ControlState computeState()
     {
         if (value == 0.0)
         {
             if (state == ControlState.Pressed || state == ControlState.JustPressed)
             {
-                Debug.Log("switch to just released");
                 state = ControlState.JustReleased;
             }
             else

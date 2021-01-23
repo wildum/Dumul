@@ -24,6 +24,8 @@ public class HandPresence : MonoBehaviour
     private Control grip = new Control();
     private Control trigger = new Control();
 
+    private TrailRenderer trailRenderer;
+
     void Awake()
     {
         // get all of our actions
@@ -35,16 +37,30 @@ public class HandPresence : MonoBehaviour
 
         spawnedHandModel = Instantiate(handModelPrefab, transform);
         _handAnimator = spawnedHandModel.GetComponent<Animator>();
+        trailRenderer = GetComponent<TrailRenderer>();
+        trailRenderer.emitting = false;
+        trailRenderer.time = Mathf.Infinity;
     }
 
-    public ControlState getTriggerState()
+    public void startTrail()
     {
-        return trigger.getState();
+        trailRenderer.emitting = true;
     }
 
-    public ControlState getGripState()
+    public void stopTrail()
     {
-        return grip.getState();
+        trailRenderer.emitting = false;
+        trailRenderer.Clear();
+    }
+
+    public ControlState computeTriggerState()
+    {
+        return trigger.computeState();
+    }
+
+    public ControlState computeGripState()
+    {
+        return grip.computeState();
     }
 
     public float getTriggerValue()
