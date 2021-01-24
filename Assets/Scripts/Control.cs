@@ -48,6 +48,11 @@ public class Control
         return state;
     }
 
+    public bool pressing()
+    {
+        return state == ControlState.Pressed || state == ControlState.JustPressed;
+    }
+
     public void setValue(float ivalue)
     {
         value = ivalue;

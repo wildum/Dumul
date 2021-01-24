@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+using QDollarGestureRecognizer;
+
 public class HandPresence : MonoBehaviour
 {
     public GameObject handModelPrefab;
@@ -25,6 +27,9 @@ public class HandPresence : MonoBehaviour
     private Control trigger = new Control();
 
     private TrailRenderer trailRenderer;
+
+    private List<Point> points = new List<Point>();
+    private int strokeId = 0;
 
     void Awake()
     {
@@ -51,6 +56,8 @@ public class HandPresence : MonoBehaviour
     {
         trailRenderer.emitting = false;
         trailRenderer.Clear();
+        points.Clear();
+        strokeId = 0;
     }
 
     public ControlState computeTriggerState()
@@ -71,6 +78,11 @@ public class HandPresence : MonoBehaviour
     public float getGripValue()
     {
         return grip.getValue();
+    }
+
+    public List<Point> getPoints()
+    {
+        return points;
     }
 
     private void OnEnable()
@@ -96,6 +108,12 @@ public class HandPresence : MonoBehaviour
 
         _handAnimator.SetFloat("Grip", trigger.getValue());
         _handAnimator.SetFloat("Trigger", grip.getValue());
+
+        if (grip.pressing())
+        {
+            Vector3 position = _inputActionPosition.ReadValue<Vector3>();
+            points.Add(new Point(position.z, position.y, strokeId));
+        }
     }
 
 }

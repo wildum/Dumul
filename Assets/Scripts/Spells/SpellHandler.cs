@@ -43,12 +43,13 @@ static class SpellHandler
         }
         else if (isJustReleased(gripState))
         {
-            hand.stopTrail();
-            if (isSpellAvailable(SpellEnum.Fireball, Fireball.CD_FIREBALL, cdMap))
+            SpellEnum spell = SpellRecognizer.recognize(hand.getPoints());
+            if (spell == SpellEnum.Fireball && isSpellAvailable(SpellEnum.Fireball, Fireball.CD_FIREBALL, cdMap))
             {
                 createFireball(hand.transform);
                 cdMap[SpellEnum.Fireball] = 0.0f;
             }
+            hand.stopTrail();
         }
     }
 
