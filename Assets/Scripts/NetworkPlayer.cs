@@ -5,7 +5,7 @@ using UnityEngine.XR;
 using Photon.Pun;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class NetworkPlayer : MonoBehaviour
+public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
 {
     public Transform head;
     public Transform rightHand;
@@ -14,7 +14,7 @@ public class NetworkPlayer : MonoBehaviour
     public Animator leftHandAnimator;
     public Animator rightHandAnimator;
 
-    private PhotonView photonView;
+    private PhotonView photonViewPlayer;
 
     private Transform headRig;
     private Transform leftHandRig;
@@ -23,14 +23,32 @@ public class NetworkPlayer : MonoBehaviour
     private HandPresence leftHandPresence;
     private HandPresence rightHandPresence;
 
+    private int health = 1000;
+    private int id = -111;
+
     private Dictionary<SpellEnum, float> cdMap = new Dictionary<SpellEnum, float>
         {{SpellEnum.Fireball, Fireball.CD_FIREBALL}}
     ;
 
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // We own this player: send the others our data
+            stream.SendNext(id);
+            stream.SendNext(health);
+        }
+        else
+        {
+            // Network player, receive data
+            health = (int)stream.ReceiveNext();
+            id = (int)stream.ReceiveNext();
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        photonView = GetComponent<PhotonView>();
         XRRig rig = FindObjectOfType<XRRig>();
         headRig = rig.transform.Find("Camera Offset/Main Camera");
         leftHandRig = rig.transform.Find("Camera Offset/LeftHand Controller");
@@ -39,19 +57,24 @@ public class NetworkPlayer : MonoBehaviour
         leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
         rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
 
-        if (photonView.IsMine)
+        if (photonView != null)
         {
-            foreach (var item in GetComponentsInChildren<Renderer>())
-	        {
-                item.enabled = false;
-	        }
+            id = photonView.Owner.ActorNumber;
+            Debug.Log(id);
+            if (photonView.IsMine)
+            {
+                foreach (var item in GetComponentsInChildren<Renderer>())
+                {
+                    item.enabled = false;
+                }
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (photonView.IsMine)
+        if (photonView != null && photonView.IsMine)
         {
             MapPosition(head, headRig);
             MapPosition(leftHand, leftHandRig);
@@ -60,7 +83,7 @@ public class NetworkPlayer : MonoBehaviour
             UpdateHandAnimation(leftHandAnimator, leftHandPresence);
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
-            SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap);
+            SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap, id);
         }
     }
 
@@ -74,5 +97,15 @@ public class NetworkPlayer : MonoBehaviour
     {
         target.position = rigTransform.position;
         target.rotation = rigTransform.rotation;
+    }
+
+    public void takeDamage(int damageAmount)
+    {
+        health = Mathf.Max(health - damageAmount, 0);
+    }
+
+    public int getId()
+    {
+        return id;
     }
 }

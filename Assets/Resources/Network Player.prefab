@@ -150,6 +150,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
+  - {fileID: -8486955524548568532}
   - {fileID: 5221496831141859645}
   - {fileID: 8451445164483072959}
   - {fileID: 604799179769910702}

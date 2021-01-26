@@ -8,14 +8,14 @@ static class SpellHandler
 
     public static List<SpellEnum> SPELLS = new List<SpellEnum>{SpellEnum.Fireball};
 
-    public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellEnum, float> cdMap)
+    public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellEnum, float> cdMap, int ownerId)
     {
-        bool consumed = handleTwoHandSpells(leftHand, rightHand, cdMap);
+        bool consumed = handleTwoHandSpells(leftHand, rightHand, cdMap, ownerId);
 
         if (!consumed)
         {
-            handleOneHandSpell(leftHand, cdMap);
-            handleOneHandSpell(rightHand, cdMap);
+            handleOneHandSpell(leftHand, cdMap, ownerId);
+            handleOneHandSpell(rightHand, cdMap, ownerId);
         }
         updateAllSpellCds(cdMap);
     }
@@ -28,13 +28,13 @@ static class SpellHandler
         }
     }
 
-    public static bool handleTwoHandSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellEnum, float> cdMap)
+    public static bool handleTwoHandSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellEnum, float> cdMap, int ownerId)
     {
         // return true when consumed
         return false;
     }
 
-    public static void handleOneHandSpell(HandPresence hand, Dictionary<SpellEnum, float> cdMap)
+    public static void handleOneHandSpell(HandPresence hand, Dictionary<SpellEnum, float> cdMap, int ownerId)
     {
         ControlState gripState = hand.computeGripState();
         if (isJustPressed(gripState))
@@ -46,7 +46,7 @@ static class SpellHandler
             SpellEnum spell = SpellRecognizer.recognize(hand.getPoints());
             if (spell == SpellEnum.Fireball && isSpellAvailable(SpellEnum.Fireball, Fireball.CD_FIREBALL, cdMap))
             {
-                createFireball(hand.transform);
+                createFireball(hand.transform, ownerId);
                 cdMap[SpellEnum.Fireball] = 0.0f;
             }
             hand.stopTrail();
@@ -68,10 +68,11 @@ static class SpellHandler
         return state == ControlState.JustPressed;
     }
 
-    public static void createFireball(Transform t)
+    public static void createFireball(Transform t, int ownerId)
     {
         GameObject fireball = PhotonNetwork.Instantiate("Fireball", t.position, t.rotation);
         fireball.GetComponent<Rigidbody>().AddForce(t.forward * Fireball.SPEED, ForceMode.Force);
+        fireball.GetComponent<Fireball>().setOwnerId(ownerId);
     }
 
 }
