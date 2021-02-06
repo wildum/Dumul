@@ -29,6 +29,7 @@ public class HandPresence : MonoBehaviour
     private TrailRenderer trailRenderer;
 
     private List<Point> points = new List<Point>();
+    private Vector3 firstMovementPoint;
     private int strokeId = 0;
 
     void Awake()
@@ -112,7 +113,18 @@ public class HandPresence : MonoBehaviour
         if (grip.pressing())
         {
             Vector3 position = _inputActionPosition.ReadValue<Vector3>();
-            points.Add(new Point(position.z, position.y, strokeId));
+            if (points.Count == 0)
+            {
+                firstMovementPoint = position;
+                points.Add(new Point(0, position.y, strokeId));
+            }
+            else
+            {
+                // compute the distance with the first point of the movement to reduce the dimension
+                float d = Tools.dist2d(position.x, firstMovementPoint.x, position.z, firstMovementPoint.z);
+                Debug.Log(d);
+                points.Add(new Point(d, position.y, strokeId));
+            }
         }
     }
 
