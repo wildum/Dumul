@@ -8,4 +8,9 @@ static class Tools
     {
         return Mathf.Sqrt((bx-ax)*(bx-ax)+(by-ay)*(by-ay));
     }
+
+    public static float middle(float ax, float bx)
+    {
+        return (ax + bx) / 2.0f;
+    }
 }

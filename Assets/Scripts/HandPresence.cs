@@ -5,6 +5,12 @@ using UnityEngine.InputSystem;
 
 using QDollarGestureRecognizer;
 
+public enum TrailType
+{
+    AttackSpell,
+    DefenseSpell
+}
+
 public class HandPresence : MonoBehaviour
 {
     public GameObject handModelPrefab;
@@ -32,6 +38,8 @@ public class HandPresence : MonoBehaviour
     private Vector3 firstMovementPoint;
     private int strokeId = 0;
 
+    private List<Vector3> shieldPoints = new List<Vector3>();
+
     void Awake()
     {
         // get all of our actions
@@ -48,16 +56,31 @@ public class HandPresence : MonoBehaviour
         trailRenderer.time = Mathf.Infinity;
     }
 
-    public void startTrail()
+    public void startTrail(TrailType trailType)
     {
         trailRenderer.emitting = true;
+        if (trailType == TrailType.AttackSpell)
+        {
+            trailRenderer.material.color = Color.red;
+        }
+        else
+        {
+            trailRenderer.material.color = Color.blue;
+        }
     }
 
-    public void stopTrail()
+    public void stopTrail(TrailType trailType)
     {
         trailRenderer.emitting = false;
         trailRenderer.Clear();
-        points.Clear();
+        if (trailType == TrailType.AttackSpell)
+        {
+            points.Clear();
+        }
+        else
+        {
+            shieldPoints.Clear();
+        }
         strokeId = 0;
     }
 
@@ -79,6 +102,16 @@ public class HandPresence : MonoBehaviour
     public float getGripValue()
     {
         return grip.getValue();
+    }
+
+    public bool gripPressing()
+    {
+        return grip.pressing();
+    }
+
+    public List<Vector3> getShieldPoints()
+    {
+        return shieldPoints;
     }
 
     public List<Point> getPoints()
@@ -122,9 +155,12 @@ public class HandPresence : MonoBehaviour
             {
                 // compute the distance with the first point of the movement to reduce the dimension
                 float d = Tools.dist2d(position.x, firstMovementPoint.x, position.z, firstMovementPoint.z);
-                Debug.Log(d);
                 points.Add(new Point(d, position.y, strokeId));
             }
+        }
+        else if (trigger.pressing())
+        {
+            shieldPoints.Add(transform.position);
         }
     }
 

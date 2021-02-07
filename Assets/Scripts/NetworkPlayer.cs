@@ -26,6 +26,8 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
     private int health = 1000;
     private int id = -111;
 
+    private GameObject shield;
+
     private Dictionary<SpellEnum, float> cdMap = new Dictionary<SpellEnum, float>
         {{SpellEnum.Fireball, Fireball.CD_FIREBALL}}
     ;
@@ -57,6 +59,10 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
         leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
         rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
 
+        // create shield on head (not activated)
+        shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
+        shield.SetActive(false);
+
         if (photonView != null)
         {
             id = photonView.Owner.ActorNumber;
@@ -84,6 +90,8 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
             SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap, id);
+            SpellHandler.handleShield(shield, leftHandPresence);
+            SpellHandler.handleShield(shield, rightHandPresence);
         }
     }
 

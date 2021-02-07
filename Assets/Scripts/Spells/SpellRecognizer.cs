@@ -9,6 +9,8 @@ static class SpellRecognizer
 {
     public const float SPELL_RECO_THRESHOLD = 20.0f;
     public const int SPELL_RECO_MIN_ELEMENT = 5;
+    public const float SHIELD_RECO_DISTANCE = 10.0f;
+    public const int SHIELD_RECO_MIN_ELEMENT = 8;
     private static List<Gesture> trainingSet = new List<Gesture>();
 
     public static void init()
@@ -51,5 +53,15 @@ static class SpellRecognizer
         }
         Debug.Log("No spell mapped to this movement : " + gestureResult.GestureClass + " with score of " + gestureResult.Score);
         return SpellEnum.UNDEFINED;
+    }
+
+    public static bool recognizeShield(List<Vector3> points)
+    {
+        if (points.Count < SHIELD_RECO_MIN_ELEMENT)
+        {
+            Debug.Log("Not enough elements to recognize shield");
+            return false;
+        }
+        return Vector3.Distance(points[0], points[points.Count-1]) < SHIELD_RECO_DISTANCE;
     }
 }
