@@ -20,7 +20,11 @@ public class Fireball : MonoBehaviour
     {
         playerTakeDamage(collision.collider);
         dummyTakeDamage(collision.collider);
-        PhotonNetwork.Destroy(gameObject);
+        PhotonView photonView = PhotonView.Get(this);
+        if (photonView.IsMine)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     void playerTakeDamage(Collider collider)
@@ -28,8 +32,15 @@ public class Fireball : MonoBehaviour
         NetworkPlayer player = collider.GetComponent<NetworkPlayer>();
         if (player != null && player.getId() != ownerId)
         {
-            player.takeDamage(DAMAGE);
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("sendDamageToPlayer", RpcTarget.All, player);
         }
+    }
+
+    [PunRPC]
+    void sendDamageToPlayer(NetworkPlayer player)
+    {
+        player.takeDamage(DAMAGE);
     }
 
     void dummyTakeDamage(Collider collider)

@@ -14,6 +14,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void ConnectedToServer()
     {
+        PhotonNetwork.GameVersion = "0.0.1";
         PhotonNetwork.ConnectUsingSettings();
         Debug.Log("Trying to connect to the server...");
     }
@@ -26,7 +27,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         roomOptions.MaxPlayers = 10;
         roomOptions.IsVisible = true;
         roomOptions.IsOpen = true;
-
+        // PhotonNetwork.JoinRandomRoom();
         PhotonNetwork.JoinOrCreateRoom("Room 1", roomOptions, TypedLobby.Default);
     }
 
@@ -38,6 +39,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
+        // get players list
+        // can check the count of players to start the game
         Debug.Log("A new player joined the room");
         base.OnPlayerEnteredRoom(newPlayer);
     }

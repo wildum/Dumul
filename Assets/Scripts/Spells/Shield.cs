@@ -9,6 +9,12 @@ public class Shield : MonoBehaviourPunCallbacks
     private float health = SHIELD_MAX_HEALTH;
     private float MAX_ALPHA = 200.0f;
 
+    void Start()
+    {
+        gameObject.SetActive(false);
+    }
+
+    [PunRPC]
     public void reset()
     {
         health = SHIELD_MAX_HEALTH;
@@ -20,8 +26,7 @@ public class Shield : MonoBehaviourPunCallbacks
         Fireball ball = collision.collider.GetComponent<Fireball>();
         if (ball != null)
         {
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("takeDamage", RpcTarget.All, SpellEnum.Fireball);
+            takeDamage(SpellEnum.Fireball);
             if (health <= 0)
             {
                 this.gameObject.SetActive(false);
@@ -44,6 +49,12 @@ public class Shield : MonoBehaviourPunCallbacks
         Color c = this.GetComponent<MeshRenderer>().material.color;
         c.a = health / MAX_ALPHA;
         this.GetComponent<MeshRenderer>().material.color = c;
+    }
+
+    [PunRPC]
+    public void updateActive(bool active)
+    {
+        this.gameObject.SetActive(active);
     }
 
 }

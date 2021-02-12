@@ -5,7 +5,7 @@ using UnityEngine.XR;
 using Photon.Pun;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
+public class NetworkPlayer : MonoBehaviourPunCallbacks
 {
     public Transform head;
     public Transform rightHand;
@@ -32,22 +32,6 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
         {{SpellEnum.Fireball, Fireball.CD_FIREBALL}}
     ;
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            // We own this player: send the others our data
-            stream.SendNext(id);
-            stream.SendNext(health);
-        }
-        else
-        {
-            // Network player, receive data
-            health = (int)stream.ReceiveNext();
-            id = (int)stream.ReceiveNext();
-        }
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -59,16 +43,17 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
         leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
         rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
 
-        // create shield on head (not activated)
-        shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
-        shield.SetActive(false);
-
         if (photonView != null)
         {
+            // assign position from here ?
             id = photonView.Owner.ActorNumber;
-            Debug.Log(id);
             if (photonView.IsMine)
             {
+                shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
+                Debug.Log("My id is : " + id);
+                StartPosition s = GameSettings.getStartPositionFromActorId(id);
+                rig.transform.position = s.position;
+                rig.transform.eulerAngles = s.rotation;
                 foreach (var item in GetComponentsInChildren<Renderer>())
                 {
                     item.enabled = false;
@@ -90,8 +75,8 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks, IPunObservable
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
             SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap, id);
-            SpellHandler.handleShield(shield, leftHandPresence);
-            SpellHandler.handleShield(shield, rightHandPresence);
+            SpellHandler.handleShield(shield, leftHandPresence, photonView);
+            SpellHandler.handleShield(shield, rightHandPresence, photonView);
         }
     }
 

@@ -54,7 +54,7 @@ static class SpellHandler
         }
     }
 
-    public static void handleShield(GameObject shield, HandPresence hand)
+    public static void handleShield(GameObject shield, HandPresence hand, PhotonView photonView)
     {
         // cannot use shield when using an attack spell already
         if (!hand.gripPressing())
@@ -67,15 +67,16 @@ static class SpellHandler
             else if (isJustReleased(triggerState))
             {
                 List<Vector3> shieldPoints = hand.getShieldPoints();
+                Shield shieldObj = shield.GetComponent<Shield>();
                 if (SpellRecognizer.recognizeShield(shieldPoints))
                 {
                     moveShield(shield, shieldPoints);
-                    shield.GetComponent<Shield>().reset();
-                    shield.SetActive(true);
+                    shieldObj.photonView.RPC("reset", RpcTarget.All);
+                    shieldObj.photonView.RPC("updateActive", RpcTarget.All, true);
                 }
                 else
                 {
-                    shield.SetActive(false);
+                    shieldObj.photonView.RPC("updateActive", RpcTarget.All, false);
                 }
                 hand.stopTrail(TrailType.DefenseSpell);
             }
