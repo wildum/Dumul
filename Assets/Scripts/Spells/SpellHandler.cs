@@ -7,9 +7,9 @@ using Photon.Pun;
 static class SpellHandler
 {
 
-    public static List<SpellEnum> SPELLS = new List<SpellEnum>{SpellEnum.Fireball};
+    public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight };
 
-    public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellEnum, float> cdMap, int ownerId)
+    public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellCdEnum, float> cdMap, int ownerId)
     {
         bool consumed = handleTwoHandSpells(leftHand, rightHand, cdMap, ownerId);
 
@@ -21,21 +21,21 @@ static class SpellHandler
         updateAllSpellCds(cdMap);
     }
 
-    public static void updateAllSpellCds(Dictionary<SpellEnum, float> cdMap)
+    public static void updateAllSpellCds(Dictionary<SpellCdEnum, float> cdMap)
     {
-        foreach (SpellEnum spell in SPELLS)
+        foreach (SpellCdEnum spell in SPELLS)
         {
             cdMap[spell] += Time.deltaTime;
         }
     }
 
-    public static bool handleTwoHandSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellEnum, float> cdMap, int ownerId)
+    public static bool handleTwoHandSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellCdEnum, float> cdMap, int ownerId)
     {
         // return true when consumed
         return false;
     }
 
-    public static void handleOneHandSpell(HandPresence hand, Dictionary<SpellEnum, float> cdMap, int ownerId)
+    public static void handleOneHandSpell(HandPresence hand, Dictionary<SpellCdEnum, float> cdMap, int ownerId)
     {
         ControlState gripState = hand.computeGripState();
         if (isJustPressed(gripState))
@@ -45,10 +45,11 @@ static class SpellHandler
         else if (isJustReleased(gripState))
         {
             SpellEnum spell = SpellRecognizer.recognize(hand.getPoints());
-            if (spell == SpellEnum.Fireball && isSpellAvailable(SpellEnum.Fireball, Fireball.CD_FIREBALL, cdMap))
+            SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
+            if (spell == SpellEnum.Fireball && isSpellAvailable(fireBallType, Fireball.CD_FIREBALL, cdMap))
             {
                 createFireball(hand.transform, ownerId);
-                cdMap[SpellEnum.Fireball] = 0.0f;
+                cdMap[fireBallType] = 0.0f;
             }
             hand.stopTrail(TrailType.AttackSpell);
         }
@@ -83,7 +84,7 @@ static class SpellHandler
         }
     }
 
-    public static bool isSpellAvailable(SpellEnum spell, float spellCd, Dictionary<SpellEnum, float> cdMap)
+    public static bool isSpellAvailable(SpellCdEnum spell, float spellCd, Dictionary<SpellCdEnum, float> cdMap)
     {
         return cdMap.ContainsKey(spell) && cdMap[spell] > spellCd;
     }

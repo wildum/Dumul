@@ -6,7 +6,7 @@ using Photon.Pun;
 public class Fireball : MonoBehaviour
 {
     public const float CD_FIREBALL = 0.5f;
-    public const int SPEED = 100;
+    public const int SPEED = 150;
     public const int DAMAGE = 50;
 
     private int ownerId = 0;

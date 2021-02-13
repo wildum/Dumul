@@ -28,8 +28,8 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
     private GameObject shield;
 
-    private Dictionary<SpellEnum, float> cdMap = new Dictionary<SpellEnum, float>
-        {{SpellEnum.Fireball, Fireball.CD_FIREBALL}}
+    private Dictionary<SpellCdEnum, float> cdMap = new Dictionary<SpellCdEnum, float>
+        {{SpellCdEnum.FireballRight, Fireball.CD_FIREBALL}, {SpellCdEnum.FireballLeft, Fireball.CD_FIREBALL}}
     ;
 
     // Start is called before the first frame update
@@ -41,7 +41,9 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         rightHandRig = rig.transform.Find("Camera Offset/RightHand Controller");
 
         leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
+        leftHandPresence.setHandSide(HandSideEnum.Left);
         rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
+        rightHandPresence.setHandSide(HandSideEnum.Right);
 
         if (photonView != null)
         {

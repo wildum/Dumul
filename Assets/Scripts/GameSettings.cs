@@ -24,8 +24,8 @@ class StartPosition
 static class GameSettings
 {
     private static List<StartPosition> playersStartPos = new List<StartPosition> {
-        new StartPosition(new Vector3(-8, 0, 0), new Vector3(0, 90, 0)),
-        new StartPosition(new Vector3(8, 0, 0), new Vector3(0, -90, 0))
+        new StartPosition(new Vector3(-5, 0, 0), new Vector3(0, 90, 0)),
+        new StartPosition(new Vector3(5, 0, 0), new Vector3(0, -90, 0))
     };
 
     public static StartPosition getStartPositionFromActorId(int id)

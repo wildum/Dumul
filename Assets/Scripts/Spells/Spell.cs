@@ -7,3 +7,10 @@ public enum SpellEnum
     Fireball,
     UNDEFINED
 }
+
+public enum SpellCdEnum
+{
+    FireballRight,
+    FireballLeft,
+    UNDEFINED
+}

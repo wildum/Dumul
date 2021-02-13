@@ -11,6 +11,12 @@ public enum TrailType
     DefenseSpell
 }
 
+public enum HandSideEnum
+{
+    Left,
+    Right
+}
+
 public class HandPresence : MonoBehaviour
 {
     public GameObject handModelPrefab;
@@ -39,6 +45,8 @@ public class HandPresence : MonoBehaviour
     private int strokeId = 0;
 
     private List<Vector3> shieldPoints = new List<Vector3>();
+
+    private HandSideEnum side;
 
     void Awake()
     {
@@ -82,6 +90,16 @@ public class HandPresence : MonoBehaviour
             shieldPoints.Clear();
         }
         strokeId = 0;
+    }
+
+    public void setHandSide(HandSideEnum iSide)
+    {
+        side = iSide;
+    }
+
+    public HandSideEnum getHandSide()
+    {
+        return side;
     }
 
     public ControlState computeTriggerState()
