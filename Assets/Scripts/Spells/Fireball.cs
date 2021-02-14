@@ -18,7 +18,7 @@ public class Fireball : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        playerTakeDamage(collision.collider);
+        playerTakeDamage(collision);
         dummyTakeDamage(collision.collider);
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine)
@@ -27,20 +27,30 @@ public class Fireball : MonoBehaviour
         }
     }
 
-    void playerTakeDamage(Collider collider)
+    void playerTakeDamage(Collision collision)
     {
-        NetworkPlayer player = collider.GetComponent<NetworkPlayer>();
+        NetworkPlayer player = getPlayerFromCollision(collision);
         if (player != null && player.getId() != ownerId)
         {
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("sendDamageToPlayer", RpcTarget.All, player);
+            player.takeDamage(DAMAGE);
         }
     }
 
-    [PunRPC]
-    void sendDamageToPlayer(NetworkPlayer player)
+    NetworkPlayer getPlayerFromCollision(Collision collision)
     {
-        player.takeDamage(DAMAGE);
+        if (collision.collider.tag == "Player")
+        {
+            GameObject g = collision.transform.parent.gameObject;
+            if (g != null)
+            {
+                GameObject gp = g.transform.parent.gameObject;
+                if (gp != null)
+                {
+                    return gp.GetComponent<NetworkPlayer>();
+                }
+            }
+        }
+        return null;
     }
 
     void dummyTakeDamage(Collider collider)

@@ -64,6 +64,11 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             }
         }
     }
+
+    public int getHealth()
+    {
+        return health;
+    }
     
     void updateCdMapInfoCanvas()
     {
@@ -87,16 +92,9 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         }
     }
 
-    void updateHealthInfoCanvas()
+    public void updateHealthInfoCanvas(int enemyHealth)
     {
-        if (photonView.IsMine)
-        {
-            infoCanvas.updateWithMyHealth(health);
-        }
-        else
-        {
-            infoCanvas.updateWithEnemyHealth(health);
-        }
+        infoCanvas.updateHealth(health, enemyHealth);
     }
 
     // Update is called once per frame
@@ -134,7 +132,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     public void takeDamage(int damageAmount)
     {
         health = Mathf.Max(health - damageAmount, 0);
-        updateHealthInfoCanvas();
+        CommunicationCenter.updateHealth();
     }
 
     public int getId()

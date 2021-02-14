@@ -39,7 +39,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        // get players list
         // can check the count of players to start the game
         Debug.Log("A new player joined the room");
         base.OnPlayerEnteredRoom(newPlayer);

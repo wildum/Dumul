@@ -18,14 +18,10 @@ public class InfoCanvas : MonoBehaviour
         cdGrid.updateCdTextOnGrid(cdMap);
     }
 
-    public void updateWithMyHealth(int health)
+    public void updateHealth(int health, int oppHealth)
     {
         myHealth.text = tHealth + health;
-    }
-
-    public void updateWithEnemyHealth(int health)
-    {
-        enemyHealth.text = tOpp + health;
+        enemyHealth.text = tOpp + oppHealth;
     }
 
 }
