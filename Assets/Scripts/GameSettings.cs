@@ -23,6 +23,8 @@ class StartPosition
 
 static class GameSettings
 {
+    public static int PLAYER_HEALTH = 1000;
+
     private static List<StartPosition> playersStartPos = new List<StartPosition> {
         new StartPosition(new Vector3(-5, 0, 0), new Vector3(0, 90, 0)),
         new StartPosition(new Vector3(5, 0, 0), new Vector3(0, -90, 0))

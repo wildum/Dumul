@@ -23,10 +23,11 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     private HandPresence leftHandPresence;
     private HandPresence rightHandPresence;
 
-    private int health = 1000;
+    private int health = GameSettings.PLAYER_HEALTH;
     private int id = -111;
 
     private GameObject shield;
+    private InfoCanvas infoCanvas;
 
     private Dictionary<SpellCdEnum, float> cdMap = new Dictionary<SpellCdEnum, float>
         {{SpellCdEnum.FireballRight, Fireball.CD_FIREBALL}, {SpellCdEnum.FireballLeft, Fireball.CD_FIREBALL}}
@@ -49,10 +50,10 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         {
             // assign position from here ?
             id = photonView.Owner.ActorNumber;
+            setInfoCanvas();
             if (photonView.IsMine)
             {
                 shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
-                Debug.Log("My id is : " + id);
                 StartPosition s = GameSettings.getStartPositionFromActorId(id);
                 rig.transform.position = s.position;
                 rig.transform.eulerAngles = s.rotation;
@@ -61,6 +62,40 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
                     item.enabled = false;
                 }
             }
+        }
+    }
+    
+    void updateCdMapInfoCanvas()
+    {
+        infoCanvas.updateCdText(cdMap);
+    }
+
+    void setInfoCanvas()
+    {
+        if (id == 1)
+        {
+            infoCanvas = GameObject.Find("InfoCanvasP1").GetComponent<InfoCanvas>();
+        }
+        else
+        {
+            infoCanvas = GameObject.Find("InfoCanvasP2").GetComponent<InfoCanvas>();
+        }
+
+        if (infoCanvas == null)
+        {
+            Debug.Log("could not set infocanvas with id " + id);
+        }
+    }
+
+    void updateHealthInfoCanvas()
+    {
+        if (photonView.IsMine)
+        {
+            infoCanvas.updateWithMyHealth(health);
+        }
+        else
+        {
+            infoCanvas.updateWithEnemyHealth(health);
         }
     }
 
@@ -79,6 +114,8 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap, id);
             SpellHandler.handleShield(shield, leftHandPresence, photonView);
             SpellHandler.handleShield(shield, rightHandPresence, photonView);
+
+            updateCdMapInfoCanvas();
         }
     }
 
@@ -97,6 +134,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     public void takeDamage(int damageAmount)
     {
         health = Mathf.Max(health - damageAmount, 0);
+        updateHealthInfoCanvas();
     }
 
     public int getId()

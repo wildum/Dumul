@@ -9,6 +9,16 @@ static class SpellHandler
 
     public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight };
 
+    public static Dictionary<SpellCdEnum, float> SPELLS_CD_MAP = new Dictionary<SpellCdEnum, float> {
+        { SpellCdEnum.FireballLeft, Fireball.CD_FIREBALL },
+        { SpellCdEnum.FireballRight, Fireball.CD_FIREBALL }
+    };
+
+    public static Dictionary<SpellCdEnum, string> SPELLS_CD_String = new Dictionary<SpellCdEnum, string> {
+        { SpellCdEnum.FireballLeft, "Fireball Left" },
+        { SpellCdEnum.FireballRight, "Fireball Right" }
+    };
+
     public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellCdEnum, float> cdMap, int ownerId)
     {
         bool consumed = handleTwoHandSpells(leftHand, rightHand, cdMap, ownerId);
