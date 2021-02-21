@@ -54,7 +54,7 @@ static class SpellHandler
         }
         else if (isJustReleased(gripState))
         {
-            SpellEnum spell = SpellRecognizer.recognize(hand.getPoints());
+            SpellEnum spell = SpellRecognizer.recognize(hand.getPoints(), hand.getCustomRecognizerData());
             SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
             if (spell == SpellEnum.Fireball && isSpellAvailable(fireBallType, Fireball.CD_FIREBALL, cdMap))
             {

@@ -43,6 +43,7 @@ public class HandPresence : MonoBehaviour
     private List<Point> points = new List<Point>();
     private Vector3 firstMovementPoint;
     private int strokeId = 0;
+    private CustomRecognizerData customRecognizerData;
 
     private List<Vector3> shieldPoints = new List<Vector3>();
 
@@ -137,6 +138,11 @@ public class HandPresence : MonoBehaviour
         return points;
     }
 
+    public CustomRecognizerData getCustomRecognizerData()
+    {
+        return customRecognizerData;
+    }
+
     private void OnEnable()
     {
         _inputActionGrip.Enable();
@@ -161,6 +167,8 @@ public class HandPresence : MonoBehaviour
         _handAnimator.SetFloat("Grip", trigger.getValue());
         _handAnimator.SetFloat("Trigger", grip.getValue());
 
+        Quaternion rotation = _inputActionRotation.ReadValue<Quaternion>();
+
         if (grip.pressing())
         {
             Vector3 position = _inputActionPosition.ReadValue<Vector3>();
@@ -168,6 +176,8 @@ public class HandPresence : MonoBehaviour
             {
                 firstMovementPoint = position;
                 points.Add(new Point(0, position.y, strokeId));
+                customRecognizerData.points = new List<Vector3>();
+                customRecognizerData.rotation = rotation.eulerAngles.y;
             }
             else
             {
@@ -175,6 +185,7 @@ public class HandPresence : MonoBehaviour
                 float d = Tools.dist2d(position.x, firstMovementPoint.x, position.z, firstMovementPoint.z);
                 points.Add(new Point(d, position.y, strokeId));
             }
+            customRecognizerData.points.Add(position);
         }
         else if (trigger.pressing())
         {

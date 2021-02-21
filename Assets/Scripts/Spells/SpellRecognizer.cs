@@ -25,12 +25,18 @@ static class SpellRecognizer
         foreach (string filePath in filePaths)
             trainingSet.Add(GestureIO.ReadGestureFromFile(filePath));
 
+        // custom part
+        List<CustomGestureIOData> gesturesIO = new List<CustomGestureIOData>();
+        TextAsset[] customGesturesXml = Resources.LoadAll<TextAsset>("CustomGestureData/");
+        foreach (TextAsset gestureXml in customGesturesXml)
+            gesturesIO.Add(CustomGestureIO.ReadGestureFromXML(gestureXml.text));
+        CustomRecognizer.init(gesturesIO);
+
         Debug.Log("SpellRecognizer initialised with " + trainingSet.Count + " elements");
     }
 
-    public static SpellEnum recognize(List<Point> points)
+    public static SpellEnum recognize(List<Point> points, CustomRecognizerData data)
     {
-
         if (points.Count < SPELL_RECO_MIN_ELEMENT)
         {
             Debug.Log("Not enough elements : " + points.Count);
@@ -39,6 +45,11 @@ static class SpellRecognizer
 
         Gesture candidate = new Gesture(points.ToArray());
         Result gestureResult = QPointCloudRecognizer.Classify(candidate, trainingSet.ToArray());
+
+        CustomGesture customGesture = new CustomGesture(data);
+        CustomRecognizerResult res = CustomRecognizer.classify(customGesture);
+
+        Debug.Log(res.spell + " " + res.score);
 
         if (gestureResult.Score > SPELL_RECO_THRESHOLD)
         {

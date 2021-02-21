@@ -23,7 +23,7 @@ public class Control
 
     public ControlState computeState()
     {
-        if (value == 0.0)
+        if (value < 0.95)
         {
             if (state == ControlState.Pressed || state == ControlState.JustPressed)
             {
