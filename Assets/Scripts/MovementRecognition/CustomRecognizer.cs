@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 public struct CustomRecognizerData
 {
-    public CustomRecognizerData(List<Vector3> p, float r)
+    public CustomRecognizerData(List<Vector3> p, List<float> r)
     {
         points = p;
-        rotation = r;
+        rotations = r;
     }
     public List<Vector3> points { get; set; }
-    public float rotation { get; set; }
+    public List<float> rotations { get; set; }
 }
 
 public struct CustomRecognizerResult
@@ -27,7 +27,7 @@ public struct CustomRecognizerResult
 
 public class CustomRecognizer : ScriptableObject
 {
-    static private List<CustomGesture> candidates;
+    static private List<CustomGesture> candidates = new List<CustomGesture>();
 
     public static void init(List<CustomGestureIOData> data)
     {
@@ -42,7 +42,10 @@ public class CustomRecognizer : ScriptableObject
         CustomRecognizerResult result = new CustomRecognizerResult(SpellEnum.UNDEFINED, float.MaxValue);
         foreach (CustomGesture candidate in candidates)
         {
+            // first compare score between candidate and gesture
             float score = eval(gesture, candidate);
+            // then compare score between gesture and candidate
+            score += eval(candidate, gesture);
             if (score < result.score)
             {
                 result.score = score;
@@ -53,13 +56,28 @@ public class CustomRecognizer : ScriptableObject
     }
 
     // TODO : to optimize this we could stop whener sum > threshold
-    private static float eval(CustomGesture gesture, CustomGesture candidate)
+    private static float eval(CustomGesture a, CustomGesture b)
     {
         float sum = 0;
+        // string dbx = "";
+        // string dby = "";
+        // string dbz = "";
         for (int i = 0; i < CustomGesture.SAMPLE_NUMBER; i++)
         {
-            sum += Tools.dist3dPoints(gesture.getCustomPoints()[i], candidate.getCustomPoints()[i]);
+            float minDist = float.MaxValue;
+            for (int j = 0; j < CustomGesture.SAMPLE_NUMBER; j++)
+            {
+                // minDist = Mathf.Min(Tools.dist3dPoints(a.getCustomPoints()[i], b.getCustomPoints()[j]), minDist);
+                minDist = Mathf.Min(Tools.dist3dPointsSquared(a.getCustomPoints()[i], b.getCustomPoints()[j]), minDist);
+            }
+            sum += minDist;
+            // dbx += a.getCustomPoints()[i].x + ", ";
+            // dby += a.getCustomPoints()[i].y + ", ";
+            // dbz += a.getCustomPoints()[i].z + ", ";
         }
-        return sum / CustomGesture.SAMPLE_NUMBER;
+        // Debug.Log(dbx);
+        // Debug.Log(dby);
+        // Debug.Log(dbz);
+        return sum*sum / CustomGesture.SAMPLE_NUMBER;
     }
 }

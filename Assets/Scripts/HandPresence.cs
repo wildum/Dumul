@@ -177,7 +177,7 @@ public class HandPresence : MonoBehaviour
                 firstMovementPoint = position;
                 points.Add(new Point(0, position.y, strokeId));
                 customRecognizerData.points = new List<Vector3>();
-                customRecognizerData.rotation = rotation.eulerAngles.y;
+                customRecognizerData.rotations = new List<float>();
             }
             else
             {
@@ -185,7 +185,8 @@ public class HandPresence : MonoBehaviour
                 float d = Tools.dist2d(position.x, firstMovementPoint.x, position.z, firstMovementPoint.z);
                 points.Add(new Point(d, position.y, strokeId));
             }
-            customRecognizerData.points.Add(position);
+            customRecognizerData.points.Add(transform.position);
+            customRecognizerData.rotations.Add(rotation.eulerAngles.y);
         }
         else if (trigger.pressing())
         {

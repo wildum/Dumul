@@ -37,20 +37,24 @@ public class CustomGesture : ScriptableObject
 
     public CustomGesture(CustomRecognizerData data)
     {
-        rotation = data.rotation;
-        buildGesture(data.points);
+        if (data.points.Count > 1 && data.rotations.Count > 1)
+        {
+            foreach (float r in data.rotations)
+            {
+                rotation += r;
+            }
+            rotation = rotation / data.rotations.Count;
+            buildGesture(data.points);
+        }
     }
 
     private void buildGesture(List<Vector3> points)
     {
-        if (points.Count > 1)
-        {
-            buildPoints(points);
-            translateToOrigin();
-            rotatePointsAroundY();
-            reSample();
-            scale();
-        }
+        buildPoints(points);
+        translateToOrigin();
+        rotatePointsAroundY();
+        reSample();
+        scale();
     }
 
     public SpellEnum getSpell()
@@ -88,8 +92,10 @@ public class CustomGesture : ScriptableObject
 
         for (int i = 1; i < points.Count; i++)
         {
-            points[i].x = points[i].x * c - points[i].z * s;
-            points[i].z = points[i].x * s + points[i].z * c;
+            float x = points[i].x;
+            float z = points[i].z;
+            points[i].x = x * c - z * s;
+            points[i].z = x * s + z * c;
         }
     }
 
@@ -145,12 +151,12 @@ public class CustomGesture : ScriptableObject
         float minx = float.MaxValue, miny = float.MaxValue, minz = float.MaxValue, maxx = float.MinValue, maxy = float.MinValue, maxz = float.MinValue;
         for (int i = 0; i < cleanPoints.Length; i++)
         {
-            if (minx > points[i].x) minx = points[i].x;
-            if (miny > points[i].y) miny = points[i].y;
-            if (maxx < points[i].x) maxx = points[i].x;
-            if (maxy < points[i].y) maxy = points[i].y;
-            if (maxz < points[i].z) maxz = points[i].z;
-            if (minz > points[i].z) minz = points[i].z;
+            if (minx > cleanPoints[i].x) minx = cleanPoints[i].x;
+            if (miny > cleanPoints[i].y) miny = cleanPoints[i].y;
+            if (maxx < cleanPoints[i].x) maxx = cleanPoints[i].x;
+            if (maxy < cleanPoints[i].y) maxy = cleanPoints[i].y;
+            if (maxz < cleanPoints[i].z) maxz = cleanPoints[i].z;
+            if (minz > cleanPoints[i].z) minz = cleanPoints[i].z;
         }
 
         float scale = Math.Max(Math.Max(maxx - minx, maxy - miny), maxz - minz);
@@ -161,9 +167,9 @@ public class CustomGesture : ScriptableObject
         }
         for (int i = 0; i < cleanPoints.Length; i++)
         {
-            cleanPoints[i].x = points[i].x / scale;
-            cleanPoints[i].y = points[i].y / scale;
-            cleanPoints[i].z = points[i].z / scale;
+            cleanPoints[i].x = cleanPoints[i].x / scale;
+            cleanPoints[i].y = cleanPoints[i].y / scale;
+            cleanPoints[i].z = cleanPoints[i].z / scale;
         }
     }
 
