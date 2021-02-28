@@ -29,14 +29,19 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     private GameObject shield;
     private InfoCanvas infoCanvas;
 
+    private int team;
+    private bool alive = true;
+
+    private XRRig rig;
+
     private Dictionary<SpellCdEnum, float> cdMap = new Dictionary<SpellCdEnum, float>
-        {{SpellCdEnum.FireballRight, Fireball.CD_FIREBALL}, {SpellCdEnum.FireballLeft, Fireball.CD_FIREBALL}}
+        {{SpellCdEnum.FireballRight, Fireball.FIREBALL_CD}, {SpellCdEnum.FireballLeft, Fireball.FIREBALL_CD}, {SpellCdEnum.Thunder, Thunder.THUNDER_CD}}
     ;
 
     // Start is called before the first frame update
     void Start()
     {
-        XRRig rig = FindObjectOfType<XRRig>();
+        rig = FindObjectOfType<XRRig>();
         headRig = rig.transform.Find("Camera Offset/Main Camera");
         leftHandRig = rig.transform.Find("Camera Offset/LeftHand Controller");
         rightHandRig = rig.transform.Find("Camera Offset/RightHand Controller");
@@ -48,8 +53,8 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
         if (photonView != null)
         {
-            // assign position from here ?
             id = photonView.Owner.ActorNumber;
+            team = GameSettings.getTeamWithId(id);
             setInfoCanvas();
             if (photonView.IsMine)
             {
@@ -109,7 +114,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             UpdateHandAnimation(leftHandAnimator, leftHandPresence);
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
-            SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap, id);
+            SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap, team);
             SpellHandler.handleShield(shield, leftHandPresence, photonView);
             SpellHandler.handleShield(shield, rightHandPresence, photonView);
 
@@ -135,8 +140,16 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         CommunicationCenter.updateHealth();
     }
 
+    public Vector3 getPosition()
+    {
+        return rig.transform.position;
+    }
+
     public int getId()
     {
         return id;
     }
+
+    public int Team { get { return team; } }
+    public bool Alive { get { return alive; } }
 }

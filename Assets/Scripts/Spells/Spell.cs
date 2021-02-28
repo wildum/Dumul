@@ -5,6 +5,7 @@ using UnityEngine;
 public enum SpellEnum
 {
     Fireball,
+    Thunder,
     UNDEFINED
 }
 
@@ -12,5 +13,35 @@ public enum SpellCdEnum
 {
     FireballRight,
     FireballLeft,
+    Thunder,
     UNDEFINED
 }
+
+public class Spell : MonoBehaviour
+{
+    protected float cd = 10f;
+    protected int speed = 50;
+    protected int damage = 150;
+
+    protected NetworkPlayer getPlayerFromCollision(Collision collision)
+    {
+        if (collision.collider.tag == "Player")
+        {
+            GameObject g = collision.transform.parent.gameObject;
+            if (g != null)
+            {
+                GameObject gp = g.transform.parent.gameObject;
+                if (gp != null)
+                {
+                    return gp.GetComponent<NetworkPlayer>();
+                }
+            }
+        }
+        return null;
+    }
+
+    public float Cd { get { return cd; } }
+    public int Speed { get { return speed; } }
+    public int Damage { get { return damage; } }
+}
+

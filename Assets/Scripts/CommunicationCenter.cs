@@ -5,16 +5,10 @@ using System.Collections.Generic;
 
 static class CommunicationCenter
 {
-
-    private static List<NetworkPlayer> players = new List<NetworkPlayer>();
-
     // to be updated when more that two players
     public static void updateHealth()
     {
-        if (players.Count == 0)
-        {
-            initPlayersList();
-        }
+        List<NetworkPlayer> players = InformationCenter.getPlayers();
         int p1Health = 0;
         int p2Health = 0;
         if (players.Count > 0)
@@ -34,15 +28,6 @@ static class CommunicationCenter
         else
         {
             Debug.Log("No players alive");
-        }
-    }
-
-    private static void initPlayersList()
-    {
-        NetworkPlayer[] playersArray = GameObject.FindObjectsOfType<NetworkPlayer>();
-        foreach(NetworkPlayer p in playersArray)
-        {
-            players.Add(p);
         }
     }
 }

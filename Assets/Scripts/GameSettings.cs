@@ -30,6 +30,12 @@ static class GameSettings
         new StartPosition(new Vector3(5, 0, 0), new Vector3(0, -90, 0))
     };
 
+    // update to assign teams for multiple players
+    public static int getTeamWithId(int id)
+    {
+        return id == 1 ? 0 : 1;
+    }
+
     public static StartPosition getStartPositionFromActorId(int id)
     {
         int index = id - 1;

@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class Fireball : MonoBehaviour
+public class Fireball : Spell
 {
-    public const float CD_FIREBALL = 0.5f;
-    public const int SPEED = 150;
-    public const int DAMAGE = 50;
+    public const float FIREBALL_CD = 0.5f;
+    public const int FIREBALL_SPEED = 150;
+    public const int FIREBALL_DAMAGE = 50;
 
-    private int ownerId = 0;
+    private int team = 0;
 
-    public void setOwnerId(int iownerId)
+    private void Awake()
     {
-        ownerId = iownerId;
+        cd = FIREBALL_CD;
+        speed = FIREBALL_SPEED;
+        damage = FIREBALL_DAMAGE;
+    }
+
+    public void setTeam(int iteam)
+    {
+        team = iteam;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -30,27 +37,10 @@ public class Fireball : MonoBehaviour
     void playerTakeDamage(Collision collision)
     {
         NetworkPlayer player = getPlayerFromCollision(collision);
-        if (player != null && player.getId() != ownerId)
+        if (player != null && player.Team != team)
         {
-            player.takeDamage(DAMAGE);
+            player.takeDamage(damage);
         }
-    }
-
-    NetworkPlayer getPlayerFromCollision(Collision collision)
-    {
-        if (collision.collider.tag == "Player")
-        {
-            GameObject g = collision.transform.parent.gameObject;
-            if (g != null)
-            {
-                GameObject gp = g.transform.parent.gameObject;
-                if (gp != null)
-                {
-                    return gp.GetComponent<NetworkPlayer>();
-                }
-            }
-        }
-        return null;
     }
 
     void dummyTakeDamage(Collider collider)
@@ -58,7 +48,7 @@ public class Fireball : MonoBehaviour
         Dummy dummy = collider.GetComponent<Dummy>();
         if (dummy != null)
         {
-            dummy.takeDamage(DAMAGE, ownerId);
+            dummy.takeDamage(damage, team);
         }
     }
 }

@@ -3,67 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
-using QDollarGestureRecognizer;
 
 static class SpellRecognizer
 {
-    public const float SPELL_RECO_THRESHOLD = 20.0f;
+    public const float SPELL_RECO_THRESHOLD = 15.0f;
     public const int SPELL_RECO_MIN_ELEMENT = 5;
     public const float SHIELD_RECO_DISTANCE = 10.0f;
     public const int SHIELD_RECO_MIN_ELEMENT = 8;
-    private static List<Gesture> trainingSet = new List<Gesture>();
 
     public static void init()
     {
-        //Load pre-made gestures
-        TextAsset[] gesturesXml = Resources.LoadAll<TextAsset>("GestureSet/10-stylus-MEDIUM/");
-        foreach (TextAsset gestureXml in gesturesXml)
-            trainingSet.Add(GestureIO.ReadGestureFromXML(gestureXml.text));
-
-        //Load user custom gestures
-        string[] filePaths = Directory.GetFiles(Application.persistentDataPath, "*.xml");
-        foreach (string filePath in filePaths)
-            trainingSet.Add(GestureIO.ReadGestureFromFile(filePath));
-
-        // custom part
         List<CustomGestureIOData> gesturesIO = new List<CustomGestureIOData>();
         TextAsset[] customGesturesXml = Resources.LoadAll<TextAsset>("CustomGestureData/");
         foreach (TextAsset gestureXml in customGesturesXml)
             gesturesIO.Add(CustomGestureIO.ReadGestureFromXML(gestureXml.text));
         CustomRecognizer.init(gesturesIO);
-
-        Debug.Log("SpellRecognizer initialised with " + trainingSet.Count + " elements");
     }
 
-    public static SpellEnum recognize(List<Point> points, CustomRecognizerData data)
+    public static SpellEnum recognize(CustomRecognizerData data)
     {
-        if (points.Count < SPELL_RECO_MIN_ELEMENT)
+        if (data.points.Count < SPELL_RECO_MIN_ELEMENT)
         {
-            Debug.Log("Not enough elements : " + points.Count);
+            Debug.Log("Not enough elements : " + data.points.Count);
             return SpellEnum.UNDEFINED;
         }
-
-        Gesture candidate = new Gesture(points.ToArray());
-        Result gestureResult = QPointCloudRecognizer.Classify(candidate, trainingSet.ToArray());
 
         CustomGesture customGesture = new CustomGesture(data);
         CustomRecognizerResult res = CustomRecognizer.classify(customGesture);
 
-        Debug.Log(res.spell + " " + res.score);
-
-        if (gestureResult.Score > SPELL_RECO_THRESHOLD)
+        if (res.score > SPELL_RECO_THRESHOLD)
         {
-            Debug.Log("Unrecognized, best was : " + gestureResult.GestureClass + " with score of " + gestureResult.Score);
+            Debug.Log("Unrecognized, best was : " + res.spell + " : " + res.score);
             return SpellEnum.UNDEFINED;
         }
-
-        if (gestureResult.GestureClass == "line")
-        {
-            Debug.Log("Fireball with score of " + gestureResult.Score);
-            return SpellEnum.Fireball;
-        }
-        Debug.Log("No spell mapped to this movement : " + gestureResult.GestureClass + " with score of " + gestureResult.Score);
-        return SpellEnum.UNDEFINED;
+            
+        Debug.Log(res.spell + " : " + res.score);
+        return res.spell;
     }
 
     public static bool recognizeShield(List<Vector3> points)

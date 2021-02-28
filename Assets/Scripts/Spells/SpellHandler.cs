@@ -6,32 +6,47 @@ using Photon.Pun;
 
 static class SpellHandler
 {
+    private const float MAX_TIME_TWO_HANDS_CAST = 2.0f;
 
-    public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight };
+    public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, SpellCdEnum.Thunder };
 
     public static Dictionary<SpellCdEnum, float> SPELLS_CD_MAP = new Dictionary<SpellCdEnum, float> {
-        { SpellCdEnum.FireballLeft, Fireball.CD_FIREBALL },
-        { SpellCdEnum.FireballRight, Fireball.CD_FIREBALL }
+        { SpellCdEnum.FireballLeft, Fireball.FIREBALL_CD },
+        { SpellCdEnum.FireballRight, Fireball.FIREBALL_CD },
+        { SpellCdEnum.Thunder, Thunder.THUNDER_CD }
     };
 
     public static Dictionary<SpellCdEnum, string> SPELLS_CD_String = new Dictionary<SpellCdEnum, string> {
         { SpellCdEnum.FireballLeft, "Fireball Left" },
-        { SpellCdEnum.FireballRight, "Fireball Right" }
+        { SpellCdEnum.FireballRight, "Fireball Right" },
+        { SpellCdEnum.Thunder, "Thunder" }
     };
 
-    public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellCdEnum, float> cdMap, int ownerId)
+    public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellCdEnum, float> cdMap, int team)
     {
-        bool consumed = handleTwoHandSpells(leftHand, rightHand, cdMap, ownerId);
-
-        if (!consumed)
-        {
-            handleOneHandSpell(leftHand, cdMap, ownerId);
-            handleOneHandSpell(rightHand, cdMap, ownerId);
-        }
+        handleOneHandSpell(leftHand, rightHand, cdMap, team);
+        handleOneHandSpell(rightHand, leftHand, cdMap, team);
         updateAllSpellCds(cdMap);
+        updateTwoHandsCd(leftHand);
+        updateTwoHandsCd(rightHand);
     }
 
-    public static void updateAllSpellCds(Dictionary<SpellCdEnum, float> cdMap)
+    private static void updateTwoHandsCd(HandPresence hand)
+    {
+        if (hand.LoadedTwoHandsSpell != SpellEnum.UNDEFINED)
+        {
+            if (hand.CurrentTimeTwoHandsSpell > MAX_TIME_TWO_HANDS_CAST)
+            {
+                hand.resetTwoHandsLoadedSpell();
+            }
+            else
+            {
+                hand.CurrentTimeTwoHandsSpell += Time.deltaTime;
+            }
+        }
+    }
+
+    private static void updateAllSpellCds(Dictionary<SpellCdEnum, float> cdMap)
     {
         foreach (SpellCdEnum spell in SPELLS)
         {
@@ -39,13 +54,7 @@ static class SpellHandler
         }
     }
 
-    public static bool handleTwoHandSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellCdEnum, float> cdMap, int ownerId)
-    {
-        // return true when consumed
-        return false;
-    }
-
-    public static void handleOneHandSpell(HandPresence hand, Dictionary<SpellCdEnum, float> cdMap, int ownerId)
+    public static void handleOneHandSpell(HandPresence hand, HandPresence otherHand, Dictionary<SpellCdEnum, float> cdMap, int team)
     {
         ControlState gripState = hand.computeGripState();
         if (isJustPressed(gripState))
@@ -54,12 +63,41 @@ static class SpellHandler
         }
         else if (isJustReleased(gripState))
         {
-            SpellEnum spell = SpellRecognizer.recognize(hand.getPoints(), hand.getCustomRecognizerData());
-            SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
-            if (spell == SpellEnum.Fireball && isSpellAvailable(fireBallType, Fireball.CD_FIREBALL, cdMap))
+            SpellEnum spell = SpellRecognizer.recognize(hand.getCustomRecognizerData());
+            if (isSpellTwoHanded(spell))
             {
-                createFireball(hand.transform, ownerId);
-                cdMap[fireBallType] = 0.0f;
+                if (otherHand.LoadedTwoHandsSpell == spell)
+                {
+                    if (spell == SpellEnum.Thunder && isSpellAvailable(SpellCdEnum.Thunder, Thunder.THUNDER_CD, cdMap))
+                    {
+                        NetworkPlayer enemy = InformationCenter.getFirstPlayerOppositeTeam(team);
+                        if (enemy != null)
+                        {
+                            createThunder(enemy.getPosition());
+                            Debug.Log("casting thunder targeting : " + enemy.getPosition());
+                        }
+                        else
+                        {
+                            createThunder(new Vector3(3.0f, 0.0f, 0.0f));
+                            Debug.Log("tried to cast thunder but not enemy around");
+                        }
+                        cdMap[SpellCdEnum.Thunder] = 0.0f;
+                        otherHand.resetTwoHandsLoadedSpell();
+                    }
+                }
+                else
+                {
+                    hand.LoadedTwoHandsSpell = spell;
+                }
+            }
+            else
+            {
+                SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
+                if (spell == SpellEnum.Fireball && isSpellAvailable(fireBallType, Fireball.FIREBALL_CD, cdMap))
+                {
+                    createFireball(hand.transform, team);
+                    cdMap[fireBallType] = 0.0f;
+                }
             }
             hand.stopTrail(TrailType.AttackSpell);
         }
@@ -94,6 +132,12 @@ static class SpellHandler
         }
     }
 
+    private static bool isSpellTwoHanded(SpellEnum spellEnum)
+    {
+        // add two hands spells here
+        return spellEnum == SpellEnum.Thunder;
+    }
+
     public static bool isSpellAvailable(SpellCdEnum spell, float spellCd, Dictionary<SpellCdEnum, float> cdMap)
     {
         return cdMap.ContainsKey(spell) && cdMap[spell] > spellCd;
@@ -109,11 +153,19 @@ static class SpellHandler
         return state == ControlState.JustPressed;
     }
 
-    public static void createFireball(Transform t, int ownerId)
+    public static void createFireball(Transform t, int team)
     {
         GameObject fireball = PhotonNetwork.Instantiate("Fireball", t.position, t.rotation);
-        fireball.GetComponent<Rigidbody>().AddForce(t.forward * Fireball.SPEED, ForceMode.Force);
-        fireball.GetComponent<Fireball>().setOwnerId(ownerId);
+        fireball.GetComponent<Rigidbody>().AddForce(t.forward * Fireball.FIREBALL_SPEED, ForceMode.Force);
+        fireball.GetComponent<Fireball>().setTeam(team);
+    }
+
+    public static void createThunder(Vector3 enemyPosition)
+    {
+        Vector3 position = new Vector3(enemyPosition.x, Thunder.yStartingPosition, enemyPosition.z);
+        Quaternion rotation = Quaternion.identity;
+        rotation.eulerAngles = new Vector3(0,0,180);
+        PhotonNetwork.Instantiate("Thunder", position, rotation);
     }
 
     public static void moveShield(GameObject shield, List<Vector3> shieldPoints)

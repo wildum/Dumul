@@ -23,10 +23,10 @@ public class Shield : MonoBehaviourPunCallbacks
 
     void OnCollisionEnter(Collision collision)
     {
-        Fireball ball = collision.collider.GetComponent<Fireball>();
-        if (ball != null)
+        Spell spell = collision.collider.GetComponent<Spell>();
+        if (spell != null)
         {
-            takeDamage(SpellEnum.Fireball);
+            takeDamage(spell.Damage);
             if (health <= 0)
             {
                 this.gameObject.SetActive(false);
@@ -35,12 +35,9 @@ public class Shield : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void takeDamage(SpellEnum spell)
+    void takeDamage(float damage)
     {
-        if (spell == SpellEnum.Fireball)
-        {
-            health -= Fireball.DAMAGE;
-        }
+        health -= damage;
         updateColor();
     }
 

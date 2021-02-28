@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-using QDollarGestureRecognizer;
-
 public enum TrailType
 {
     AttackSpell,
@@ -40,14 +38,14 @@ public class HandPresence : MonoBehaviour
 
     private TrailRenderer trailRenderer;
 
-    private List<Point> points = new List<Point>();
-    private Vector3 firstMovementPoint;
-    private int strokeId = 0;
     private CustomRecognizerData customRecognizerData;
 
     private List<Vector3> shieldPoints = new List<Vector3>();
 
     private HandSideEnum side;
+
+    private SpellEnum loadedTwoHandsSpell = SpellEnum.UNDEFINED;
+    private float currentTimeTwoHandsSpell = 0.0f;
 
     void Awake()
     {
@@ -82,15 +80,15 @@ public class HandPresence : MonoBehaviour
     {
         trailRenderer.emitting = false;
         trailRenderer.Clear();
-        if (trailType == TrailType.AttackSpell)
-        {
-            points.Clear();
-        }
-        else
+        if (trailType == TrailType.DefenseSpell)
         {
             shieldPoints.Clear();
         }
-        strokeId = 0;
+        else if (trailType == TrailType.AttackSpell)
+        {
+            customRecognizerData.points.Clear();
+            customRecognizerData.rotations.Clear();
+        }
     }
 
     public void setHandSide(HandSideEnum iSide)
@@ -133,11 +131,6 @@ public class HandPresence : MonoBehaviour
         return shieldPoints;
     }
 
-    public List<Point> getPoints()
-    {
-        return points;
-    }
-
     public CustomRecognizerData getCustomRecognizerData()
     {
         return customRecognizerData;
@@ -171,19 +164,10 @@ public class HandPresence : MonoBehaviour
 
         if (grip.pressing())
         {
-            Vector3 position = _inputActionPosition.ReadValue<Vector3>();
-            if (points.Count == 0)
+            if (customRecognizerData.points == null || customRecognizerData.rotations == null)
             {
-                firstMovementPoint = position;
-                points.Add(new Point(0, position.y, strokeId));
                 customRecognizerData.points = new List<Vector3>();
                 customRecognizerData.rotations = new List<float>();
-            }
-            else
-            {
-                // compute the distance with the first point of the movement to reduce the dimension
-                float d = Tools.dist2d(position.x, firstMovementPoint.x, position.z, firstMovementPoint.z);
-                points.Add(new Point(d, position.y, strokeId));
             }
             customRecognizerData.points.Add(transform.position);
             customRecognizerData.rotations.Add(rotation.eulerAngles.y);
@@ -193,5 +177,14 @@ public class HandPresence : MonoBehaviour
             shieldPoints.Add(transform.position);
         }
     }
+
+    public void resetTwoHandsLoadedSpell()
+    {
+        loadedTwoHandsSpell = SpellEnum.UNDEFINED;
+        currentTimeTwoHandsSpell = 0.0f;
+    }
+
+    public SpellEnum LoadedTwoHandsSpell { get { return loadedTwoHandsSpell; } set { loadedTwoHandsSpell = value; } }
+    public float CurrentTimeTwoHandsSpell { get { return currentTimeTwoHandsSpell; } set { currentTimeTwoHandsSpell = value; } }
 
 }

@@ -5,9 +5,9 @@ using UnityEngine;
 public class Dummy : MonoBehaviour
 {
 
-    public void takeDamage(int damageAmount, int playerId)
+    public void takeDamage(int damageAmount, int team)
     {
-        Debug.Log("Dummy took " + damageAmount + " damages from player " + playerId);
+        Debug.Log("Dummy took " + damageAmount + " damages from team " + team);
     }
 
 }
