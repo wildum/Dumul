@@ -44,7 +44,8 @@ public class Thunder : Spell
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine && 
             (collision.collider.GetComponent<TerrainCollider>() != null ||
-            collision.collider.tag == "Player"))
+            collision.collider.tag == "Player" ||
+            collision.collider.tag == "Shield"))
         {
             PhotonNetwork.Destroy(gameObject);
             PhotonNetwork.Destroy(transform.parent.gameObject); ;
