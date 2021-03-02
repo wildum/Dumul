@@ -12,7 +12,7 @@ public class CdGrid : MonoBehaviour
     {
         GameObject cdSpellTemplate = transform.GetChild(0).gameObject;
         GameObject g;
-        foreach (SpellCdEnum spell in SpellHandler.SPELLS)
+        foreach (SpellCdEnum spell in SpellBook.SPELLS)
         {
             g = Instantiate(cdSpellTemplate, transform);
             g.transform.GetChild(0).GetComponent<Slider>().value = 0;
@@ -23,16 +23,15 @@ public class CdGrid : MonoBehaviour
         Destroy(cdSpellTemplate);
     }
 
-    public void updateCdTextOnGrid(Dictionary<SpellCdEnum, float> cdMap)
+    public void updateCdTextOnGrid(Dictionary<SpellCdEnum, SpellCd> spellsCd)
     {
-        foreach(KeyValuePair<SpellCdEnum, float> entry in cdMap)
+        foreach(KeyValuePair<SpellCdEnum, SpellCd> entry in spellsCd)
         {
-            float cdMaxSpell = SpellHandler.SPELLS_CD_MAP[entry.Key];
             GameObject g = cdSpellDict[entry.Key];
-            if (entry.Value < cdMaxSpell)
+            if (entry.Value.CurrentCd < entry.Value.Cd)
             {
-                g.transform.GetChild(0).GetComponent<Slider>().value = 1 - entry.Value / cdMaxSpell;
-                g.transform.GetChild(1).GetComponent<Text>().text = SpellHandler.SPELLS_CD_String[entry.Key];
+                g.transform.GetChild(0).GetComponent<Slider>().value = 1 - entry.Value.CurrentCd / entry.Value.Cd;
+                g.transform.GetChild(1).GetComponent<Text>().text = entry.Value.Name;
                 if(!cdDisplayed.Contains(entry.Key))
                 {
                     cdDisplayed.Add(entry.Key);

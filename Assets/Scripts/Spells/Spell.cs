@@ -17,6 +17,24 @@ public enum SpellCdEnum
     UNDEFINED
 }
 
+public class SpellCd
+{
+    private float cd;
+    private float currentCd;
+    private string name;
+
+    public SpellCd(float icd, string iname)
+    {
+        cd = icd;
+        currentCd = icd;
+        name = iname;
+    }
+
+    public float Cd { get { return cd; } }
+    public float CurrentCd { get { return currentCd; } set { currentCd = value; } }
+    public string Name { get { return name; } }
+}
+
 public class Spell : MonoBehaviour
 {
     protected float cd = 10f;

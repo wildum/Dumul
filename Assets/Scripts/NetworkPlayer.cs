@@ -14,8 +14,6 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     public Animator leftHandAnimator;
     public Animator rightHandAnimator;
 
-    private PhotonView photonViewPlayer;
-
     private Transform headRig;
     private Transform leftHandRig;
     private Transform rightHandRig;
@@ -34,9 +32,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
     private XRRig rig;
 
-    private Dictionary<SpellCdEnum, float> cdMap = new Dictionary<SpellCdEnum, float>
-        {{SpellCdEnum.FireballRight, Fireball.FIREBALL_CD}, {SpellCdEnum.FireballLeft, Fireball.FIREBALL_CD}, {SpellCdEnum.Thunder, Thunder.THUNDER_CD}}
-    ;
+    private SpellBook spellBook = new SpellBook();
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +51,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         {
             id = photonView.Owner.ActorNumber;
             team = GameSettings.getTeamWithId(id);
+            spellBook.Team = team;
             setInfoCanvas();
             if (photonView.IsMine)
             {
@@ -77,7 +74,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     
     void updateCdMapInfoCanvas()
     {
-        infoCanvas.updateCdText(cdMap);
+        infoCanvas.updateCdText(spellBook.SpellCds);
     }
 
     void setInfoCanvas()
@@ -114,9 +111,9 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             UpdateHandAnimation(leftHandAnimator, leftHandPresence);
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
-            SpellHandler.handleSpells(leftHandPresence, rightHandPresence, cdMap, team);
-            SpellHandler.handleShield(shield, leftHandPresence, photonView);
-            SpellHandler.handleShield(shield, rightHandPresence, photonView);
+            spellBook.handleSpells(leftHandPresence, rightHandPresence);
+            spellBook.handleShield(shield, leftHandPresence);
+            spellBook.handleShield(shield, rightHandPresence);
 
             updateCdMapInfoCanvas();
         }

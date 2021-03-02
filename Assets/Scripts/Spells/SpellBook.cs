@@ -4,34 +4,31 @@ using UnityEngine;
 using System;
 using Photon.Pun;
 
-static class SpellHandler
+public class SpellBook
 {
     private const float MAX_TIME_TWO_HANDS_CAST = 2.0f;
 
     public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, SpellCdEnum.Thunder };
 
-    public static Dictionary<SpellCdEnum, float> SPELLS_CD_MAP = new Dictionary<SpellCdEnum, float> {
-        { SpellCdEnum.FireballLeft, Fireball.FIREBALL_CD },
-        { SpellCdEnum.FireballRight, Fireball.FIREBALL_CD },
-        { SpellCdEnum.Thunder, Thunder.THUNDER_CD }
-    };
-
-    public static Dictionary<SpellCdEnum, string> SPELLS_CD_String = new Dictionary<SpellCdEnum, string> {
-        { SpellCdEnum.FireballLeft, "Fireball Left" },
-        { SpellCdEnum.FireballRight, "Fireball Right" },
-        { SpellCdEnum.Thunder, "Thunder" }
-    };
-
-    public static void handleSpells(HandPresence leftHand, HandPresence rightHand, Dictionary<SpellCdEnum, float> cdMap, int team)
+    private Dictionary<SpellCdEnum, SpellCd> spellCds = new Dictionary<SpellCdEnum, SpellCd>
     {
-        handleOneHandSpell(leftHand, rightHand, cdMap, team);
-        handleOneHandSpell(rightHand, leftHand, cdMap, team);
-        updateAllSpellCds(cdMap);
+        { SpellCdEnum.FireballLeft, new SpellCd(Fireball.FIREBALL_CD, "Fireball Left") },
+        { SpellCdEnum.FireballRight, new SpellCd(Fireball.FIREBALL_CD, "Fireball Right") },
+        { SpellCdEnum.Thunder, new SpellCd(Thunder.THUNDER_CD, "Thunder") }
+    };
+
+    private int team;
+
+    public void handleSpells(HandPresence leftHand, HandPresence rightHand)
+    {
+        handleOneHandSpell(leftHand, rightHand);
+        handleOneHandSpell(rightHand, leftHand);
+        updateAllSpellCds();
         updateTwoHandsCd(leftHand);
         updateTwoHandsCd(rightHand);
     }
 
-    private static void updateTwoHandsCd(HandPresence hand)
+    private void updateTwoHandsCd(HandPresence hand)
     {
         if (hand.LoadedTwoHandsSpell != SpellEnum.UNDEFINED)
         {
@@ -46,15 +43,15 @@ static class SpellHandler
         }
     }
 
-    private static void updateAllSpellCds(Dictionary<SpellCdEnum, float> cdMap)
+    private void updateAllSpellCds()
     {
         foreach (SpellCdEnum spell in SPELLS)
         {
-            cdMap[spell] += Time.deltaTime;
+            spellCds[spell].CurrentCd += Time.deltaTime;
         }
     }
 
-    public static void handleOneHandSpell(HandPresence hand, HandPresence otherHand, Dictionary<SpellCdEnum, float> cdMap, int team)
+    public void handleOneHandSpell(HandPresence hand, HandPresence otherHand)
     {
         ControlState gripState = hand.computeGripState();
         if (isJustPressed(gripState))
@@ -68,7 +65,7 @@ static class SpellHandler
             {
                 if (otherHand.LoadedTwoHandsSpell == spell)
                 {
-                    if (spell == SpellEnum.Thunder && isSpellAvailable(SpellCdEnum.Thunder, Thunder.THUNDER_CD, cdMap))
+                    if (spell == SpellEnum.Thunder && isSpellAvailable(SpellCdEnum.Thunder, Thunder.THUNDER_CD))
                     {
                         NetworkPlayer enemy = InformationCenter.getFirstPlayerOppositeTeam(team);
                         if (enemy != null)
@@ -78,10 +75,10 @@ static class SpellHandler
                         }
                         else
                         {
-                            createThunder(new Vector3(3.0f, 0.0f, 0.0f));
+                            createThunder(new Vector3(-5.0f, 0.0f, 0.0f));
                             Debug.Log("tried to cast thunder but not enemy around");
                         }
-                        cdMap[SpellCdEnum.Thunder] = 0.0f;
+                        spellCds[SpellCdEnum.Thunder].CurrentCd = 0.0f;
                         otherHand.resetTwoHandsLoadedSpell();
                     }
                 }
@@ -93,17 +90,17 @@ static class SpellHandler
             else
             {
                 SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
-                if (spell == SpellEnum.Fireball && isSpellAvailable(fireBallType, Fireball.FIREBALL_CD, cdMap))
+                if (spell == SpellEnum.Fireball && isSpellAvailable(fireBallType, Fireball.FIREBALL_CD))
                 {
                     createFireball(hand.transform, team);
-                    cdMap[fireBallType] = 0.0f;
+                    spellCds[fireBallType].CurrentCd = 0.0f;
                 }
             }
             hand.stopTrail(TrailType.AttackSpell);
         }
     }
 
-    public static void handleShield(GameObject shield, HandPresence hand, PhotonView photonView)
+    public void handleShield(GameObject shield, HandPresence hand)
     {
         // cannot use shield when using an attack spell already
         if (!hand.gripPressing())
@@ -132,35 +129,35 @@ static class SpellHandler
         }
     }
 
-    private static bool isSpellTwoHanded(SpellEnum spellEnum)
+    private bool isSpellTwoHanded(SpellEnum spellEnum)
     {
         // add two hands spells here
         return spellEnum == SpellEnum.Thunder;
     }
 
-    public static bool isSpellAvailable(SpellCdEnum spell, float spellCd, Dictionary<SpellCdEnum, float> cdMap)
+    public bool isSpellAvailable(SpellCdEnum spell, float spellCd)
     {
-        return cdMap.ContainsKey(spell) && cdMap[spell] > spellCd;
+        return spellCds.ContainsKey(spell) && spellCds[spell].CurrentCd > spellCd;
     }
 
-    public static bool isJustReleased(ControlState state)
+    public bool isJustReleased(ControlState state)
     {
         return state == ControlState.JustReleased;
     }
 
-    public static bool isJustPressed(ControlState state)
+    public bool isJustPressed(ControlState state)
     {
         return state == ControlState.JustPressed;
     }
 
-    public static void createFireball(Transform t, int team)
+    private  void createFireball(Transform t, int team)
     {
         GameObject fireball = PhotonNetwork.Instantiate("Fireball", t.position, t.rotation);
         fireball.GetComponent<Rigidbody>().AddForce(t.forward * Fireball.FIREBALL_SPEED, ForceMode.Force);
         fireball.GetComponent<Fireball>().setTeam(team);
     }
 
-    public static void createThunder(Vector3 enemyPosition)
+    private void createThunder(Vector3 enemyPosition)
     {
         Vector3 position = new Vector3(enemyPosition.x, Thunder.yStartingPosition, enemyPosition.z);
         Quaternion rotation = Quaternion.identity;
@@ -168,7 +165,7 @@ static class SpellHandler
         PhotonNetwork.Instantiate("Thunder", position, rotation);
     }
 
-    public static void moveShield(GameObject shield, List<Vector3> shieldPoints)
+    public void moveShield(GameObject shield, List<Vector3> shieldPoints)
     {
         Vector3 smallest = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
         Vector3 biggest = new Vector3(Single.MinValue, Single.MinValue, Single.MinValue);
@@ -270,4 +267,6 @@ static class SpellHandler
         shield.transform.localScale = new Vector3(xscale, yscale, shield.transform.localScale.z);
     }
 
+    public int Team { set { team = value; } }
+    public Dictionary<SpellCdEnum, SpellCd> SpellCds { get { return spellCds; } }
 }

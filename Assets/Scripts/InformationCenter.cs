@@ -13,6 +13,7 @@ static class InformationCenter
     private static void updatePlayersList()
     {
         NetworkPlayer[] playersArray = GameObject.FindObjectsOfType<NetworkPlayer>();
+        players.Clear();
         foreach (NetworkPlayer p in playersArray)
         {
             players.Add(p);
@@ -28,7 +29,7 @@ static class InformationCenter
                 return p;
             }
         }
-        Debug.Log("No player alive, return null");
+        Debug.Log("No enemy player alive, return null");
         return null;
     }
 }

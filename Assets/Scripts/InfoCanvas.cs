@@ -13,9 +13,9 @@ public class InfoCanvas : MonoBehaviour
     private const string tHealth = "HP : ";
     private const string tOpp = "ENEMY : ";
 
-    public void updateCdText(Dictionary<SpellCdEnum, float> cdMap)
+    public void updateCdText(Dictionary<SpellCdEnum, SpellCd> spellsCd)
     {
-        cdGrid.updateCdTextOnGrid(cdMap);
+        cdGrid.updateCdTextOnGrid(spellsCd);
     }
 
     public void updateHealth(int health, int oppHealth)
