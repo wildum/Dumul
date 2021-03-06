@@ -167,6 +167,8 @@ public class SpellBook
 
     public void moveShield(GameObject shield, List<Vector3> shieldPoints)
     {
+        if (shieldPoints.Count == 0)
+            return;
         Vector3 smallest = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
         Vector3 biggest = new Vector3(Single.MinValue, Single.MinValue, Single.MinValue);
         Vector3 bigX = new Vector3(0,0,0);
@@ -175,6 +177,9 @@ public class SpellBook
         Vector3 smallY = new Vector3(0,0,0);
         Vector3 bigZ = new Vector3(0,0,0);
         Vector3 smallZ = new Vector3(0,0,0);
+        float xcenter = 0;
+        float ycenter = 0;
+        float zcenter = 0;
         foreach (Vector3 p in shieldPoints)
         {
             if (p.x < smallest.x)
@@ -207,13 +212,17 @@ public class SpellBook
                 bigZ = p;
                 biggest.z = p.z;
             }
+            xcenter += p.x;
+            ycenter += p.y;
+            zcenter += p.z;
         }
-        shield.transform.position = new Vector3(Tools.middle(biggest.x, smallest.x), Tools.middle(biggest.y, smallest.y), Tools.middle(biggest.z, smallest.z));
-        Vector3 rotationX = bigX - smallX;
+        Vector3 center = new Vector3(xcenter / shieldPoints.Count, ycenter / shieldPoints.Count, zcenter / shieldPoints.Count);
+        shield.transform.position = center;
+        Vector3 rotationX = bigX - center;
         rotationX.y = 0;
-        Vector3 rotationZ = bigZ - smallZ;
+        Vector3 rotationZ = bigZ - center;
         rotationZ.y = 0;
-        Vector3 rotationY = bigY - smallY;
+        Vector3 rotationY = bigY - center;
         rotationY.x = 0;
         Vector3 rotationToUseForY = rotationX.x > rotationZ.z ? rotationX : rotationZ;
         float yAngle = Vector3.SignedAngle(Vector3.right, rotationToUseForY, Vector3.up);
@@ -229,8 +238,10 @@ public class SpellBook
         // Debug.Log("Vector x : " + rotationX.x + " " + rotationX.z);
         // Debug.Log("Vector y : " + rotationY.y + " " + rotationY.z);
         // Debug.Log("Vector z : " + rotationZ.x + " " + rotationZ.z);
-        // Debug.Log(xAngle + " " + yAngle);
+        Debug.Log(xAngle + " " + yAngle);
         shield.transform.eulerAngles = new Vector3(xAngle, yAngle, 0);
+
+        // scaling
         float xValue = Mathf.Abs(biggest.x - smallest.x);
         float yValue = Mathf.Abs(biggest.y - smallest.y);
         float zValue = Mathf.Abs(biggest.z - smallest.z);
