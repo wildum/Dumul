@@ -49,6 +49,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
         if (photonView != null)
         {
+            // is this id correct ?
             id = photonView.Owner.ActorNumber;
             team = GameSettings.getTeamWithId(id);
             spellBook.Team = team;
