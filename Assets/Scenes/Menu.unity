@@ -1254,6 +1254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f044e5d17938904cb6790ce6b5204b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkPlayerMenuSpawner: {fileID: 232060335}
 --- !u!4 &508998470
 Transform:
   m_ObjectHideFlags: 0

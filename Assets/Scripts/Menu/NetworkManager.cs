@@ -12,6 +12,7 @@ namespace menu
     {
         public RoomsHandler roomHandler;
         public ButtonManager buttonManager;
+        private GameObject spawnedPlayerPrefab;
         // Start is called before the first frame update
         void Start()
         {
@@ -54,6 +55,7 @@ namespace menu
             if (roomHandler.RoomState != RoomState.Searching)
             {
                 buttonManager.updateButtonsStatus();
+                spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player Menu", transform.position, transform.rotation);
             }
         }
 
@@ -85,6 +87,7 @@ namespace menu
             {
                 roomHandler.resetRoom();
             }
+            PhotonNetwork.Destroy(spawnedPlayerPrefab);
         }
 
         private void updateFriendsList()
