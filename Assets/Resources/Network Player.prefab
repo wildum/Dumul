@@ -105,7 +105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8059320226513984072}
-  - component: {fileID: -8486955524548568532}
+  - component: {fileID: 7555799070614597275}
   - component: {fileID: -5562335667182812358}
   m_Layer: 0
   m_Name: Network Player
@@ -131,7 +131,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-8486955524548568532
+--- !u!114 &7555799070614597275
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5025002088854538781}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93406284caa2c9e4b8f68152df42eb2c, type: 3}
+  m_Script: {fileID: 11500000, guid: 86a5689296a58ed408cf82245b1e47fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   head: {fileID: 4089953308053264977}
@@ -491,12 +491,12 @@ PrefabInstance:
     - target: {fileID: 5686134208185136530, guid: 1fd3a7c43c8190f4d8c167ebde694364,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5686134208185136530, guid: 1fd3a7c43c8190f4d8c167ebde694364,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5686134208185136530, guid: 1fd3a7c43c8190f4d8c167ebde694364,
         type: 3}

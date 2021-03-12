@@ -169,7 +169,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 15660504}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 013ab84c572713d4e87e9b48bac09f04, type: 3}
+  m_Script: {fileID: 11500000, guid: a64e26c90d12b314cb2381ffd4cc9f01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &15660507
@@ -431,7 +431,6 @@ GameObject:
   - component: {fileID: 120240318}
   - component: {fileID: 120240321}
   - component: {fileID: 120240320}
-  - component: {fileID: 120240319}
   m_Layer: 5
   m_Name: enemyHealth
   m_TagString: Untagged
@@ -458,21 +457,6 @@ RectTransform:
   m_AnchoredPosition: {x: -215, y: 102}
   m_SizeDelta: {x: 700, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &120240319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 120240317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7303dd7b19d4f04f9aa54714342090a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myHealth: {fileID: 0}
-  enemyHealth: {fileID: 0}
-  cdGrid: {fileID: 0}
 --- !u!114 &120240320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -603,7 +587,6 @@ GameObject:
   - component: {fileID: 127768914}
   - component: {fileID: 127768917}
   - component: {fileID: 127768916}
-  - component: {fileID: 127768915}
   m_Layer: 5
   m_Name: myHealth
   m_TagString: Untagged
@@ -630,21 +613,6 @@ RectTransform:
   m_AnchoredPosition: {x: -312, y: 196}
   m_SizeDelta: {x: 500, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &127768915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 127768913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7303dd7b19d4f04f9aa54714342090a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myHealth: {fileID: 0}
-  enemyHealth: {fileID: 0}
-  cdGrid: {fileID: 0}
 --- !u!114 &127768916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,7 +702,7 @@ Transform:
   m_Children:
   - {fileID: 1501045141}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &329097657 stripped
 GameObject:
@@ -839,6 +807,25 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!114 &329097659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 329097657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6851f7da369db8946898ba55623c3b82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handModelPrefab: {fileID: 5686134208185362930, guid: 1fd3a7c43c8190f4d8c167ebde694364,
+    type: 3}
+  actionAsset: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  controllerName: XRI RightHand
+  actionNameTrigger: Activate
+  actionNameGrip: Select
 --- !u!1001 &361523514
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -975,7 +962,7 @@ PrefabInstance:
     - target: {fileID: -7646275767339197186, guid: ddc38db09f9124241b4b4e9b2b9831eb,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3621981467535291324, guid: ddc38db09f9124241b4b4e9b2b9831eb,
         type: 3}
@@ -1049,7 +1036,8 @@ PrefabInstance:
       value: Position
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: -7646275767339197186, guid: ddc38db09f9124241b4b4e9b2b9831eb, type: 3}
+    - {fileID: 0}
+    - {fileID: 8949174103851601971, guid: ddc38db09f9124241b4b4e9b2b9831eb, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ddc38db09f9124241b4b4e9b2b9831eb, type: 3}
 --- !u!1 &615051821
 GameObject:
@@ -1314,7 +1302,7 @@ Transform:
   - {fileID: 2116624372}
   - {fileID: 1147092690}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &641557964
 MeshCollider:
@@ -1472,7 +1460,7 @@ RectTransform:
   - {fileID: 120240318}
   - {fileID: 1050746479}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1488,7 +1476,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 756935191}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7303dd7b19d4f04f9aa54714342090a, type: 3}
+  m_Script: {fileID: 11500000, guid: 13f01291488ce4343b4640c2bf25c107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myHealth: {fileID: 1927519787}
@@ -1667,7 +1655,7 @@ RectTransform:
   - {fileID: 2078769451}
   - {fileID: 15660505}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1683,7 +1671,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 972349001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7303dd7b19d4f04f9aa54714342090a, type: 3}
+  m_Script: {fileID: 11500000, guid: 13f01291488ce4343b4640c2bf25c107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myHealth: {fileID: 127768916}
@@ -1839,7 +1827,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1050746478}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 8.9e-14}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 45469177}
@@ -1848,7 +1836,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00000093122, y: -106}
+  m_AnchoredPosition: {x: 0, y: -106}
   m_SizeDelta: {x: 1000, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1050746480
@@ -1860,7 +1848,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1050746478}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 013ab84c572713d4e87e9b48bac09f04, type: 3}
+  m_Script: {fileID: 11500000, guid: a64e26c90d12b314cb2381ffd4cc9f01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1050746481
@@ -2332,6 +2320,25 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!114 &1284456915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284456913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6851f7da369db8946898ba55623c3b82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handModelPrefab: {fileID: 109434732395284509, guid: 65847589f926b734d9eaed6e25f0046b,
+    type: 3}
+  actionAsset: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  controllerName: XRI LeftHand
+  actionNameTrigger: Activate
+  actionNameGrip: Select
 --- !u!1 &1501045140
 GameObject:
   m_ObjectHideFlags: 0
@@ -2382,6 +2389,11 @@ PrefabInstance:
         type: 3}
       propertyPath: actionNamePosition
       value: Position
+      objectReference: {fileID: 0}
+    - target: {fileID: -1996831204563175295, guid: 6c2509c76b281144cb0099fc45f17a09,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3621981467535291324, guid: 6c2509c76b281144cb0099fc45f17a09,
         type: 3}
@@ -2444,64 +2456,9 @@ PrefabInstance:
       value: Left Hand Presence
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: -1996831204563175295, guid: 6c2509c76b281144cb0099fc45f17a09, type: 3}
+    - {fileID: 0}
+    - {fileID: -4197807472432749986, guid: 6c2509c76b281144cb0099fc45f17a09, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6c2509c76b281144cb0099fc45f17a09, type: 3}
---- !u!1 &1560972788
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1560972790}
-  - component: {fileID: 1560972789}
-  - component: {fileID: 1560972791}
-  m_Layer: 0
-  m_Name: Network Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1560972789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1560972788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a7fc01768f9a5f4480d86b0ad1af809, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1560972790
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1560972788}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1560972791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1560972788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e027509e0b4c6d4badb5599745aaf3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1671687135 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3621981467535291324, guid: 6c2509c76b281144cb0099fc45f17a09,
@@ -2572,7 +2529,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1755160513
 GameObject:
@@ -2674,7 +2631,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1858374735}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e99859b288298144be28b6b1baf8064, type: 3}
+  m_Script: {fileID: 11500000, guid: b3ba1f92d8e500242a2860eac0559349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1858374737
@@ -2689,7 +2646,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1891459673
 GameObject:
@@ -2901,7 +2858,6 @@ GameObject:
   - component: {fileID: 1927519785}
   - component: {fileID: 1927519788}
   - component: {fileID: 1927519787}
-  - component: {fileID: 1927519786}
   m_Layer: 5
   m_Name: myHealth
   m_TagString: Untagged
@@ -2928,21 +2884,6 @@ RectTransform:
   m_AnchoredPosition: {x: -312, y: 196}
   m_SizeDelta: {x: 500, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1927519786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1927519784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7303dd7b19d4f04f9aa54714342090a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myHealth: {fileID: 0}
-  enemyHealth: {fileID: 0}
-  cdGrid: {fileID: 0}
 --- !u!114 &1927519787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2995,7 +2936,6 @@ GameObject:
   - component: {fileID: 2078769451}
   - component: {fileID: 2078769454}
   - component: {fileID: 2078769453}
-  - component: {fileID: 2078769452}
   m_Layer: 5
   m_Name: enemyHealth
   m_TagString: Untagged
@@ -3022,21 +2962,6 @@ RectTransform:
   m_AnchoredPosition: {x: -215, y: 102}
   m_SizeDelta: {x: 700, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2078769452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2078769450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7303dd7b19d4f04f9aa54714342090a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myHealth: {fileID: 0}
-  enemyHealth: {fileID: 0}
-  cdGrid: {fileID: 0}
 --- !u!114 &2078769453
 MonoBehaviour:
   m_ObjectHideFlags: 0

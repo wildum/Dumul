@@ -135,6 +135,11 @@ namespace menu
             roomHandler.handle1v1Matchmaking();
         }
 
+        public void loadPratice()
+        {
+            roomHandler.startPratice();
+        }
+
         public void cancelQueue()
         {
             updateButtonsStatus();

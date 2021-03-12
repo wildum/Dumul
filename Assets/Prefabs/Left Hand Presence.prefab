@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3621981467535291324}
   - component: {fileID: -1996831204563175295}
-  - component: {fileID: -4197807472432749986}
   m_Layer: 0
   m_Name: Left Hand Presence
   m_TagString: Untagged
@@ -51,22 +50,3 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &-4197807472432749986
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3621981467535291326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99b4a737903b82a43bb95804a2149147, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handModelPrefab: {fileID: 109434732395284509, guid: 65847589f926b734d9eaed6e25f0046b,
-    type: 3}
-  actionAsset: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f,
-    type: 3}
-  controllerName: XRI LeftHand
-  actionNameTrigger: Activate
-  actionNameGrip: Select

@@ -31,6 +31,12 @@ namespace menu
             }
         }
 
+        public void startPratice()
+        {
+            Debug.Log("Pratice");
+            PhotonNetwork.LoadLevel("Arena");
+        }
+
         public void joinRandomRoom()
         {
             PhotonNetwork.JoinRandomRoom(null, numberOfPlayerExpected);
@@ -50,17 +56,6 @@ namespace menu
             roomState = RoomState.Chill;
             PhotonNetwork.CurrentRoom.MaxPlayers = 4;
             PhotonNetwork.CurrentRoom.IsVisible = false;
-        }
-
-        private void createLobbyRoom()
-        {
-            Debug.Log("Create a lobby room");
-            RoomOptions roomOptions = new RoomOptions();
-            roomOptions.MaxPlayers = 4;
-            roomOptions.IsVisible = false;
-            roomOptions.IsOpen = true;
-            PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
-            PhotonNetwork.AutomaticallySyncScene = true;
         }
 
         public void createWaitingRoom()
