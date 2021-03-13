@@ -25,11 +25,11 @@ public class Fireball : Spell
 
     void OnCollisionEnter(Collision collision)
     {
-        playerTakeDamage(collision);
-        dummyTakeDamage(collision.collider);
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine)
         {
+            playerTakeDamage(collision);
+            dummyTakeDamage(collision.collider);
             PhotonNetwork.Destroy(gameObject);
         }
     }
@@ -39,7 +39,7 @@ public class Fireball : Spell
         NetworkPlayer player = getPlayerFromCollision(collision);
         if (player != null && player.Team != team)
         {
-            player.takeDamage(damage);
+            player.photonView.RPC("takeDamage", RpcTarget.All, damage);
         }
     }
 

@@ -112,9 +112,12 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             UpdateHandAnimation(leftHandAnimator, leftHandPresence);
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
-            spellBook.handleSpells(leftHandPresence, rightHandPresence);
-            spellBook.handleShield(shield, leftHandPresence);
-            spellBook.handleShield(shield, rightHandPresence);
+            if (Main.gameStarted)
+            {
+                spellBook.handleSpells(leftHandPresence, rightHandPresence);
+                spellBook.handleShield(shield, leftHandPresence);
+                spellBook.handleShield(shield, rightHandPresence);
+            }
 
             updateCdMapInfoCanvas();
         }
@@ -132,6 +135,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         target.rotation = rigTransform.rotation;
     }
 
+    [PunRPC]
     public void takeDamage(int damageAmount)
     {
         health = Mathf.Max(health - damageAmount, 0);

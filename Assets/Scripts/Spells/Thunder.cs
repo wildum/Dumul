@@ -26,8 +26,12 @@ public class Thunder : Spell
 
     void OnCollisionEnter(Collision collision)
     {
-        playerTakeDamage(collision);
-        handleDestruction(collision);
+        PhotonView photonView = PhotonView.Get(this);
+        if (photonView.IsMine)
+        {
+            playerTakeDamage(collision);
+            handleDestruction(collision);
+        }
     }
 
     void playerTakeDamage(Collision collision)
@@ -35,7 +39,7 @@ public class Thunder : Spell
         NetworkPlayer player = getPlayerFromCollision(collision);
         if (player != null)
         {
-            player.takeDamage(damage);
+            player.photonView.RPC("takeDamage", RpcTarget.All, damage);
         }
     }
 
