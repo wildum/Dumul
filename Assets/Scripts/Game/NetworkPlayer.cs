@@ -112,7 +112,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             UpdateHandAnimation(leftHandAnimator, leftHandPresence);
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
-            if (Main.gameStarted)
+            if (Main.gameStarted && !Main.gameEnded)
             {
                 spellBook.handleSpells(leftHandPresence, rightHandPresence);
                 spellBook.handleShield(shield, leftHandPresence);

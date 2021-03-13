@@ -78,6 +78,9 @@ namespace menu
             target.position = rigTransform.position;
             target.rotation = rigTransform.rotation;
         }
-        public MenuStartPosition MenuStartPosition { get { return menuStartPosition; } }
+        public Vector3 getHeadPosition()
+        {
+            return head.position;
+        }
     }
 }

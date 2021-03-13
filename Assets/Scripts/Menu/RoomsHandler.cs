@@ -20,6 +20,7 @@ namespace menu
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
             {
                 Debug.Log("load scene 1 v 1");
+                AppState.currentState = State.OneVsOne;
                 PhotonNetwork.LoadLevel("Arena");
             }
             else
@@ -34,6 +35,7 @@ namespace menu
         public void startPratice()
         {
             Debug.Log("Pratice");
+            AppState.currentState = State.Pratice;
             PhotonNetwork.LoadLevel("Arena");
         }
 
@@ -47,6 +49,7 @@ namespace menu
             if (PhotonNetwork.CurrentRoom.PlayerCount == numberOfPlayerExpected)
             {
                 Debug.Log("load scene 1 v 1");
+                AppState.currentState = State.OneVsOne;
                 PhotonNetwork.LoadLevel("Arena");
             }
         }

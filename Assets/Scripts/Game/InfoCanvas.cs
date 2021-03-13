@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum EndGameStatus
+{
+    Victory,
+    Defeat,
+    Draw
+}
+
 public class InfoCanvas : MonoBehaviour
 {
-
     public Text myHealth;
     public Text enemyHealth;
     public Text timer;
+    public Text victory;
+    public Text defeat;
+    public Text draw;
     public CdGrid cdGrid;
 
     private const string tHealth = "HP : ";
@@ -17,6 +26,29 @@ public class InfoCanvas : MonoBehaviour
 
     private int minuteValue = 0;
     private int secondValue = 0;
+
+    private void Start()
+    {
+        victory.gameObject.SetActive(false);
+        defeat.gameObject.SetActive(false);
+        draw.gameObject.SetActive(false);
+    }
+
+    public void updateEndGameText(EndGameStatus endGameStatus)
+    {
+        if (endGameStatus == EndGameStatus.Victory)
+        {
+            victory.gameObject.SetActive(true);
+        }
+        else if(endGameStatus == EndGameStatus.Defeat)
+        {
+            defeat.gameObject.SetActive(true);
+        }
+        else if (endGameStatus == EndGameStatus.Draw)
+        {
+            draw.gameObject.SetActive(true);
+        }
+    }
 
     public void handleGameStarted(float timeSinceStart)
     {

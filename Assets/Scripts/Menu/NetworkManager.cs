@@ -16,10 +16,23 @@ namespace menu
         // Start is called before the first frame update
         void Start()
         {
-            ConnectedToServer();
-            Core.Initialize();
-            Entitlements.IsUserEntitledToApplication().OnComplete(callbackMethod);
-            updateFriendsList();
+            if (AppState.currentState == State.Starter)
+            {
+                ConnectedToServer();
+                Core.Initialize();
+                Entitlements.IsUserEntitledToApplication().OnComplete(callbackMethod);
+                updateFriendsList();
+            }
+            else if (AppState.currentState == State.Lobby)
+            {
+                buttonManager.updateButtonsStatus();
+                Invoke("spawnWithDelay", 2.0f);
+            }
+        }
+
+        void spawnWithDelay()
+        {
+            spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player Menu", transform.position, transform.rotation);
         }
 
         void ConnectedToServer()

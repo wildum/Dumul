@@ -12,11 +12,14 @@ static class InformationCenter
     }
     private static void updatePlayersList()
     {
-        NetworkPlayer[] playersArray = GameObject.FindObjectsOfType<NetworkPlayer>();
-        players.Clear();
-        foreach (NetworkPlayer p in playersArray)
+        if (GameSettings.nbPlayers != players.Count)
         {
-            players.Add(p);
+            NetworkPlayer[] playersArray = GameObject.FindObjectsOfType<NetworkPlayer>();
+            players.Clear();
+            foreach (NetworkPlayer p in playersArray)
+            {
+                players.Add(p);
+            }
         }
     }
     public static NetworkPlayer getFirstPlayerOppositeTeam(int team)

@@ -31,6 +31,7 @@ namespace menu
 
     static class MenuSpawnPositionsManager
     {
+        const float circleRadThresh = 1.0f;
         private static List<MenuStartPosition> playersStartPos = new List<MenuStartPosition> {
             new MenuStartPosition(new Vector3(-0.844f, 0, 0), new Vector3(0, 0, 0), 0, 1),
             new MenuStartPosition(new Vector3(0.844f, 0, 0), new Vector3(0, 0, 0), 1, 2),
@@ -43,8 +44,18 @@ namespace menu
             bool[] availablePositions = new bool[] { true, true, true, true };
             foreach (var p in MenuInformationCenter.getPlayers())
             {
-                if (p.MenuStartPosition != null)
-                    availablePositions[p.MenuStartPosition.id - 1] = false;
+                Vector3 v = p.getHeadPosition();
+                if (v != null)
+                {
+                    for (int i = 0; i < playersStartPos.Count; i++)
+                    {
+                        Vector3 sp = playersStartPos[i].position;
+                        if (Tools.dist2d(v.x, sp.x, v.y, sp.y) < circleRadThresh)
+                        {
+                            availablePositions[i] = false;
+                        }
+                    }
+                }
             }
             return availablePositions;
         }

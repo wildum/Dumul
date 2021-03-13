@@ -24,7 +24,9 @@ class StartPosition
 static class GameSettings
 {
     public static int PLAYER_HEALTH = 1000;
+    public static int nbPlayers = 2;
     public const float timeBeforeStart = 10.0f;
+    public const float endGameTimer = 10.0f;
     public const float gameTimer = 300.0f;
 
     private static List<StartPosition> playersStartPos = new List<StartPosition> {
