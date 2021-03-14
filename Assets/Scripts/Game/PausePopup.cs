@@ -13,7 +13,7 @@ public class PausePopup : MonoBehaviour
         popupText.text = "Keep the button pressed for " + Mathf.CeilToInt(GameSettings.pauseTimePopup - timePaused) + " more seconds to return to lobby...";
         if (timePaused > GameSettings.pauseTimePopup)
         {
-            Main.gameAborded = true;
+            Main.gameAborted = true;
         }
     }
 }

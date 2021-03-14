@@ -5,26 +5,34 @@ using System.Collections.Generic;
 static class InformationCenter
 {
     private static List<NetworkPlayer> players = new List<NetworkPlayer>();
-    public static  List<NetworkPlayer> getPlayers()
+
+    public static void clearPlayers()
     {
-        updatePlayersList();
-        return players; 
+        players.Clear();
     }
-    private static void updatePlayersList()
+    public static  List<NetworkPlayer> getPlayers()
     {
         if (GameSettings.nbPlayers != players.Count)
         {
-            NetworkPlayer[] playersArray = GameObject.FindObjectsOfType<NetworkPlayer>();
-            players.Clear();
-            foreach (NetworkPlayer p in playersArray)
-            {
-                players.Add(p);
-            }
+            updatePlayersList();
+        }
+        return players; 
+    }
+    public static void updatePlayersList()
+    {
+        NetworkPlayer[] playersArray = GameObject.FindObjectsOfType<NetworkPlayer>();
+        players.Clear();
+        foreach (NetworkPlayer p in playersArray)
+        {
+            players.Add(p);
         }
     }
     public static NetworkPlayer getFirstPlayerOppositeTeam(int team)
     {
-        updatePlayersList();
+        if (GameSettings.nbPlayers != players.Count)
+        {
+            updatePlayersList();
+        }
         foreach (NetworkPlayer p in players)
         {
             if (p.Team != team && p.Alive)

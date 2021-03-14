@@ -50,8 +50,7 @@ public class Control
 
     public bool pressing()
     {
-        computeState();
-        return state == ControlState.Pressed || state == ControlState.JustPressed;
+        return value >= 0.95;
     }
 
     public void setValue(float ivalue)

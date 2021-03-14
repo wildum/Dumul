@@ -53,6 +53,7 @@ public class HandPresence : MonoBehaviour
 
     bool pausePressed = false;
     private GameObject pausePopupInstantiated;
+    private int team = -1;
 
     void Awake()
     {
@@ -183,7 +184,9 @@ public class HandPresence : MonoBehaviour
                 if (!pausePressed)
                 {
                     pausePressed = true;
-                    pausePopupInstantiated = Instantiate(pausePopup, new Vector3(0, 3, 0), transform.rotation);
+                    Quaternion rotationPausePopup = Quaternion.identity;
+                    rotationPausePopup.eulerAngles = new Vector3(0, team == 0 ? -90 : 90, 0);
+                    pausePopupInstantiated = Instantiate(pausePopup, new Vector3(0, 3, 0), rotationPausePopup);
                 }
             }
             else if (pausePressed)
@@ -222,5 +225,6 @@ public class HandPresence : MonoBehaviour
 
     public SpellEnum LoadedTwoHandsSpell { get { return loadedTwoHandsSpell; } set { loadedTwoHandsSpell = value; } }
     public float CurrentTimeTwoHandsSpell { get { return currentTimeTwoHandsSpell; } set { currentTimeTwoHandsSpell = value; } }
+    public int Team { get { return team; } set { team = value; } }
 
 }

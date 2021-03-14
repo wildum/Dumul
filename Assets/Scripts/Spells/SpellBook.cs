@@ -75,7 +75,7 @@ public class SpellBook
                         }
                         else
                         {
-                            createThunder(new Vector3(-5.0f, 0.0f, 0.0f));
+                            createThunder(new Vector3(0.0f, 0.0f, 0.0f));
                             Debug.Log("tried to cast thunder but not enemy around");
                         }
                         spellCds[SpellCdEnum.Thunder].CurrentCd = 0.0f;

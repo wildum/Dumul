@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using Photon.Realtime;
 
 public class Main : MonoBehaviourPunCallbacks
 {
@@ -10,7 +11,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public static bool gameStarted = false;
     public static bool gameEnded = false;
-    public static bool gameAborded = false;
+    public static bool gameAborted = false;
     public InfoCanvas infoCanvas1;
     public InfoCanvas infoCanvas2;
 
@@ -25,7 +26,8 @@ public class Main : MonoBehaviourPunCallbacks
     {
         gameStarted = false;
         gameEnded = false;
-        gameAborded = false;
+        gameAborted = false;
+        InformationCenter.clearPlayers();
         setNbOfPlayers();
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
         SpellRecognizer.init();
@@ -36,17 +38,24 @@ public class Main : MonoBehaviourPunCallbacks
     {
         AppState.currentState = State.NoRoom;
         SceneManager.LoadScene("Menu");
-
         base.OnLeftRoom();
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        base.OnPlayerLeftRoom(otherPlayer);
+        Debug.Log("player left room, update list");
+        InformationCenter.updatePlayersList();
     }
 
     private void Update()
     {
-        if (gameAborded)
+        if (gameAborted)
         {
             if (!loadingMenu)
             {
                 loadingMenu = true;
+                PhotonNetwork.Destroy(spawnedPlayerPrefab);
                 PhotonNetwork.LeaveRoom();
             }
         }
@@ -57,6 +66,7 @@ public class Main : MonoBehaviourPunCallbacks
             {
                 if (timeSinceStart > GameSettings.timeBeforeStart)
                 {
+                    Debug.Log("Game is starting");
                     gameStarted = true;
                 }
                 else

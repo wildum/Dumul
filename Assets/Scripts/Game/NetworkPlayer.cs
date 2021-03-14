@@ -22,12 +22,12 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     private HandPresence rightHandPresence;
 
     private int health = GameSettings.PLAYER_HEALTH;
-    private int id = -111;
 
     private GameObject shield;
     private InfoCanvas infoCanvas;
 
-    private int team;
+    private int team = -1;
+    private bool teamAssigned = false;
     private bool alive = true;
 
     private XRRig rig;
@@ -47,22 +47,32 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
         if (photonView != null)
         {
-            // is this id correct ?
-            id = photonView.Owner.ActorNumber;
-            team = GameSettings.getTeamWithId(id);
-            spellBook.Team = team;
-            setInfoCanvas();
             if (photonView.IsMine)
             {
                 shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
-                StartPosition s = GameSettings.getStartPositionFromActorId(id);
-                rig.transform.position = s.position;
-                rig.transform.eulerAngles = s.rotation;
                 foreach (var item in GetComponentsInChildren<Renderer>())
                 {
                     item.enabled = false;
                 }
             }
+        }
+    }
+
+    [PunRPC]
+    public void setTeamRPC(int teamId)
+    {
+        team = teamId;
+        spellBook.Team = team;
+        leftHandPresence.Team = team;
+        rightHandPresence.Team = team;
+        setInfoCanvas();
+        if (photonView.IsMine)
+        {
+            StartPosition s = GameSettings.getStartPositionFromTeam(team);
+            Debug.Log(" In RPC : team id : " + teamId + " , actor id : " + photonView.Owner.ActorNumber);
+            Debug.Log(s.position);
+            rig.transform.position = s.position;
+            rig.transform.eulerAngles = s.rotation;
         }
     }
 
@@ -73,12 +83,13 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     
     void updateCdMapInfoCanvas()
     {
-        infoCanvas.updateCdText(spellBook.SpellCds);
+        if (infoCanvas != null)
+            infoCanvas.updateCdText(spellBook.SpellCds);
     }
 
     void setInfoCanvas()
     {
-        if (id == 1)
+        if (team == 0)
         {
             infoCanvas = GameObject.Find("InfoCanvasP1").GetComponent<InfoCanvas>();
         }
@@ -89,13 +100,14 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
         if (infoCanvas == null)
         {
-            Debug.Log("could not set infocanvas with id " + id);
+            Debug.Log("could not set infocanvas with team " + team);
         }
     }
 
     public void updateHealthInfoCanvas(int enemyHealth)
     {
-        infoCanvas.updateHealth(health, enemyHealth);
+        if (infoCanvas != null)
+            infoCanvas.updateHealth(health, enemyHealth);
     }
 
     // Update is called once per frame
@@ -103,6 +115,15 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     {
         if (photonView != null && photonView.IsMine)
         {
+            if (!teamAssigned && InformationCenter.getPlayers().Count == GameSettings.nbPlayers)
+            {
+                teamAssigned = true;
+                int id = photonView.Owner.ActorNumber;
+                int t = GameSettings.getTeamWithId(id);
+                Debug.Log("team id : " + t + " , actor id : " + id);
+                photonView.RPC("setTeamRPC", RpcTarget.All, GameSettings.getTeamWithId(id));
+            }
+
             MapPosition(head, headRig);
             MapPosition(leftHand, leftHandRig);
             MapPosition(rightHand, rightHandRig);
@@ -115,9 +136,9 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
                 spellBook.handleSpells(leftHandPresence, rightHandPresence);
                 spellBook.handleShield(shield, leftHandPresence);
                 spellBook.handleShield(shield, rightHandPresence);
+                updateCdMapInfoCanvas();
             }
 
-            updateCdMapInfoCanvas();
         }
     }
 
@@ -142,12 +163,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
     public Vector3 getPosition()
     {
-        return rig.transform.position;
-    }
-
-    public int getId()
-    {
-        return id;
+        return head.position;
     }
 
     public int Team { get { return team; } }

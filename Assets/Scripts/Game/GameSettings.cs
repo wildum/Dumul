@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 
 class StartPosition
 {
@@ -35,20 +37,39 @@ static class GameSettings
         new StartPosition(new Vector3(5, 0, 0), new Vector3(0, -90, 0))
     };
 
-    // update to assign teams for multiple players
     public static int getTeamWithId(int id)
     {
-        return id == 1 ? 0 : 1;
+        Dictionary<int, Photon.Realtime.Player> dict = PhotonNetwork.CurrentRoom.Players;
+        List<int> actorNumbers = new List<int>();
+        foreach (KeyValuePair<int, Photon.Realtime.Player> entry in dict)
+        {
+            actorNumbers.Add(entry.Value.ActorNumber);
+        }
+
+        actorNumbers.Sort();
+
+        for (int i = 0; i < actorNumbers.Count; i++)
+        {
+            if (actorNumbers[i] == id)
+            {
+                // little trick here to assign the teams
+                // if 1v1 then it is 0/2 = 0 => team 0, 1/2 = 0.5 => team 1
+                // if 2v2 then it is 0/4 = 0 => team 0, 1/4 = 0.25 => team 0, 2/4 = 0.5 => team 1, 3/4 = 0.75 => team 1
+                return (i /(float) actorNumbers.Count) < 0.5 ? 0 : 1;
+            }
+        }
+
+        Debug.Log("team unassigned");
+        return -1;
     }
 
-    public static StartPosition getStartPositionFromActorId(int id)
+    public static StartPosition getStartPositionFromTeam(int team)
     {
-        int index = id - 1;
-        if (index < 0 || index >= playersStartPos.Count)
+        if (team < 0 || team >= playersStartPos.Count)
         {
-            Debug.Log("Error, no start positions for id : " + id);
+            Debug.Log("Error, no start positions for id : " + team);
             return new StartPosition();
         }
-        return playersStartPos[index];
+        return playersStartPos[team];
     }
 }
