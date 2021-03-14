@@ -10,9 +10,11 @@ namespace menu
     public class ButtonManager : MonoBehaviour
     {
         public RoomsHandler roomHandler;
+        public Text queueText;
 
         void Start()
         {
+            queueText.gameObject.SetActive(false);
             updateButtonSetActiveByName("CancelQueue", false);
         }
 
@@ -110,6 +112,7 @@ namespace menu
         private void buttonConfigDuringQueue()
         {
             updateButtonSetActiveByName("CancelQueue", true);
+            queueText.gameObject.SetActive(true);
             updateButtonInteractableByName("1v1", false);
             updateButtonInteractableByName("2v2", false);
             updateButtonInteractableByName("2vIA", false);
@@ -144,6 +147,7 @@ namespace menu
         {
             updateButtonsStatus();
             updateButtonSetActiveByName("CancelQueue", false);
+            queueText.gameObject.SetActive(false);
             roomHandler.resetRoom();
         }
 

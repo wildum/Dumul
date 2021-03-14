@@ -106,7 +106,8 @@ namespace menu
         public override void OnLeftRoom()
         {
             base.OnLeftRoom();
-            PhotonNetwork.Destroy(spawnedPlayerPrefab);
+            if (spawnedPlayerPrefab != null)
+                PhotonNetwork.Destroy(spawnedPlayerPrefab);
         }
 
         private void updateFriendsList()

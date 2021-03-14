@@ -51,8 +51,7 @@ public class Thunder : Spell
             collision.collider.tag == "Player" ||
             collision.collider.tag == "Shield"))
         {
-            PhotonNetwork.Destroy(gameObject);
-            PhotonNetwork.Destroy(transform.parent.gameObject); ;
+            PhotonNetwork.Destroy(transform.parent.gameObject);
         }
     }
 }

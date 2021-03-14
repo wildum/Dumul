@@ -12,7 +12,7 @@ static class InformationCenter
     }
     public static  List<NetworkPlayer> getPlayers()
     {
-        if (GameSettings.nbPlayers != players.Count)
+        if (GameSettings.nbPlayers != players.Count || Main.missingPlayer)
         {
             updatePlayersList();
         }

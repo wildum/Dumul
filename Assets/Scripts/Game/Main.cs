@@ -12,6 +12,7 @@ public class Main : MonoBehaviourPunCallbacks
     public static bool gameStarted = false;
     public static bool gameEnded = false;
     public static bool gameAborted = false;
+    public static bool missingPlayer = false;
     public InfoCanvas infoCanvas1;
     public InfoCanvas infoCanvas2;
 
@@ -27,6 +28,7 @@ public class Main : MonoBehaviourPunCallbacks
         gameStarted = false;
         gameEnded = false;
         gameAborted = false;
+        missingPlayer = false;
         InformationCenter.clearPlayers();
         setNbOfPlayers();
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
@@ -37,6 +39,8 @@ public class Main : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         AppState.currentState = State.NoRoom;
+        if (spawnedPlayerPrefab != null)
+            PhotonNetwork.Destroy(spawnedPlayerPrefab);
         SceneManager.LoadScene("Menu");
         base.OnLeftRoom();
     }
@@ -45,7 +49,7 @@ public class Main : MonoBehaviourPunCallbacks
     {
         base.OnPlayerLeftRoom(otherPlayer);
         Debug.Log("player left room, update list");
-        InformationCenter.updatePlayersList();
+        missingPlayer = true;
     }
 
     private void Update()
