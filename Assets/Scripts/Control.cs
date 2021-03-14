@@ -50,6 +50,7 @@ public class Control
 
     public bool pressing()
     {
+        computeState();
         return state == ControlState.Pressed || state == ControlState.JustPressed;
     }
 
@@ -62,4 +63,5 @@ public class Control
     {
         return value;
     }
+
 }

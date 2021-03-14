@@ -52,6 +52,7 @@ namespace menu
             }
             else
             {
+                Debug.Log("Create room");
                 Photon.Realtime.RoomOptions roomOptions = new Photon.Realtime.RoomOptions();
                 roomOptions.MaxPlayers = 4;
                 roomOptions.IsVisible = false;

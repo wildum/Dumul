@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 public class Main : MonoBehaviourPunCallbacks
 {
@@ -9,6 +10,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public static bool gameStarted = false;
     public static bool gameEnded = false;
+    public static bool gameAborded = false;
     public InfoCanvas infoCanvas1;
     public InfoCanvas infoCanvas2;
 
@@ -23,42 +25,62 @@ public class Main : MonoBehaviourPunCallbacks
     {
         gameStarted = false;
         gameEnded = false;
+        gameAborded = false;
         setNbOfPlayers();
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
         SpellRecognizer.init();
         startTime = Time.time;
     }
 
+    public override void OnLeftRoom()
+    {
+        AppState.currentState = State.NoRoom;
+        SceneManager.LoadScene("Menu");
+
+        base.OnLeftRoom();
+    }
+
     private void Update()
     {
-        timeSinceStart = Time.time - startTime;
-        if (!gameStarted)
+        if (gameAborded)
         {
-            if (timeSinceStart > GameSettings.timeBeforeStart)
-            {
-                gameStarted = true;
-            }
-            else
-            {
-                infoCanvas1.handleGameNotStarted(timeSinceStart);
-                infoCanvas2.handleGameNotStarted(timeSinceStart);
-            }
-        }
-
-        if (AppState.currentState != State.Pratice && checkGameEnd())
-        {
-            endTime += Time.deltaTime;
-            if (!loadingMenu && endTime > GameSettings.endGameTimer)
+            if (!loadingMenu)
             {
                 loadingMenu = true;
-                AppState.currentState = State.Lobby;
-                PhotonNetwork.LoadLevel("Menu");
+                PhotonNetwork.LeaveRoom();
             }
         }
-        else if (gameStarted)
+        else
         {
-            infoCanvas1.handleGameStarted(timeSinceStart);
-            infoCanvas2.handleGameStarted(timeSinceStart);
+            timeSinceStart = Time.time - startTime;
+            if (!gameStarted)
+            {
+                if (timeSinceStart > GameSettings.timeBeforeStart)
+                {
+                    gameStarted = true;
+                }
+                else
+                {
+                    infoCanvas1.handleGameNotStarted(timeSinceStart);
+                    infoCanvas2.handleGameNotStarted(timeSinceStart);
+                }
+            }
+
+            if (AppState.currentState != State.Pratice && checkGameEnd())
+            {
+                endTime += Time.deltaTime;
+                if (!loadingMenu && endTime > GameSettings.endGameTimer)
+                {
+                    loadingMenu = true;
+                    AppState.currentState = State.Lobby;
+                    PhotonNetwork.LoadLevel("Menu");
+                }
+            }
+            else if (gameStarted)
+            {
+                infoCanvas1.handleGameStarted(timeSinceStart);
+                infoCanvas2.handleGameStarted(timeSinceStart);
+            }
         }
     }
 

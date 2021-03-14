@@ -43,9 +43,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         rightHandRig = rig.transform.Find("Camera Offset/RightHand Controller");
 
         leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
-        leftHandPresence.setHandSide(HandSideEnum.Left);
         rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
-        rightHandPresence.setHandSide(HandSideEnum.Right);
 
         if (photonView != null)
         {

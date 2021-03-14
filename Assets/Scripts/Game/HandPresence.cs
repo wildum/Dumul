@@ -24,17 +24,23 @@ public class HandPresence : MonoBehaviour
     public string controllerName;
     public string actionNameTrigger;
     public string actionNameGrip;
+    public string actionNamePause;
+    public HandSideEnum side;
+
+    public GameObject pausePopup;
 
     private InputActionMap _actionMap;
     private InputAction _inputActionTrigger;
     private InputAction _inputActionGrip;
     private InputAction _inputActionPosition;
     private InputAction _inputActionRotation;
+    private InputAction _inputActionPause;
 
     private Animator _handAnimator;
 
     private Control grip = new Control();
     private Control trigger = new Control();
+    private Control pause = new Control();
 
     private TrailRenderer trailRenderer;
 
@@ -42,10 +48,11 @@ public class HandPresence : MonoBehaviour
 
     private List<Vector3> shieldPoints = new List<Vector3>();
 
-    private HandSideEnum side;
-
     private SpellEnum loadedTwoHandsSpell = SpellEnum.UNDEFINED;
     private float currentTimeTwoHandsSpell = 0.0f;
+
+    bool pausePressed = false;
+    private GameObject pausePopupInstantiated;
 
     void Awake()
     {
@@ -55,6 +62,9 @@ public class HandPresence : MonoBehaviour
         _inputActionTrigger = _actionMap.FindAction(actionNameTrigger);
         _inputActionPosition = _actionMap.FindAction("Position");
         _inputActionRotation = _actionMap.FindAction("Rotation");
+
+        if (side == HandSideEnum.Left)
+            _inputActionPause = _actionMap.FindAction(actionNamePause);
 
         spawnedHandModel = Instantiate(handModelPrefab, transform);
         _handAnimator = spawnedHandModel.GetComponent<Animator>();
@@ -142,6 +152,10 @@ public class HandPresence : MonoBehaviour
         _inputActionTrigger.Enable();
         _inputActionPosition.Enable();
         _inputActionRotation.Enable();
+        if (side == HandSideEnum.Left)
+        {
+            _inputActionPause.Enable();
+        }
     }
 
     private void OnDisable()
@@ -149,13 +163,35 @@ public class HandPresence : MonoBehaviour
         _inputActionGrip.Disable();
         _inputActionTrigger.Disable();
         _inputActionPosition.Disable();
-        _inputActionRotation.Enable();
+        _inputActionRotation.Disable();
+        if (side == HandSideEnum.Left)
+        {
+            _inputActionPause.Disable();
+        }
     }
 
     void Update()
     {
         trigger.setValue(_inputActionGrip.ReadValue<float>());
         grip.setValue(_inputActionTrigger.ReadValue<float>());
+
+        if (side == HandSideEnum.Left)
+        {
+            pause.setValue(_inputActionPause.ReadValue<float>());
+            if (pause.pressing())
+            {
+                if (!pausePressed)
+                {
+                    pausePressed = true;
+                    pausePopupInstantiated = Instantiate(pausePopup, new Vector3(0, 3, 0), transform.rotation);
+                }
+            }
+            else if (pausePressed)
+            {
+                pausePressed = false;
+                Destroy(pausePopupInstantiated);
+            }
+        }
 
         _handAnimator.SetFloat("Grip", trigger.getValue());
         _handAnimator.SetFloat("Trigger", grip.getValue());

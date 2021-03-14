@@ -28,6 +28,7 @@ static class GameSettings
     public const float timeBeforeStart = 10.0f;
     public const float endGameTimer = 10.0f;
     public const float gameTimer = 300.0f;
+    public const float pauseTimePopup = 5.0f;
 
     private static List<StartPosition> playersStartPos = new List<StartPosition> {
         new StartPosition(new Vector3(-5, 0, 0), new Vector3(0, 90, 0)),

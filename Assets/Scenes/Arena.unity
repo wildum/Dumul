@@ -905,6 +905,10 @@ MonoBehaviour:
   controllerName: XRI RightHand
   actionNameTrigger: Activate
   actionNameGrip: Select
+  actionNamePause: Pause
+  pausePopup: {fileID: 6175714265619810351, guid: 76070ac05072b1742957e23f0c70b442,
+    type: 3}
+  side: 1
 --- !u!1 &347051282
 GameObject:
   m_ObjectHideFlags: 0
@@ -2967,6 +2971,10 @@ MonoBehaviour:
   controllerName: XRI LeftHand
   actionNameTrigger: Activate
   actionNameGrip: Select
+  actionNamePause: Pause
+  pausePopup: {fileID: 6175714265619810351, guid: 76070ac05072b1742957e23f0c70b442,
+    type: 3}
+  side: 0
 --- !u!1 &1352004736
 GameObject:
   m_ObjectHideFlags: 0
