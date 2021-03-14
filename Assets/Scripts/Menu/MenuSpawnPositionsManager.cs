@@ -31,7 +31,6 @@ namespace menu
 
     static class MenuSpawnPositionsManager
     {
-        const float circleRadThresh = 1.0f;
         private static List<MenuStartPosition> playersStartPos = new List<MenuStartPosition> {
             new MenuStartPosition(new Vector3(-0.844f, 0, 0), new Vector3(0, 0, 0), 0, 1),
             new MenuStartPosition(new Vector3(0.844f, 0, 0), new Vector3(0, 0, 0), 1, 2),
@@ -39,38 +38,25 @@ namespace menu
             new MenuStartPosition(new Vector3(2.175f, 0, 0), new Vector3(0, 0, 0), 1, 4)
         };
 
-        public static bool[] getAvailablePositions()
+        public static MenuStartPosition getMenuStartPosition(int id)
         {
-            bool[] availablePositions = new bool[] { true, true, true, true };
-            foreach (var p in MenuInformationCenter.getPlayers())
+            Dictionary<int, Photon.Realtime.Player> dict = PhotonNetwork.CurrentRoom.Players;
+            List<int> actorNumbers = new List<int>();
+            foreach (KeyValuePair<int, Photon.Realtime.Player> entry in dict)
             {
-                Vector3 v = p.getHeadPosition();
-                if (v != null)
-                {
-                    for (int i = 0; i < playersStartPos.Count; i++)
-                    {
-                        Vector3 sp = playersStartPos[i].position;
-                        if (Tools.dist2d(v.x, sp.x, v.y, sp.y) < circleRadThresh)
-                        {
-                            availablePositions[i] = false;
-                        }
-                    }
-                }
+                actorNumbers.Add(entry.Value.ActorNumber);
             }
-            return availablePositions;
-        }
 
-        public static MenuStartPosition getMenuStartPosition()
-        {
-            bool[] positionsAvailable = getAvailablePositions();
-            for (int i = 0; i < 4; i++)
+            actorNumbers.Sort();
+
+            for (int i = 0; i < actorNumbers.Count; i++)
             {
-                if (positionsAvailable[i])
+                if (actorNumbers[i] == id)
                 {
-                    return playersStartPos[i];
+                    return playersStartPos[i%playersStartPos.Count];
                 }
             }
-            Debug.LogError("Too many players in the room ? snh");
+            Debug.LogError("Actor not found, snh");
             return new MenuStartPosition();
         }
     }

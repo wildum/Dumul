@@ -101,6 +101,11 @@ namespace menu
             {
                 roomHandler.resetRoom();
             }
+        }
+
+        public override void OnLeftRoom()
+        {
+            base.OnLeftRoom();
             PhotonNetwork.Destroy(spawnedPlayerPrefab);
         }
 

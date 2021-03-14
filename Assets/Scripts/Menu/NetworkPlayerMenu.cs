@@ -42,7 +42,8 @@ namespace menu
             {
                 if (photonView.IsMine)
                 {
-                    menuStartPosition = MenuSpawnPositionsManager.getMenuStartPosition();
+                    int id = photonView.Owner.ActorNumber;
+                    menuStartPosition = MenuSpawnPositionsManager.getMenuStartPosition(id);
                     rig.transform.position = menuStartPosition.position;
                     rig.transform.eulerAngles = menuStartPosition.rotation;
                     foreach (var item in GetComponentsInChildren<Renderer>())

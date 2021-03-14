@@ -147,6 +147,11 @@ namespace menu
             roomHandler.resetRoom();
         }
 
+        public void quitLobby()
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+
         public void quitGame()
         {
             Application.Quit();
