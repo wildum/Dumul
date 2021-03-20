@@ -8,21 +8,32 @@ public class SpellBook
 {
     private const float MAX_TIME_TWO_HANDS_CAST = 2.0f;
 
-    public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, SpellCdEnum.Thunder };
+    public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, SpellCdEnum.Thunder, SpellCdEnum.Cross };
+
+    private static Dictionary<SpellRecognition, SpellEnum> recognitionToSpell = new Dictionary<SpellRecognition, SpellEnum>
+    {
+        {SpellRecognition.CrossLeft, SpellEnum.Cross},
+        {SpellRecognition.CrossRight, SpellEnum.Cross},
+        {SpellRecognition.Fireball, SpellEnum.Fireball},
+        {SpellRecognition.Thunder, SpellEnum.Thunder},
+        {SpellRecognition.UNDEFINED, SpellEnum.UNDEFINED}
+    };
+
 
     private Dictionary<SpellCdEnum, SpellCd> spellCds = new Dictionary<SpellCdEnum, SpellCd>
     {
         { SpellCdEnum.FireballLeft, new SpellCd(Fireball.FIREBALL_CD, "Fireball Left") },
         { SpellCdEnum.FireballRight, new SpellCd(Fireball.FIREBALL_CD, "Fireball Right") },
-        { SpellCdEnum.Thunder, new SpellCd(Thunder.THUNDER_CD, "Thunder") }
+        { SpellCdEnum.Thunder, new SpellCd(Thunder.THUNDER_CD, "Thunder") },
+        { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") }
     };
 
     private int team;
 
-    public void handleSpells(HandPresence leftHand, HandPresence rightHand)
+    public void handleSpells(Transform head, HandPresence leftHand, HandPresence rightHand)
     {
-        handleOneHandSpell(leftHand, rightHand);
-        handleOneHandSpell(rightHand, leftHand);
+        handleOneHandSpell(head, leftHand, rightHand);
+        handleOneHandSpell(head, rightHand, leftHand);
         updateAllSpellCds();
         updateTwoHandsCd(leftHand);
         updateTwoHandsCd(rightHand);
@@ -30,7 +41,7 @@ public class SpellBook
 
     private void updateTwoHandsCd(HandPresence hand)
     {
-        if (hand.LoadedTwoHandsSpell != SpellEnum.UNDEFINED)
+        if (hand.LoadedTwoHandsSpell != SpellRecognition.UNDEFINED)
         {
             if (hand.CurrentTimeTwoHandsSpell > MAX_TIME_TWO_HANDS_CAST)
             {
@@ -51,7 +62,7 @@ public class SpellBook
         }
     }
 
-    public void handleOneHandSpell(HandPresence hand, HandPresence otherHand)
+    public void handleOneHandSpell(Transform head, HandPresence hand, HandPresence otherHand)
     {
         ControlState gripState = hand.computeGripState();
         if (isJustPressed(gripState))
@@ -60,10 +71,11 @@ public class SpellBook
         }
         else if (isJustReleased(gripState))
         {
-            SpellEnum spell = SpellRecognizer.recognize(hand.getCustomRecognizerData());
+            SpellRecognition spellReco = SpellRecognizer.recognize(hand.getCustomRecognizerData());
+            SpellEnum spell = recognitionToSpell[spellReco];
             if (isSpellTwoHanded(spell))
             {
-                if (otherHand.LoadedTwoHandsSpell == spell)
+                if (recognitionToSpell[otherHand.LoadedTwoHandsSpell] == spell)
                 {
                     if (spell == SpellEnum.Thunder && isSpellAvailable(SpellCdEnum.Thunder, Thunder.THUNDER_CD))
                     {
@@ -81,10 +93,17 @@ public class SpellBook
                         spellCds[SpellCdEnum.Thunder].CurrentCd = 0.0f;
                         otherHand.resetTwoHandsLoadedSpell();
                     }
+                    else if (spell == SpellEnum.Cross && isSpellAvailable(SpellCdEnum.Cross, Cross.CROSS_CD))
+                    {
+                        createCross(head, otherHand.LoadedPoints, hand.getCustomRecognizerData().points);
+                        spellCds[SpellCdEnum.Cross].CurrentCd = 0.0f;
+                        otherHand.resetTwoHandsLoadedSpell();
+                    }
                 }
                 else
                 {
-                    hand.LoadedTwoHandsSpell = spell;
+                    hand.LoadedTwoHandsSpell = spellReco;
+                    hand.LoadedPoints = new List<Vector3>(hand.getCustomRecognizerData().points);
                 }
             }
             else
@@ -98,6 +117,19 @@ public class SpellBook
             }
             hand.stopTrail(TrailType.AttackSpell);
         }
+    }
+
+    private void createCross(Transform head, List<Vector3> p1, List<Vector3> p2)
+    {
+        Vector3 position = Tools.foundClosestMiddlePointBetweenTwoLists(p1, p2);
+        position.y += 0.5f;
+        // spawn it a little further from the player to avoid self collision
+        position = position + (head.forward / 2.0f);
+        Quaternion quaternion = head.rotation;
+        quaternion.eulerAngles = new Vector3(90, quaternion.eulerAngles.y, 0);
+        GameObject cross = PhotonNetwork.Instantiate("Cross", position, quaternion);
+        cross.GetComponent<Rigidbody>().AddForce(head.forward * Cross.CROSS_SPEED, ForceMode.VelocityChange);
+        cross.GetComponent<Cross>().setTeam(team);
     }
 
     public void handleShield(GameObject shield, HandPresence hand)
@@ -131,8 +163,7 @@ public class SpellBook
 
     private bool isSpellTwoHanded(SpellEnum spellEnum)
     {
-        // add two hands spells here
-        return spellEnum == SpellEnum.Thunder;
+        return spellEnum == SpellEnum.Thunder || spellEnum == SpellEnum.Cross;
     }
 
     public bool isSpellAvailable(SpellCdEnum spell, float spellCd)

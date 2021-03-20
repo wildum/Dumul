@@ -27,7 +27,7 @@ public class CustomGesture
     private List<CustomPoint> points;
     private CustomPoint[] cleanPoints = new CustomPoint[SAMPLE_NUMBER];
     private float rotation = 0.0f;
-    private SpellEnum spell = SpellEnum.UNDEFINED;
+    private SpellRecognition spell = SpellRecognition.UNDEFINED;
 
     public CustomGesture(CustomGestureIOData data)
     {
@@ -57,12 +57,12 @@ public class CustomGesture
         scale();
     }
 
-    public SpellEnum getSpell()
+    public SpellRecognition getSpell()
     {
         return spell;
     }
 
-    public void setSpell(SpellEnum iname)
+    public void setSpell(SpellRecognition iname)
     {
         spell = iname;
     }

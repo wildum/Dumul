@@ -20,12 +20,12 @@ static class SpellRecognizer
         CustomRecognizer.init(gesturesIO);
     }
 
-    public static SpellEnum recognize(CustomRecognizerData data)
+    public static SpellRecognition recognize(CustomRecognizerData data)
     {
         if (data.points.Count < SPELL_RECO_MIN_ELEMENT)
         {
             Debug.Log("Not enough elements : " + data.points.Count);
-            return SpellEnum.UNDEFINED;
+            return SpellRecognition.UNDEFINED;
         }
 
         CustomGesture customGesture = new CustomGesture(data);
@@ -34,7 +34,7 @@ static class SpellRecognizer
         if (res.score > SPELL_RECO_THRESHOLD)
         {
             Debug.Log("Unrecognized, best was : " + res.spell + " : " + res.score);
-            return SpellEnum.UNDEFINED;
+            return SpellRecognition.UNDEFINED;
         }
             
         Debug.Log(res.spell + " : " + res.score);

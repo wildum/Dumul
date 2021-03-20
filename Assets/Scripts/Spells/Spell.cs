@@ -2,10 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum SpellRecognition
+{
+    Fireball,
+    Thunder,
+    CrossLeft,
+    CrossRight,
+    UNDEFINED
+}
+
 public enum SpellEnum
 {
     Fireball,
     Thunder,
+    Cross,
     UNDEFINED
 }
 
@@ -13,6 +23,7 @@ public enum SpellCdEnum
 {
     FireballRight,
     FireballLeft,
+    Cross,
     Thunder,
     UNDEFINED
 }

@@ -16,12 +16,12 @@ public struct CustomRecognizerData
 
 public struct CustomRecognizerResult
 {
-    public CustomRecognizerResult(SpellEnum sp, float sc)
+    public CustomRecognizerResult(SpellRecognition sp, float sc)
     {
         spell = sp;
         score = sc;
     }
-    public SpellEnum spell { get; set; }
+    public SpellRecognition spell { get; set; }
     public float score { get; set; }
 }
 
@@ -39,7 +39,7 @@ public class CustomRecognizer : ScriptableObject
 
     public static CustomRecognizerResult classify(CustomGesture gesture)
     {
-        CustomRecognizerResult result = new CustomRecognizerResult(SpellEnum.UNDEFINED, float.MaxValue);
+        CustomRecognizerResult result = new CustomRecognizerResult(SpellRecognition.UNDEFINED, float.MaxValue);
         foreach (CustomGesture candidate in candidates)
         {
             // first compare score between candidate and gesture

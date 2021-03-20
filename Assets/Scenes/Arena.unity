@@ -1070,6 +1070,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ArenaSphere
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 799e579e7adc22846b58b18a5c885b6f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Arena
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 799e579e7adc22846b58b18a5c885b6f, type: 3}
 --- !u!4 &361523515 stripped
@@ -1442,7 +1447,7 @@ GameObject:
   - component: {fileID: 641557964}
   m_Layer: 0
   m_Name: Arena
-  m_TagString: Untagged
+  m_TagString: Arena
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

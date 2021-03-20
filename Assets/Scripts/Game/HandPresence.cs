@@ -48,7 +48,8 @@ public class HandPresence : MonoBehaviour
 
     private List<Vector3> shieldPoints = new List<Vector3>();
 
-    private SpellEnum loadedTwoHandsSpell = SpellEnum.UNDEFINED;
+    private SpellRecognition loadedTwoHandsSpell = SpellRecognition.UNDEFINED;
+    private List<Vector3> loadedPoints = new List<Vector3>();
     private float currentTimeTwoHandsSpell = 0.0f;
 
     bool pausePressed = false;
@@ -144,6 +145,30 @@ public class HandPresence : MonoBehaviour
 
     public CustomRecognizerData getCustomRecognizerData()
     {
+        // string xp = "";
+        // string yp = "";
+        // string zp = "";
+        // if (side == HandSideEnum.Left)
+        // {
+        //     xp = "Left : ";
+        //     yp = "Left : ";
+        //     zp = "Left : ";
+        // }
+        // else
+        // {
+        //     xp = "Right : ";
+        //     yp = "Right : ";
+        //     zp = "Right : ";
+        // }
+        // foreach (var p in customRecognizerData.points)
+        // {
+        //     xp += p.x + ", ";
+        //     yp += p.y + ", ";
+        //     zp += p.z + ", ";
+        // }
+        // Debug.Log(xp);
+        // Debug.Log(yp);
+        // Debug.Log(zp);
         return customRecognizerData;
     }
 
@@ -219,12 +244,14 @@ public class HandPresence : MonoBehaviour
 
     public void resetTwoHandsLoadedSpell()
     {
-        loadedTwoHandsSpell = SpellEnum.UNDEFINED;
+        loadedTwoHandsSpell = SpellRecognition.UNDEFINED;
+        loadedPoints.Clear();
         currentTimeTwoHandsSpell = 0.0f;
     }
 
-    public SpellEnum LoadedTwoHandsSpell { get { return loadedTwoHandsSpell; } set { loadedTwoHandsSpell = value; } }
+    public SpellRecognition LoadedTwoHandsSpell { get { return loadedTwoHandsSpell; } set { loadedTwoHandsSpell = value; } }
     public float CurrentTimeTwoHandsSpell { get { return currentTimeTwoHandsSpell; } set { currentTimeTwoHandsSpell = value; } }
     public int Team { get { return team; } set { team = value; } }
+    public List<Vector3> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
 
 }

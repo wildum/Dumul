@@ -6,20 +6,22 @@ using System.Xml;
 
 public struct CustomGestureIOData
 {
-    public CustomGestureIOData(List<Vector3> p, SpellEnum s)
+    public CustomGestureIOData(List<Vector3> p, SpellRecognition s)
     {
         points = p;
         spell = s;
     }
     public List<Vector3> points { get; set; }
-    public SpellEnum spell { get; set; }
+    public SpellRecognition spell { get; set; }
 }
 
 public class CustomGestureIO : ScriptableObject
 {
-    private static Dictionary<string, SpellEnum> gestureNameToSpellEnum = new Dictionary<string, SpellEnum> {
-        { "fireball", SpellEnum.Fireball },
-        { "thunder", SpellEnum.Thunder }
+    private static Dictionary<string, SpellRecognition> gestureNameToSpellEnum = new Dictionary<string, SpellRecognition> {
+        { "fireball", SpellRecognition.Fireball },
+        { "thunder", SpellRecognition.Thunder },
+        { "crossLeft", SpellRecognition.CrossLeft },
+        { "crossRight", SpellRecognition.CrossRight }
     };
     public static CustomGestureIOData ReadGestureFromXML(string xml)
     {
@@ -60,9 +62,9 @@ public class CustomGestureIO : ScriptableObject
                         break;
                     case "Point":
                         points.Add(new Vector3(
-                            float.Parse(xmlReader["X"]),
-                            float.Parse(xmlReader["Y"]),
-                            float.Parse(xmlReader["Z"])
+                            float.Parse(xmlReader["X"], System.Globalization.CultureInfo.InvariantCulture.NumberFormat),
+                            float.Parse(xmlReader["Y"], System.Globalization.CultureInfo.InvariantCulture.NumberFormat),
+                            float.Parse(xmlReader["Z"], System.Globalization.CultureInfo.InvariantCulture.NumberFormat)
                         ));
                         break;
                 }
@@ -73,6 +75,6 @@ public class CustomGestureIO : ScriptableObject
             if (xmlReader != null)
                 xmlReader.Close();
         }
-        return new CustomGestureIOData(points, gestureNameToSpellEnum.ContainsKey(gestureName) ? gestureNameToSpellEnum[gestureName] : SpellEnum.UNDEFINED);
+        return new CustomGestureIOData(points, gestureNameToSpellEnum.ContainsKey(gestureName) ? gestureNameToSpellEnum[gestureName] : SpellRecognition.UNDEFINED);
     }
 }

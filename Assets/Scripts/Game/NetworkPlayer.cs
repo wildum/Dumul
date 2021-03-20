@@ -133,7 +133,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
 
             if (Main.gameStarted && !Main.gameEnded)
             {
-                spellBook.handleSpells(leftHandPresence, rightHandPresence);
+                spellBook.handleSpells(head, leftHandPresence, rightHandPresence);
                 spellBook.handleShield(shield, leftHandPresence);
                 spellBook.handleShield(shield, rightHandPresence);
                 updateCdMapInfoCanvas();
