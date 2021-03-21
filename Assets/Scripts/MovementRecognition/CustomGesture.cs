@@ -30,6 +30,11 @@ public class CustomPoint
         z = other.z;
         side = other.side;
     }
+
+    public Vector3 toVector3()
+    {
+        return new Vector3(x, y, z);
+    }
 }
 
 public class CustomGesture

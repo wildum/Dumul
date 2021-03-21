@@ -18,7 +18,8 @@ public struct CustomGestureIOData
 public class CustomGestureIO : ScriptableObject
 {
     private static Dictionary<string, SpellRecognition> gestureNameToSpellEnum = new Dictionary<string, SpellRecognition> {
-        { "fireball", SpellRecognition.Fireball },
+        { "fireballRight", SpellRecognition.FireballRight },
+        { "fireballLeft", SpellRecognition.FireballLeft },
         { "thunder", SpellRecognition.Thunder },
         { "thunderLeft", SpellRecognition.ThunderRight },
         { "thunderRight", SpellRecognition.ThunderLeft },

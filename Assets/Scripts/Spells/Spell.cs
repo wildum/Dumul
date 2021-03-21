@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum SpellRecognition
 {
-    Fireball,
+    FireballLeft,
+    FireballRight,
     Thunder,
     ThunderRight,
     ThunderLeft,

@@ -15,7 +15,8 @@ public class SpellBook
         {SpellRecognition.CrossLeft, SpellEnum.Cross},
         {SpellRecognition.CrossRight, SpellEnum.Cross},
         {SpellRecognition.Cross, SpellEnum.Cross},
-        {SpellRecognition.Fireball, SpellEnum.Fireball},
+        {SpellRecognition.FireballRight, SpellEnum.Fireball},
+        {SpellRecognition.FireballLeft, SpellEnum.Fireball},
         {SpellRecognition.Thunder, SpellEnum.Thunder},
         {SpellRecognition.ThunderRight, SpellEnum.Thunder},
         {SpellRecognition.ThunderLeft, SpellEnum.Thunder},
@@ -77,9 +78,7 @@ public class SpellBook
             CustomRecognizerData customData = hand.getCustomRecognizerData();
             // add points of other hand, usually empty except when loading a two hands movement
             customData.points.AddRange(otherHand.LoadedPoints);
-            Debug.Log("test : " + hand.getCustomRecognizerData().points[0].y);
             SpellRecognition spellReco = SpellRecognizer.recognize(customData);
-            Debug.Log("test2 : " + hand.getCustomRecognizerData().points[0].y);
             SpellEnum spell = recognitionToSpell[spellReco];
             if (isSpellTwoHanded(spell))
             {
@@ -117,9 +116,11 @@ public class SpellBook
             else
             {
                 SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
-                if (spell == SpellEnum.Fireball && isSpellAvailable(fireBallType, Fireball.FIREBALL_CD))
+                if (isSpellAvailable(fireBallType, Fireball.FIREBALL_CD) 
+                    && ((spellReco == SpellRecognition.FireballLeft && fireBallType == SpellCdEnum.FireballLeft)
+                    || (spellReco == SpellRecognition.FireballRight && fireBallType == SpellCdEnum.FireballRight)))
                 {
-                    createFireball(hand.transform, team);
+                    createFireball(hand.getCustomRecognizerData().points);
                     spellCds[fireBallType].CurrentCd = 0.0f;
                 }
             }
@@ -190,11 +191,19 @@ public class SpellBook
         return state == ControlState.JustPressed;
     }
 
-    private  void createFireball(Transform t, int team)
+    private void createFireball(List<CustomPoint> points)
     {
-        GameObject fireball = PhotonNetwork.Instantiate("Fireball", t.position, t.rotation);
-        fireball.GetComponent<Rigidbody>().AddForce(t.forward * Fireball.FIREBALL_SPEED, ForceMode.Force);
+        Vector3 direction = computeFireballDirection(points);
+        Vector3 position = points[points.Count - 1].toVector3();
+        GameObject fireball = PhotonNetwork.Instantiate("Fireball", position, Quaternion.identity);
+        fireball.GetComponent<Rigidbody>().AddForce(direction.normalized * Fireball.FIREBALL_SPEED, ForceMode.Force);
         fireball.GetComponent<Fireball>().setTeam(team);
+    }
+
+    // expects at least 3 elements
+    private Vector3 computeFireballDirection(List<CustomPoint> points)
+    {
+        return points[points.Count - 1].toVector3() - points[0].toVector3();
     }
 
     private void createThunder(Vector3 enemyPosition)
