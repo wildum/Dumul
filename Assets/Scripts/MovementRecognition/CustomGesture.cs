@@ -6,18 +6,29 @@ using System.Collections.Generic;
 public class CustomPoint
 {
     public float x, y, z;
+    public HandSideEnum side;
 
-    public CustomPoint(float ix, float iy, float iz)
+    public CustomPoint(float ix, float iy, float iz, HandSideEnum iside)
     {
         x = ix;
         y = iy;
         z = iz;
+        side = iside;
     }
-    public CustomPoint(Vector3 point)
+    public CustomPoint(Vector3 point, HandSideEnum iside)
     {
         x = point.x;
         y = point.y;
         z = point.z;
+        side = iside;
+    }
+
+    public CustomPoint(CustomPoint other)
+    {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+        side = other.side;
     }
 }
 
@@ -48,13 +59,22 @@ public class CustomGesture
         }
     }
 
-    private void buildGesture(List<Vector3> points)
+    private void buildGesture(List<CustomPoint> ipoints)
     {
-        buildPoints(points);
+        buildPoints(ipoints);
         translateToOrigin();
         rotatePointsAroundY();
         reSample();
         scale();
+    }
+
+    private void buildPoints(List<CustomPoint> ipoints)
+    {
+        points = new List<CustomPoint>();
+        foreach (CustomPoint p in ipoints)
+        {
+            points.Add(new CustomPoint(p));
+        }
     }
 
     public SpellRecognition getSpell()
@@ -103,46 +123,51 @@ public class CustomGesture
     {
         float length = 0;
         for (int i = 1; i < points.Count; i++)
-            length += Tools.dist3dPoints(points[i - 1], points[i]);
+            if (points[i].side == points[i - 1].side)
+                length += Tools.dist3dPoints(points[i - 1], points[i]);
         return length;
     }
 
     public CustomPoint[] reSample()
     {
-        cleanPoints[0] = new CustomPoint(points[0].x, points[0].y, points[0].z);
+        cleanPoints[0] = new CustomPoint(points[0].x, points[0].y, points[0].z, points[0].side);
         int numPoints = 1;
 
         float I = PathLength(points) / (SAMPLE_NUMBER - 1); // computes interval length
         float D = 0;
         for (int i = 1; i < points.Count; i++)
         {
-            float d = Tools.dist3dPoints(points[i - 1], points[i]);
-            if (D + d >= I)
+            if (points[i].side == points[i - 1].side)
             {
-                CustomPoint firstPoint = points[i - 1];
-                while (D + d >= I)
+                float d = Tools.dist3dPoints(points[i - 1], points[i]);
+                if (D + d >= I)
                 {
-                    // add interpolated point
-                    float t = Math.Min(Math.Max((I - D) / d, 0.0f), 1.0f);
-                    if (float.IsNaN(t)) t = 0.5f;
-                    cleanPoints[numPoints++] = new CustomPoint(
-                        (1.0f - t) * firstPoint.x + t * points[i].x,
-                        (1.0f - t) * firstPoint.y + t * points[i].y,
-                        (1.0f - t) * firstPoint.z + t * points[i].z
-                    );
+                    CustomPoint firstPoint = points[i - 1];
+                    while (D + d >= I)
+                    {
+                        // add interpolated point
+                        float t = Math.Min(Math.Max((I - D) / d, 0.0f), 1.0f);
+                        if (float.IsNaN(t)) t = 0.5f;
+                        cleanPoints[numPoints++] = new CustomPoint(
+                            (1.0f - t) * firstPoint.x + t * points[i].x,
+                            (1.0f - t) * firstPoint.y + t * points[i].y,
+                            (1.0f - t) * firstPoint.z + t * points[i].z,
+                            points[i].side
+                        );
 
-                    // update partial length
-                    d = D + d - I;
-                    D = 0;
-                    firstPoint = cleanPoints[numPoints - 1];
+                        // update partial length
+                        d = D + d - I;
+                        D = 0;
+                        firstPoint = cleanPoints[numPoints - 1];
+                    }
+                    D = d;
                 }
-                D = d;
+                else D += d;
             }
-            else D += d;
         }
 
         if (numPoints == SAMPLE_NUMBER - 1) // sometimes we fall a rounding-error short of adding the last point, so add it if so
-            cleanPoints[numPoints++] = new CustomPoint(points[points.Count - 1].x, points[points.Count - 1].y, points[points.Count - 1].z);
+            cleanPoints[numPoints++] = new CustomPoint(points[points.Count - 1].x, points[points.Count - 1].y, points[points.Count - 1].z, points[points.Count - 1].side);
         return cleanPoints;
     }
 
@@ -170,15 +195,6 @@ public class CustomGesture
             cleanPoints[i].x = cleanPoints[i].x / scale;
             cleanPoints[i].y = cleanPoints[i].y / scale;
             cleanPoints[i].z = cleanPoints[i].z / scale;
-        }
-    }
-
-    void buildPoints(List<Vector3> rawPoints)
-    {
-        points = new List<CustomPoint>();
-        foreach (var v in rawPoints)
-        {
-            points.Add(new CustomPoint(v));
         }
     }
 }

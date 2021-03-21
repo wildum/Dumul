@@ -14,8 +14,11 @@ public class SpellBook
     {
         {SpellRecognition.CrossLeft, SpellEnum.Cross},
         {SpellRecognition.CrossRight, SpellEnum.Cross},
+        {SpellRecognition.Cross, SpellEnum.Cross},
         {SpellRecognition.Fireball, SpellEnum.Fireball},
         {SpellRecognition.Thunder, SpellEnum.Thunder},
+        {SpellRecognition.ThunderRight, SpellEnum.Thunder},
+        {SpellRecognition.ThunderLeft, SpellEnum.Thunder},
         {SpellRecognition.UNDEFINED, SpellEnum.UNDEFINED}
     };
 
@@ -71,7 +74,12 @@ public class SpellBook
         }
         else if (isJustReleased(gripState))
         {
-            SpellRecognition spellReco = SpellRecognizer.recognize(hand.getCustomRecognizerData());
+            CustomRecognizerData customData = hand.getCustomRecognizerData();
+            // add points of other hand, usually empty except when loading a two hands movement
+            customData.points.AddRange(otherHand.LoadedPoints);
+            Debug.Log("test : " + hand.getCustomRecognizerData().points[0].y);
+            SpellRecognition spellReco = SpellRecognizer.recognize(customData);
+            Debug.Log("test2 : " + hand.getCustomRecognizerData().points[0].y);
             SpellEnum spell = recognitionToSpell[spellReco];
             if (isSpellTwoHanded(spell))
             {
@@ -103,7 +111,7 @@ public class SpellBook
                 else
                 {
                     hand.LoadedTwoHandsSpell = spellReco;
-                    hand.LoadedPoints = new List<Vector3>(hand.getCustomRecognizerData().points);
+                    hand.LoadedPoints = new List<CustomPoint>(hand.getCustomRecognizerData().points);
                 }
             }
             else
@@ -119,9 +127,10 @@ public class SpellBook
         }
     }
 
-    private void createCross(Transform head, List<Vector3> p1, List<Vector3> p2)
+    private void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)
     {
         Vector3 position = Tools.foundClosestMiddlePointBetweenTwoLists(p1, p2);
+        Debug.Log(position);
         position.y += 0.5f;
         // spawn it a little further from the player to avoid self collision
         position = position + (head.forward / 2.0f);

@@ -32,6 +32,12 @@ public class InfoCanvas : MonoBehaviour
         victory.gameObject.SetActive(false);
         defeat.gameObject.SetActive(false);
         draw.gameObject.SetActive(false);
+        if (AppState.currentState == State.Pratice)
+        {
+            timer.gameObject.SetActive(false);
+            myHealth.gameObject.SetActive(false);
+            enemyHealth.gameObject.SetActive(false);
+        }
     }
 
     public void updateEndGameText(EndGameStatus endGameStatus)

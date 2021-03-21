@@ -6,9 +6,9 @@ using System.IO;
 
 static class SpellRecognizer
 {
-    public const float SPELL_RECO_THRESHOLD = 15.0f;
+    public const float SPELL_RECO_THRESHOLD = 10.0f;
     public const int SPELL_RECO_MIN_ELEMENT = 5;
-    public const float SHIELD_RECO_DISTANCE = 10.0f;
+    public const float SHIELD_RECO_DISTANCE = 5.0f;
     public const int SHIELD_RECO_MIN_ELEMENT = 8;
 
     public static void init()

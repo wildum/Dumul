@@ -6,7 +6,7 @@ using Photon.Pun;
 public class Fireball : Spell
 {
     public const float FIREBALL_CD = 0.5f;
-    public const int FIREBALL_SPEED = 150;
+    public const int FIREBALL_SPEED = 250;
     public const int FIREBALL_DAMAGE = 50;
 
     private int team = 0;

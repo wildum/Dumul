@@ -49,7 +49,7 @@ public class HandPresence : MonoBehaviour
     private List<Vector3> shieldPoints = new List<Vector3>();
 
     private SpellRecognition loadedTwoHandsSpell = SpellRecognition.UNDEFINED;
-    private List<Vector3> loadedPoints = new List<Vector3>();
+    private List<CustomPoint> loadedPoints = new List<CustomPoint>();
     private float currentTimeTwoHandsSpell = 0.0f;
 
     bool pausePressed = false;
@@ -230,10 +230,10 @@ public class HandPresence : MonoBehaviour
         {
             if (customRecognizerData.points == null || customRecognizerData.rotations == null)
             {
-                customRecognizerData.points = new List<Vector3>();
+                customRecognizerData.points = new List<CustomPoint>();
                 customRecognizerData.rotations = new List<float>();
             }
-            customRecognizerData.points.Add(transform.position);
+            customRecognizerData.points.Add(new CustomPoint(transform.position, side));
             customRecognizerData.rotations.Add(rotation.eulerAngles.y);
         }
         else if (trigger.pressing())
@@ -252,6 +252,6 @@ public class HandPresence : MonoBehaviour
     public SpellRecognition LoadedTwoHandsSpell { get { return loadedTwoHandsSpell; } set { loadedTwoHandsSpell = value; } }
     public float CurrentTimeTwoHandsSpell { get { return currentTimeTwoHandsSpell; } set { currentTimeTwoHandsSpell = value; } }
     public int Team { get { return team; } set { team = value; } }
-    public List<Vector3> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
+    public List<CustomPoint> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
 
 }

@@ -6,6 +6,9 @@ public enum SpellRecognition
 {
     Fireball,
     Thunder,
+    ThunderRight,
+    ThunderLeft,
+    Cross,
     CrossLeft,
     CrossRight,
     UNDEFINED

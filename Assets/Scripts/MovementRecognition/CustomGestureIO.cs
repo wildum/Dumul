@@ -6,12 +6,12 @@ using System.Xml;
 
 public struct CustomGestureIOData
 {
-    public CustomGestureIOData(List<Vector3> p, SpellRecognition s)
+    public CustomGestureIOData(List<CustomPoint> p, SpellRecognition s)
     {
         points = p;
         spell = s;
     }
-    public List<Vector3> points { get; set; }
+    public List<CustomPoint> points { get; set; }
     public SpellRecognition spell { get; set; }
 }
 
@@ -20,6 +20,9 @@ public class CustomGestureIO : ScriptableObject
     private static Dictionary<string, SpellRecognition> gestureNameToSpellEnum = new Dictionary<string, SpellRecognition> {
         { "fireball", SpellRecognition.Fireball },
         { "thunder", SpellRecognition.Thunder },
+        { "thunderLeft", SpellRecognition.ThunderRight },
+        { "thunderRight", SpellRecognition.ThunderLeft },
+        { "cross", SpellRecognition.Cross },
         { "crossLeft", SpellRecognition.CrossLeft },
         { "crossRight", SpellRecognition.CrossRight }
     };
@@ -48,7 +51,7 @@ public class CustomGestureIO : ScriptableObject
 
     private static CustomGestureIOData ReadGesture(XmlTextReader xmlReader)
     {
-        List<Vector3> points = new List<Vector3>();
+        List<CustomPoint> points = new List<CustomPoint>();
         string gestureName = "";
         try
         {
@@ -61,10 +64,11 @@ public class CustomGestureIO : ScriptableObject
                         gestureName = xmlReader["Name"];
                         break;
                     case "Point":
-                        points.Add(new Vector3(
+                        points.Add(new CustomPoint(
                             float.Parse(xmlReader["X"], System.Globalization.CultureInfo.InvariantCulture.NumberFormat),
                             float.Parse(xmlReader["Y"], System.Globalization.CultureInfo.InvariantCulture.NumberFormat),
-                            float.Parse(xmlReader["Z"], System.Globalization.CultureInfo.InvariantCulture.NumberFormat)
+                            float.Parse(xmlReader["Z"], System.Globalization.CultureInfo.InvariantCulture.NumberFormat),
+                            int.Parse(xmlReader["SIDE"]) == 0 ? HandSideEnum.Left : HandSideEnum.Right
                         ));
                         break;
                 }

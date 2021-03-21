@@ -5,9 +5,9 @@ using Photon.Pun;
 
 public class Shield : MonoBehaviourPunCallbacks
 {
-    const float SHIELD_MAX_HEALTH = 150.0f;
+    const float SHIELD_MAX_HEALTH = 1.0f;
     private float health = SHIELD_MAX_HEALTH;
-    private float MAX_ALPHA = 200.0f;
+    private float MAX_ALPHA = 1.5f;
 
     void Start()
     {
