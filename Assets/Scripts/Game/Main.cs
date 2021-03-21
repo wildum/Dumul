@@ -30,6 +30,8 @@ public class Main : MonoBehaviourPunCallbacks
         gameAborted = false;
         missingPlayer = false;
         InformationCenter.clearPlayers();
+        if (AppState.currentState == State.Pratice)
+            GameSettings.timeBeforeStart = 0;
         setNbOfPlayers();
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
         SpellRecognizer.init();
