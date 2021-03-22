@@ -15,8 +15,7 @@ public class SpellBook
         {SpellRecognition.CrossLeft, SpellEnum.Cross},
         {SpellRecognition.CrossRight, SpellEnum.Cross},
         {SpellRecognition.Cross, SpellEnum.Cross},
-        {SpellRecognition.FireballRight, SpellEnum.Fireball},
-        {SpellRecognition.FireballLeft, SpellEnum.Fireball},
+        {SpellRecognition.Fireball, SpellEnum.Fireball},
         {SpellRecognition.Thunder, SpellEnum.Thunder},
         {SpellRecognition.ThunderRight, SpellEnum.Thunder},
         {SpellRecognition.ThunderLeft, SpellEnum.Thunder},
@@ -77,7 +76,16 @@ public class SpellBook
         {
             CustomRecognizerData customData = hand.getCustomRecognizerData();
             // add points of other hand, usually empty except when loading a two hands movement
-            customData.points.AddRange(otherHand.LoadedPoints);
+            if (hand.side == HandSideEnum.Left)
+            {
+                customData.points.AddRange(otherHand.LoadedPoints);
+            }
+            else
+            {
+                List<CustomPoint> tmp = new List<CustomPoint>(otherHand.LoadedPoints);
+                tmp.AddRange(customData.points);
+                customData.points = tmp;
+            }
             SpellRecognition spellReco = SpellRecognizer.recognize(customData);
             SpellEnum spell = recognitionToSpell[spellReco];
             if (isSpellTwoHanded(spell))
@@ -116,9 +124,7 @@ public class SpellBook
             else
             {
                 SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
-                if (isSpellAvailable(fireBallType, Fireball.FIREBALL_CD) 
-                    && ((spellReco == SpellRecognition.FireballLeft && fireBallType == SpellCdEnum.FireballLeft)
-                    || (spellReco == SpellRecognition.FireballRight && fireBallType == SpellCdEnum.FireballRight)))
+                if (spellReco == SpellRecognition.Fireball && isSpellAvailable(fireBallType, Fireball.FIREBALL_CD))
                 {
                     createFireball(hand.getCustomRecognizerData().points);
                     spellCds[fireBallType].CurrentCd = 0.0f;
@@ -131,7 +137,6 @@ public class SpellBook
     private void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)
     {
         Vector3 position = Tools.foundClosestMiddlePointBetweenTwoLists(p1, p2);
-        Debug.Log(position);
         position.y += 0.5f;
         // spawn it a little further from the player to avoid self collision
         position = position + (head.forward / 2.0f);

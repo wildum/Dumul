@@ -18,11 +18,10 @@ public struct CustomGestureIOData
 public class CustomGestureIO : ScriptableObject
 {
     private static Dictionary<string, SpellRecognition> gestureNameToSpellEnum = new Dictionary<string, SpellRecognition> {
-        { "fireballRight", SpellRecognition.FireballRight },
-        { "fireballLeft", SpellRecognition.FireballLeft },
+        { "fireball", SpellRecognition.Fireball },
         { "thunder", SpellRecognition.Thunder },
-        { "thunderLeft", SpellRecognition.ThunderRight },
-        { "thunderRight", SpellRecognition.ThunderLeft },
+        { "thunderLeft", SpellRecognition.ThunderLeft },
+        { "thunderRight", SpellRecognition.ThunderRight },
         { "cross", SpellRecognition.Cross },
         { "crossLeft", SpellRecognition.CrossLeft },
         { "crossRight", SpellRecognition.CrossRight }
@@ -35,7 +34,6 @@ public class CustomGestureIO : ScriptableObject
 
         try
         {
-
             xmlReader = new XmlTextReader(new StringReader(xml));
             gesture = ReadGesture(xmlReader);
 

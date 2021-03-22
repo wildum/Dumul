@@ -6,7 +6,7 @@ using System.IO;
 
 static class SpellRecognizer
 {
-    public const float SPELL_RECO_THRESHOLD = 10.0f;
+    public const float SPELL_RECO_THRESHOLD = 0.15f;
     public const int SPELL_RECO_MIN_ELEMENT = 5;
     public const float SHIELD_RECO_DISTANCE = 5.0f;
     public const int SHIELD_RECO_MIN_ELEMENT = 8;
@@ -31,7 +31,7 @@ static class SpellRecognizer
         CustomGesture customGesture = new CustomGesture(data);
         CustomRecognizerResult res = CustomRecognizer.classify(customGesture);
 
-        if (res.score > SPELL_RECO_THRESHOLD)
+        if (res.score < SPELL_RECO_THRESHOLD)
         {
             Debug.Log("Unrecognized, best was : " + res.spell + " : " + res.score);
             return SpellRecognition.UNDEFINED;

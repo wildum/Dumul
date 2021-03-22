@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<Gesture Name="fireballRight" NumPts="2">
-  <Point X="0" Y="0" Z="0" SIDE="1"/>
-  <Point X="-0.643" Y="0" Z="-0.766" SIDE="1"/>
-</Gesture>

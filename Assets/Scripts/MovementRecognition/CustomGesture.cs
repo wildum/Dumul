@@ -39,7 +39,7 @@ public class CustomPoint
 
 public class CustomGesture
 {
-    public const int SAMPLE_NUMBER = 32;
+    public const int SAMPLE_NUMBER = 64;
     private List<CustomPoint> points;
     private CustomPoint[] cleanPoints = new CustomPoint[SAMPLE_NUMBER];
     private float rotation = 0.0f;

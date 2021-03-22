@@ -56,6 +56,8 @@ public class HandPresence : MonoBehaviour
     private GameObject pausePopupInstantiated;
     private int team = -1;
 
+    private float headAngley = 0.0f;
+
     void Awake()
     {
         // get all of our actions
@@ -224,8 +226,6 @@ public class HandPresence : MonoBehaviour
         _handAnimator.SetFloat("Grip", trigger.getValue());
         _handAnimator.SetFloat("Trigger", grip.getValue());
 
-        Quaternion rotation = _inputActionRotation.ReadValue<Quaternion>();
-
         if (grip.pressing())
         {
             if (customRecognizerData.points == null || customRecognizerData.rotations == null)
@@ -234,7 +234,7 @@ public class HandPresence : MonoBehaviour
                 customRecognizerData.rotations = new List<float>();
             }
             customRecognizerData.points.Add(new CustomPoint(transform.position, side));
-            customRecognizerData.rotations.Add(rotation.eulerAngles.y);
+            customRecognizerData.rotations.Add(headAngley);
         }
         else if (trigger.pressing())
         {
@@ -253,5 +253,6 @@ public class HandPresence : MonoBehaviour
     public float CurrentTimeTwoHandsSpell { get { return currentTimeTwoHandsSpell; } set { currentTimeTwoHandsSpell = value; } }
     public int Team { get { return team; } set { team = value; } }
     public List<CustomPoint> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
+    public float HeadAngley {get {return headAngley;} set {headAngley = value;}}
 
 }

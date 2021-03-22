@@ -131,6 +131,11 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             UpdateHandAnimation(leftHandAnimator, leftHandPresence);
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
 
+            // offset of -90 because the head is turned tower z axis at start and that the 
+            // spells as defined as turned toward x axis
+            leftHandPresence.HeadAngley = head.transform.rotation.eulerAngles.y - 90;
+            rightHandPresence.HeadAngley = head.transform.rotation.eulerAngles.y - 90;
+
             if (Main.gameStarted && !Main.gameEnded)
             {
                 spellBook.handleSpells(head, leftHandPresence, rightHandPresence);
