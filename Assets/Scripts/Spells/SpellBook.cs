@@ -137,13 +137,11 @@ public class SpellBook
     private void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)
     {
         Vector3 position = Tools.foundClosestMiddlePointBetweenTwoLists(p1, p2);
-        position.y += 0.5f;
-        // spawn it a little further from the player to avoid self collision
-        position = position + (head.forward / 2.0f);
         Quaternion quaternion = head.rotation;
         quaternion.eulerAngles = new Vector3(90, quaternion.eulerAngles.y, 0);
+        Vector3 direction = new Vector3(head.forward.x, 0, head.forward.z);
         GameObject cross = PhotonNetwork.Instantiate("Cross", position, quaternion);
-        cross.GetComponent<Rigidbody>().AddForce(head.forward * Cross.CROSS_SPEED, ForceMode.VelocityChange);
+        cross.GetComponent<Rigidbody>().AddForce(direction * Cross.CROSS_SPEED, ForceMode.VelocityChange);
         cross.GetComponent<Cross>().setTeam(team);
     }
 
