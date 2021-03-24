@@ -152,7 +152,11 @@ public class CustomGesture
                     {
                         // add interpolated point
                         float t = Math.Min(Math.Max((I - D) / d, 0.0f), 1.0f);
-                        if (float.IsNaN(t)) t = 0.5f;
+                        if (float.IsNaN(t))
+                        {
+                            t = 0.5f;
+                            Debug.Log("NaN : " + i);
+                        }
                         cleanPoints[numPoints++] = new CustomPoint(
                             (1.0f - t) * firstPoint.x + t * points[i].x,
                             (1.0f - t) * firstPoint.y + t * points[i].y,

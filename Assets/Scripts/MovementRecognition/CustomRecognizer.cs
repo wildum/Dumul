@@ -47,11 +47,11 @@ public class CustomRecognizer : ScriptableObject
         StreamWriter file = new StreamWriter("points.txt");
         foreach(CustomGesture c in candidates)
         {
-            if (c.getSpell() != SpellRecognition.Fireball)
-                continue;
+            // if (c.getSpell() != SpellRecognition.Cross)
+            //     continue;
             file.WriteLine(c.getSpell().ToString());
             for (int i = 0; i < c.getCustomPoints().Length; i++)
-            {
+            { 
                 CustomPoint p = c.getCustomPoints()[i];
                 file.WriteLine("<Point X=\""+p.x+"\" Y=\""+p.y+"\" Z=\""+p.z+"\" SIDE=\"" + (p.side == HandSideEnum.Left ? 0 : 1) +"\"/>");
             }
@@ -67,7 +67,7 @@ public class CustomRecognizer : ScriptableObject
             // first compare score between candidate and gesture
             float score = eval(gesture, candidate);
             // then compare score between gesture and candidate
-            //Debug.Log(score);
+            Debug.Log(candidate.getSpell() + " " + score);
             //score += eval(candidate, gesture);
             if (score > result.score)
             {
@@ -82,18 +82,52 @@ public class CustomRecognizer : ScriptableObject
     private static float eval(CustomGesture a, CustomGesture b)
     {
         float sum = 0;
+        bool twoHandComp = isTwoHandGestureComparison(a, b);
+        int indexDiffLeft = 1;
+        int indexDiffRight = 1;
         for (int i = 0; i < CustomGesture.SAMPLE_NUMBER; i++)
         {
-            // float minDist = float.MaxValue;
-            // for (int j = 0; j < CustomGesture.SAMPLE_NUMBER; j++)
-            // {
-            //     minDist = Mathf.Min(Tools.dist3dPointsSquared(a.getCustomPoints()[i], b.getCustomPoints()[j]), minDist);
-            // }
-            // sum += minDist;
-            sum += Tools.dist3dPointsSquared(a.getCustomPoints()[i], b.getCustomPoints()[i]);
+            if (twoHandComp)
+            {
+                if (a.getCustomPoints()[i].side == b.getCustomPoints()[i].side)
+                {
+                    sum += Tools.dist3dPointsSquared(a.getCustomPoints()[i], b.getCustomPoints()[i]);
+                }
+                else if (a.getCustomPoints()[i].side == HandSideEnum.Left)
+                {
+                    sum += Tools.dist3dPointsSquared(a.getCustomPoints()[i], b.getCustomPoints()[i-indexDiffLeft]);
+                    indexDiffLeft++;
+                }
+                else
+                {
+                    sum += Tools.dist3dPointsSquared(a.getCustomPoints()[i-indexDiffRight], b.getCustomPoints()[i]);
+                    indexDiffRight++;
+                }
+            }
+            else
+            {
+                sum += Tools.dist3dPointsSquared(a.getCustomPoints()[i], b.getCustomPoints()[i]);
+            }
         }
-
-        // sum*sum / CustomGesture.SAMPLE_NUMBER
         return CustomGesture.SAMPLE_NUMBER / (CustomGesture.SAMPLE_NUMBER + sum*sum);
+    }
+
+    private static bool isTwoHandGestureComparison(CustomGesture a, CustomGesture b)
+    {
+        return isTwoHandGesture(a) && isTwoHandGesture(b);
+    }
+
+    private static bool isTwoHandGesture(CustomGesture gest)
+    {
+        bool gestSide0 = false;
+        bool gestSide1 = false;
+        foreach (CustomPoint c in gest.getCustomPoints())
+        {
+            if (c.side == HandSideEnum.Left)
+                gestSide0 = true;
+            else
+                gestSide1 = true;
+        }
+        return gestSide0 && gestSide1;
     }
 }
