@@ -5,7 +5,7 @@ using Photon.Pun;
 
 public class Cross : Spell
 {
-    public const float CROSS_CD = 5.0f;
+    public const float CROSS_CD = 8.0f;
     public const int CROSS_SPEED = 10;
     public const int CROSS_DAMAGE = 100;
 

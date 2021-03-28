@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using Photon.Pun;
 
 public enum State
 {
@@ -14,4 +15,10 @@ public enum State
 public static class AppState
 {
     public static State currentState = State.Starter;
+
+    [PunRPC]
+    public static void setCurrentState(State state)
+    {
+        currentState = state;
+    }
 }

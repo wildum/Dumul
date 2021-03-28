@@ -8,7 +8,8 @@ public class SpellBook
 {
     private const float MAX_TIME_TWO_HANDS_CAST = 2.0f;
 
-    public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, SpellCdEnum.Thunder, SpellCdEnum.Cross };
+    public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, 
+        SpellCdEnum.Thunder, SpellCdEnum.Cross,  SpellCdEnum.GrenadeLeft, SpellCdEnum.GrenadeRight };
 
     private static Dictionary<SpellRecognition, SpellEnum> recognitionToSpell = new Dictionary<SpellRecognition, SpellEnum>
     {
@@ -19,6 +20,8 @@ public class SpellBook
         {SpellRecognition.Thunder, SpellEnum.Thunder},
         {SpellRecognition.ThunderRight, SpellEnum.Thunder},
         {SpellRecognition.ThunderLeft, SpellEnum.Thunder},
+        {SpellRecognition.GrenadeLeft, SpellEnum.Grenade},
+        {SpellRecognition.GrenadeRight, SpellEnum.Grenade},
         {SpellRecognition.UNDEFINED, SpellEnum.UNDEFINED}
     };
 
@@ -28,6 +31,8 @@ public class SpellBook
         { SpellCdEnum.FireballLeft, new SpellCd(Fireball.FIREBALL_CD, "Fireball Left") },
         { SpellCdEnum.FireballRight, new SpellCd(Fireball.FIREBALL_CD, "Fireball Right") },
         { SpellCdEnum.Thunder, new SpellCd(Thunder.THUNDER_CD, "Thunder") },
+        { SpellCdEnum.GrenadeRight, new SpellCd(Grenade.GRENADE_CD, "GrenadeRight") },
+        { SpellCdEnum.GrenadeLeft, new SpellCd(Grenade.GRENADE_CD, "GrenadeLeft") },
         { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") }
     };
 
@@ -35,8 +40,8 @@ public class SpellBook
 
     public void handleSpells(Transform head, HandPresence leftHand, HandPresence rightHand)
     {
-        handleOneHandSpell(head, leftHand, rightHand);
-        handleOneHandSpell(head, rightHand, leftHand);
+        handleSpell(head, leftHand, rightHand);
+        handleSpell(head, rightHand, leftHand);
         updateAllSpellCds();
         updateTwoHandsCd(leftHand);
         updateTwoHandsCd(rightHand);
@@ -65,7 +70,7 @@ public class SpellBook
         }
     }
 
-    public void handleOneHandSpell(Transform head, HandPresence hand, HandPresence otherHand)
+    public void handleSpell(Transform head, HandPresence hand, HandPresence otherHand)
     {
         ControlState gripState = hand.computeGripState();
         if (isJustPressed(gripState))
@@ -129,9 +134,37 @@ public class SpellBook
                     createFireball(hand.getCustomRecognizerData().points);
                     spellCds[fireBallType].CurrentCd = 0.0f;
                 }
+                else if (hand.getHandSide() == HandSideEnum.Left
+                    && spellReco == SpellRecognition.GrenadeLeft
+                    && isSpellAvailable(SpellCdEnum.GrenadeLeft, Grenade.GRENADE_CD))
+                {
+                    createGrenade(hand.getCustomRecognizerData().points);
+                    spellCds[SpellCdEnum.GrenadeLeft].CurrentCd = 0.0f;
+                }
+                else if (hand.getHandSide() == HandSideEnum.Right
+                    && spellReco == SpellRecognition.GrenadeRight
+                    && isSpellAvailable(SpellCdEnum.GrenadeRight, Grenade.GRENADE_CD))
+                {
+                    createGrenade(hand.getCustomRecognizerData().points);
+                    spellCds[SpellCdEnum.GrenadeRight].CurrentCd = 0.0f;
+                }
             }
             hand.stopTrail(TrailType.AttackSpell);
         }
+    }
+
+    private void createGrenade(List<CustomPoint> points)
+    {
+        float mx = 0;
+        float my = 0;
+        float mz = 0;
+        foreach(CustomPoint p in points)
+        {
+            mx += p.x;
+            my += p.y;
+            mz += p.z;
+        }
+        PhotonNetwork.Instantiate("Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity);
     }
 
     private void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)

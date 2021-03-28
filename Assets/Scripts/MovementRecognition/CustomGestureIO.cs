@@ -22,6 +22,8 @@ public class CustomGestureIO : ScriptableObject
         { "thunder", SpellRecognition.Thunder },
         { "thunderLeft", SpellRecognition.ThunderLeft },
         { "thunderRight", SpellRecognition.ThunderRight },
+        { "grenadeRight", SpellRecognition.GrenadeRight },
+        { "grenadeLeft", SpellRecognition.GrenadeLeft },
         { "cross", SpellRecognition.Cross },
         { "crossLeft", SpellRecognition.CrossLeft },
         { "crossRight", SpellRecognition.CrossRight }

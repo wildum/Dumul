@@ -11,6 +11,8 @@ public enum SpellRecognition
     Cross,
     CrossLeft,
     CrossRight,
+    GrenadeRight,
+    GrenadeLeft,
     UNDEFINED
 }
 
@@ -19,6 +21,7 @@ public enum SpellEnum
     Fireball,
     Thunder,
     Cross,
+    Grenade,
     UNDEFINED
 }
 
@@ -28,6 +31,8 @@ public enum SpellCdEnum
     FireballLeft,
     Cross,
     Thunder,
+    GrenadeLeft,
+    GrenadeRight,
     UNDEFINED
 }
 

@@ -70,7 +70,6 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         {
             StartPosition s = GameSettings.getStartPositionFromTeam(team);
             Debug.Log(" In RPC : team id : " + teamId + " , actor id : " + photonView.Owner.ActorNumber);
-            Debug.Log(s.position);
             rig.transform.position = s.position;
             rig.transform.eulerAngles = s.rotation;
         }
@@ -139,8 +138,10 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             if (Main.gameStarted && !Main.gameEnded)
             {
                 spellBook.handleSpells(head, leftHandPresence, rightHandPresence);
-                spellBook.handleShield(shield, leftHandPresence);
-                spellBook.handleShield(shield, rightHandPresence);
+                if (!leftHandPresence.Grabbing)
+                    spellBook.handleShield(shield, leftHandPresence);
+                if (!rightHandPresence.Grabbing)
+                    spellBook.handleShield(shield, rightHandPresence);
                 updateCdMapInfoCanvas();
             }
 
@@ -169,6 +170,13 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     public Vector3 getPosition()
     {
         return head.position;
+    }
+
+    public float getScaledHeadRadius()
+    {
+        // we take x because the head should be round
+        Transform sphere = head.GetChild(0);
+        return sphere.GetComponent<SphereCollider>().radius * sphere.localScale.x;
     }
 
     public int Team { get { return team; } }

@@ -66,6 +66,13 @@ namespace menu
         {
             Debug.Log("Joined a room");
             base.OnJoinedRoom();
+
+            // TODO : FIX THIS
+            if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            {
+                AppState.currentState = State.OneVsOne;
+            }
+
             if (roomHandler.RoomState != RoomState.Searching)
             {
                 buttonManager.updateButtonsStatus();
@@ -83,6 +90,13 @@ namespace menu
         {
             Debug.Log("A new player joined the room");
             base.OnPlayerEnteredRoom(newPlayer);
+
+            // TODO : FIX THIS
+            if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            {
+                AppState.currentState = State.OneVsOne;
+            }
+
             if (roomHandler.RoomState == RoomState.Chill)
             {
                 buttonManager.updateButtonsStatus();

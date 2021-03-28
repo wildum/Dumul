@@ -47,8 +47,8 @@ public class CustomRecognizer : ScriptableObject
         StreamWriter file = new StreamWriter("points.txt");
         foreach(CustomGesture c in candidates)
         {
-            // if (c.getSpell() != SpellRecognition.Cross)
-            //     continue;
+            if (c.getSpell() != SpellRecognition.GrenadeLeft && c.getSpell() != SpellRecognition.GrenadeRight)
+                continue;
             file.WriteLine(c.getSpell().ToString());
             for (int i = 0; i < c.getCustomPoints().Length; i++)
             { 

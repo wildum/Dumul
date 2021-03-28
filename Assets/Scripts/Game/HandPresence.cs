@@ -58,6 +58,8 @@ public class HandPresence : MonoBehaviour
 
     private float headAngley = 0.0f;
 
+    private bool grabbing = false;
+
     void Awake()
     {
         // get all of our actions
@@ -75,6 +77,17 @@ public class HandPresence : MonoBehaviour
         trailRenderer = GetComponent<TrailRenderer>();
         trailRenderer.emitting = false;
         trailRenderer.time = Mathf.Infinity;
+    }
+
+
+    public void onStartGrabbing()
+    {
+        grabbing = true;
+    }
+
+    public void onStopGrabbing()
+    {
+        grabbing = false;
     }
 
     public void startTrail(TrailType trailType)
@@ -238,7 +251,17 @@ public class HandPresence : MonoBehaviour
         }
         else if (trigger.pressing())
         {
-            shieldPoints.Add(transform.position);
+            if (!grabbing)
+            {
+                shieldPoints.Add(transform.position);
+            }
+            else
+            {
+                if (shieldPoints.Count > 0)
+                {
+                    shieldPoints.Clear();
+                }
+            }
         }
     }
 
@@ -254,5 +277,6 @@ public class HandPresence : MonoBehaviour
     public int Team { get { return team; } set { team = value; } }
     public List<CustomPoint> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
     public float HeadAngley {get {return headAngley;} set {headAngley = value;}}
+    public bool Grabbing { get { return grabbing; } }
 
 }
