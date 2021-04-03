@@ -5,15 +5,8 @@ using UnityEngine.XR;
 using Photon.Pun;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class NetworkPlayer : MonoBehaviourPunCallbacks
+public class NetworkPlayer : ArenaPlayer
 {
-    public Transform head;
-    public Transform rightHand;
-    public Transform leftHand;
-
-    public Animator leftHandAnimator;
-    public Animator rightHandAnimator;
-
     private Transform headRig;
     private Transform leftHandRig;
     private Transform rightHandRig;
@@ -21,14 +14,7 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
     private HandPresence leftHandPresence;
     private HandPresence rightHandPresence;
 
-    private int health = GameSettings.PLAYER_HEALTH;
-
-    private GameObject shield;
-    private InfoCanvas infoCanvas;
-
-    private int team = -1;
     private bool teamAssigned = false;
-    private bool alive = true;
 
     private XRRig rig;
 
@@ -74,39 +60,11 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
             rig.transform.eulerAngles = s.rotation;
         }
     }
-
-    public int getHealth()
-    {
-        return health;
-    }
     
     void updateCdMapInfoCanvas()
     {
         if (infoCanvas != null)
             infoCanvas.updateCdText(spellBook.SpellCds);
-    }
-
-    void setInfoCanvas()
-    {
-        if (team == 0)
-        {
-            infoCanvas = GameObject.Find("InfoCanvasP1").GetComponent<InfoCanvas>();
-        }
-        else
-        {
-            infoCanvas = GameObject.Find("InfoCanvasP2").GetComponent<InfoCanvas>();
-        }
-
-        if (infoCanvas == null)
-        {
-            Debug.Log("could not set infocanvas with team " + team);
-        }
-    }
-
-    public void updateHealthInfoCanvas(int enemyHealth)
-    {
-        if (infoCanvas != null)
-            infoCanvas.updateHealth(health, enemyHealth);
     }
 
     // Update is called once per frame
@@ -159,26 +117,4 @@ public class NetworkPlayer : MonoBehaviourPunCallbacks
         target.position = rigTransform.position;
         target.rotation = rigTransform.rotation;
     }
-
-    [PunRPC]
-    public void takeDamage(int damageAmount)
-    {
-        health = Mathf.Max(health - damageAmount, 0);
-        CommunicationCenter.updateHealth();
-    }
-
-    public Vector3 getPosition()
-    {
-        return head.position;
-    }
-
-    public float getScaledHeadRadius()
-    {
-        // we take x because the head should be round
-        Transform sphere = head.GetChild(0);
-        return sphere.GetComponent<SphereCollider>().radius * sphere.localScale.x;
-    }
-
-    public int Team { get { return team; } }
-    public bool Alive { get { return alive; } }
 }

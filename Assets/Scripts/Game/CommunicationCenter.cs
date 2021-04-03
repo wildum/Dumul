@@ -8,7 +8,7 @@ static class CommunicationCenter
     // to be updated when more that two players
     public static void updateHealth()
     {
-        List<NetworkPlayer> players = InformationCenter.getPlayers();
+        List<ArenaPlayer> players = InformationCenter.getPlayers();
         int p1Health = 0;
         int p2Health = 0;
         if (players.Count > 0)

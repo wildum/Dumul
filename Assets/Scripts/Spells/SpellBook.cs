@@ -11,7 +11,7 @@ public class SpellBook
     public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, 
         SpellCdEnum.Thunder, SpellCdEnum.Cross,  SpellCdEnum.GrenadeLeft, SpellCdEnum.GrenadeRight };
 
-    private static Dictionary<SpellRecognition, SpellEnum> recognitionToSpell = new Dictionary<SpellRecognition, SpellEnum>
+    public static Dictionary<SpellRecognition, SpellEnum> recognitionToSpell = new Dictionary<SpellRecognition, SpellEnum>
     {
         {SpellRecognition.CrossLeft, SpellEnum.Cross},
         {SpellRecognition.CrossRight, SpellEnum.Cross},
@@ -25,7 +25,6 @@ public class SpellBook
         {SpellRecognition.UNDEFINED, SpellEnum.UNDEFINED}
     };
 
-
     private Dictionary<SpellCdEnum, SpellCd> spellCds = new Dictionary<SpellCdEnum, SpellCd>
     {
         { SpellCdEnum.FireballLeft, new SpellCd(Fireball.FIREBALL_CD, "Fireball Left") },
@@ -35,6 +34,8 @@ public class SpellBook
         { SpellCdEnum.GrenadeLeft, new SpellCd(Grenade.GRENADE_CD, "GrenadeLeft") },
         { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") }
     };
+
+    private SpellCreator spellcreator = new SpellCreator();
 
     private int team;
 
@@ -99,15 +100,15 @@ public class SpellBook
                 {
                     if (spell == SpellEnum.Thunder && isSpellAvailable(SpellCdEnum.Thunder, Thunder.THUNDER_CD))
                     {
-                        NetworkPlayer enemy = InformationCenter.getFirstPlayerOppositeTeam(team);
+                        ArenaPlayer enemy = InformationCenter.getFirstPlayerOppositeTeam(team);
                         if (enemy != null)
                         {
-                            createThunder(enemy.getPosition());
+                            spellcreator.createThunder(enemy.getPosition());
                             Debug.Log("casting thunder targeting : " + enemy.getPosition());
                         }
                         else
                         {
-                            createThunder(new Vector3(0.0f, 0.0f, 0.0f));
+                            spellcreator.createThunder(new Vector3(0.0f, 0.0f, 0.0f));
                             Debug.Log("tried to cast thunder but not enemy around");
                         }
                         spellCds[SpellCdEnum.Thunder].CurrentCd = 0.0f;
@@ -115,7 +116,7 @@ public class SpellBook
                     }
                     else if (spell == SpellEnum.Cross && isSpellAvailable(SpellCdEnum.Cross, Cross.CROSS_CD))
                     {
-                        createCross(head, otherHand.LoadedPoints, hand.getCustomRecognizerData().points);
+                        spellcreator.createCross(head, otherHand.LoadedPoints, hand.getCustomRecognizerData().points);
                         spellCds[SpellCdEnum.Cross].CurrentCd = 0.0f;
                         otherHand.resetTwoHandsLoadedSpell();
                     }
@@ -131,51 +132,26 @@ public class SpellBook
                 SpellCdEnum fireBallType = hand.getHandSide() == HandSideEnum.Left ? SpellCdEnum.FireballLeft : SpellCdEnum.FireballRight;
                 if (spellReco == SpellRecognition.Fireball && isSpellAvailable(fireBallType, Fireball.FIREBALL_CD))
                 {
-                    createFireball(hand.getCustomRecognizerData().points);
+                    spellcreator.createFireball(hand.getCustomRecognizerData().points);
                     spellCds[fireBallType].CurrentCd = 0.0f;
                 }
                 else if (hand.getHandSide() == HandSideEnum.Left
                     && spellReco == SpellRecognition.GrenadeLeft
                     && isSpellAvailable(SpellCdEnum.GrenadeLeft, Grenade.GRENADE_CD))
                 {
-                    createGrenade(hand.getCustomRecognizerData().points);
+                    spellcreator.createGrenade(hand.getCustomRecognizerData().points);
                     spellCds[SpellCdEnum.GrenadeLeft].CurrentCd = 0.0f;
                 }
                 else if (hand.getHandSide() == HandSideEnum.Right
                     && spellReco == SpellRecognition.GrenadeRight
                     && isSpellAvailable(SpellCdEnum.GrenadeRight, Grenade.GRENADE_CD))
                 {
-                    createGrenade(hand.getCustomRecognizerData().points);
+                    spellcreator.createGrenade(hand.getCustomRecognizerData().points);
                     spellCds[SpellCdEnum.GrenadeRight].CurrentCd = 0.0f;
                 }
             }
             hand.stopTrail(TrailType.AttackSpell);
         }
-    }
-
-    private void createGrenade(List<CustomPoint> points)
-    {
-        float mx = 0;
-        float my = 0;
-        float mz = 0;
-        foreach(CustomPoint p in points)
-        {
-            mx += p.x;
-            my += p.y;
-            mz += p.z;
-        }
-        PhotonNetwork.Instantiate("Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity);
-    }
-
-    private void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)
-    {
-        Vector3 position = Tools.foundClosestMiddlePointBetweenTwoLists(p1, p2);
-        Quaternion quaternion = head.rotation;
-        quaternion.eulerAngles = new Vector3(90, quaternion.eulerAngles.y, 0);
-        Vector3 direction = new Vector3(head.forward.x, 0, head.forward.z);
-        GameObject cross = PhotonNetwork.Instantiate("Cross", position, quaternion);
-        cross.GetComponent<Rigidbody>().AddForce(direction * Cross.CROSS_SPEED, ForceMode.VelocityChange);
-        cross.GetComponent<Cross>().setTeam(team);
     }
 
     public void handleShield(GameObject shield, HandPresence hand)
@@ -225,29 +201,6 @@ public class SpellBook
     public bool isJustPressed(ControlState state)
     {
         return state == ControlState.JustPressed;
-    }
-
-    private void createFireball(List<CustomPoint> points)
-    {
-        Vector3 direction = computeFireballDirection(points);
-        Vector3 position = points[points.Count - 1].toVector3();
-        GameObject fireball = PhotonNetwork.Instantiate("Fireball", position, Quaternion.identity);
-        fireball.GetComponent<Rigidbody>().AddForce(direction.normalized * Fireball.FIREBALL_SPEED, ForceMode.Force);
-        fireball.GetComponent<Fireball>().setTeam(team);
-    }
-
-    // expects at least 3 elements
-    private Vector3 computeFireballDirection(List<CustomPoint> points)
-    {
-        return points[points.Count - 1].toVector3() - points[0].toVector3();
-    }
-
-    private void createThunder(Vector3 enemyPosition)
-    {
-        Vector3 position = new Vector3(enemyPosition.x, Thunder.yStartingPosition, enemyPosition.z);
-        Quaternion rotation = Quaternion.identity;
-        rotation.eulerAngles = new Vector3(0,0,180);
-        PhotonNetwork.Instantiate("Thunder", position, rotation);
     }
 
     public void moveShield(GameObject shield, List<Vector3> shieldPoints)
@@ -363,6 +316,6 @@ public class SpellBook
         shield.transform.localScale = new Vector3(xscale, yscale, shield.transform.localScale.z);
     }
 
-    public int Team { set { team = value; } }
+    public int Team { set { team = value; spellcreator.Team = value;} }
     public Dictionary<SpellCdEnum, SpellCd> SpellCds { get { return spellCds; } }
 }

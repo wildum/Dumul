@@ -39,6 +39,13 @@ namespace menu
             PhotonNetwork.LoadLevel("Arena");
         }
 
+        public void startOneVsAI()
+        {
+            Debug.Log("OneVsAI");
+            AppState.currentState = State.OneVsAI;
+            PhotonNetwork.LoadLevel("Arena");
+        }
+
         public void joinRandomRoom()
         {
             PhotonNetwork.JoinRandomRoom(null, numberOfPlayerExpected);

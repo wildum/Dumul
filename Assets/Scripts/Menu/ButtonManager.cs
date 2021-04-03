@@ -143,6 +143,11 @@ namespace menu
             roomHandler.startPratice();
         }
 
+        public void loadOneVsAI()
+        {
+            roomHandler.startOneVsAI();
+        }
+
         public void cancelQueue()
         {
             updateButtonsStatus();

@@ -60,7 +60,7 @@ public class Spell : MonoBehaviour
     protected int speed = 50;
     protected int damage = 150;
 
-    protected NetworkPlayer getPlayerFromCollision(Collision collision)
+    protected ArenaPlayer getPlayerFromCollision(Collision collision)
     {
         if (collision.collider.tag == "Player")
         {
@@ -70,7 +70,7 @@ public class Spell : MonoBehaviour
                 GameObject gp = g.transform.parent.gameObject;
                 if (gp != null)
                 {
-                    return gp.GetComponent<NetworkPlayer>();
+                    return gp.GetComponent<ArenaPlayer>();
                 }
             }
         }

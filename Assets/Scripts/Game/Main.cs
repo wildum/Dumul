@@ -8,6 +8,7 @@ using Photon.Realtime;
 public class Main : MonoBehaviourPunCallbacks
 {
     private GameObject spawnedPlayerPrefab;
+    private GameObject aiPlayerPrefab;
 
     public static bool gameStarted = false;
     public static bool gameEnded = false;
@@ -25,17 +26,36 @@ public class Main : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        resetGameState();
+        setNbOfPlayers();
+        spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
+        SpellRecognizer.init();
+        ruleModeSpecific();
+        startTime = Time.time;
+    }
+
+    void resetGameState()
+    {
         gameStarted = false;
         gameEnded = false;
         gameAborted = false;
         missingPlayer = false;
         InformationCenter.clearPlayers();
+    }
+
+    void ruleModeSpecific()
+    {
         if (AppState.currentState == State.Pratice)
+        {
             GameSettings.timeBeforeStart = 0;
-        setNbOfPlayers();
-        spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
-        SpellRecognizer.init();
-        startTime = Time.time;
+        }
+        else if (AppState.currentState == State.OneVsAI)
+        {
+            // AI is always in the enemy team
+            StartPosition s = GameSettings.getStartPositionFromTeam(1);
+            Quaternion rotation = Quaternion.Euler(s.rotation);
+            aiPlayerPrefab = PhotonNetwork.Instantiate("AI Player", s.position, rotation);
+        }
     }
 
     public override void OnLeftRoom()
@@ -62,6 +82,8 @@ public class Main : MonoBehaviourPunCallbacks
             {
                 loadingMenu = true;
                 PhotonNetwork.Destroy(spawnedPlayerPrefab);
+                if (aiPlayerPrefab)
+                    PhotonNetwork.Destroy(aiPlayerPrefab);
                 PhotonNetwork.LeaveRoom();
             }
         }
@@ -102,7 +124,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     private void setNbOfPlayers()
     {
-        if (AppState.currentState == State.OneVsOne)
+        if (AppState.currentState == State.OneVsOne || AppState.currentState == State.OneVsAI)
         {
             GameSettings.nbPlayers = 2;
         }
@@ -114,7 +136,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     private bool checkGameEnd()
     {
-        List<NetworkPlayer> players = InformationCenter.getPlayers();
+        List<ArenaPlayer> players = InformationCenter.getPlayers();
         if (gameStarted && !gameEnded)
         {
             bool teamZeroWon = false;

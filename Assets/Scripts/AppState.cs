@@ -9,6 +9,7 @@ public enum State
     Lobby,
     OneVsOne,
     Pratice,
+    OneVsAI,
     Starter
 }
 

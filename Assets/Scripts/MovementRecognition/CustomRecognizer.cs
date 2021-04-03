@@ -34,6 +34,7 @@ public class CustomRecognizer : ScriptableObject
 
     public static void init(List<CustomGestureIOData> data)
     {
+        candidates = new List<CustomGesture>();
         foreach (CustomGestureIOData d in data)
         {
             candidates.Add(new CustomGesture(d));
@@ -130,4 +131,6 @@ public class CustomRecognizer : ScriptableObject
         }
         return gestSide0 && gestSide1;
     }
+
+    static public List<CustomGesture> Candidates { get {return candidates;}}
 }

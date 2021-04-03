@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 static class InformationCenter
 {
-    private static List<NetworkPlayer> players = new List<NetworkPlayer>();
+    private static List<ArenaPlayer> players = new List<ArenaPlayer>();
 
     public static void clearPlayers()
     {
         players.Clear();
     }
-    public static  List<NetworkPlayer> getPlayers()
+    public static  List<ArenaPlayer> getPlayers()
     {
         if (GameSettings.nbPlayers != players.Count || Main.missingPlayer)
         {
@@ -20,20 +20,20 @@ static class InformationCenter
     }
     public static void updatePlayersList()
     {
-        NetworkPlayer[] playersArray = GameObject.FindObjectsOfType<NetworkPlayer>();
+        ArenaPlayer[] playersArray = GameObject.FindObjectsOfType<ArenaPlayer>();
         players.Clear();
-        foreach (NetworkPlayer p in playersArray)
+        foreach (ArenaPlayer p in playersArray)
         {
             players.Add(p);
         }
     }
-    public static NetworkPlayer getFirstPlayerOppositeTeam(int team)
+    public static ArenaPlayer getFirstPlayerOppositeTeam(int team)
     {
         if (GameSettings.nbPlayers != players.Count)
         {
             updatePlayersList();
         }
-        foreach (NetworkPlayer p in players)
+        foreach (ArenaPlayer p in players)
         {
             if (p.Team != team && p.Alive)
             {

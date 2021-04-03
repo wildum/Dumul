@@ -34,7 +34,7 @@ public class Cross : Spell
 
     void playerTakeDamage(Collision collision)
     {
-        NetworkPlayer player = getPlayerFromCollision(collision);
+        ArenaPlayer player = getPlayerFromCollision(collision);
         if (player != null && player.Team != team)
         {
             player.photonView.RPC("takeDamage", RpcTarget.All, damage);
@@ -42,7 +42,7 @@ public class Cross : Spell
         handleDestruction(collision, player);
     }
 
-    void handleDestruction(Collision collision, NetworkPlayer player)
+    void handleDestruction(Collision collision, ArenaPlayer player)
     {
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine &&

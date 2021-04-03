@@ -36,7 +36,7 @@ public class Fireball : Spell
 
     void playerTakeDamage(Collision collision)
     {
-        NetworkPlayer player = getPlayerFromCollision(collision);
+        ArenaPlayer player = getPlayerFromCollision(collision);
         if (player != null && player.Team != team)
         {
             player.photonView.RPC("takeDamage", RpcTarget.All, damage);
