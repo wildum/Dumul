@@ -793,7 +793,7 @@ PrefabInstance:
     - target: {fileID: 1142044464090772963, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
       propertyPath: m_Text
-      value: Pratice
+      value: Practice
       objectReference: {fileID: 0}
     - target: {fileID: 1142044464892791512, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
@@ -2196,7 +2196,7 @@ PrefabInstance:
     - target: {fileID: 1142044464090772963, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
       propertyPath: m_Text
-      value: 2v2
+      value: 2 v 2
       objectReference: {fileID: 0}
     - target: {fileID: 1142044464892791512, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
@@ -2590,7 +2590,7 @@ PrefabInstance:
     - target: {fileID: 1142044464090772963, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
       propertyPath: m_Text
-      value: 2vIA
+      value: 2 vs IA
       objectReference: {fileID: 0}
     - target: {fileID: 1142044464892791512, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
@@ -3806,7 +3806,7 @@ PrefabInstance:
     - target: {fileID: 1142044464090772963, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
       propertyPath: m_Text
-      value: 1v1
+      value: 1 vs 1
       objectReference: {fileID: 0}
     - target: {fileID: 1142044464892791512, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
