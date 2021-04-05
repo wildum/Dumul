@@ -6,12 +6,17 @@ using Photon.Pun;
 
 public class AIPlayer : ArenaPlayer
 {
-    public float rotationSpeed;
     
     // params
     private float reactionTimeInSecond = 2.0f;
     private float decisionThreshold = 0.6f;
     private float speedOfMovement = 0.01f;
+    private float maxMovementRadiusDistance = 1.0f;
+    private float maxMovementHightRadiusDistance = 0.1f;
+    private float movementProba = 0.3f;
+    private float bodyMovementSpeed = 1.0f;
+    private float speedChange = 0.3f;
+    private float rotationSpeed = 100.0f;
 
     private System.Random rnd = new System.Random();
     private Dictionary<SpellCdEnum, CustomGesture> availableGestures = new Dictionary<SpellCdEnum, CustomGesture>();
@@ -41,6 +46,8 @@ public class AIPlayer : ArenaPlayer
     bool wasPerformingSpell = false;
     private Vector3 rightOriginLocalPosition;
     private Vector3 leftOriginLocalPosition;
+    private Vector3 originPosition;
+    private Vector3 targetPosition;
     private SpellCreator spellCreator = new SpellCreator();
 
     // Start is called before the first frame update
@@ -59,6 +66,8 @@ public class AIPlayer : ArenaPlayer
         leftOriginLocalPosition = leftHand.localPosition;
         spellCreator.Team = 1;
         setInfoCanvas();
+        originPosition = transform.position;
+        targetPosition = originPosition;
     }
 
     // Update is called once per frame
@@ -91,6 +100,7 @@ public class AIPlayer : ArenaPlayer
                 }
                 else
                 {
+                    moveAround();
                     updateRotationToFixEnemy(enemy, head);
                     updateRotationToFixEnemy(enemy, leftHand);
                     updateRotationToFixEnemy(enemy, rightHand);
@@ -98,6 +108,28 @@ public class AIPlayer : ArenaPlayer
                 }
             }
 
+        }
+    }
+
+    float computeRndInterval(float min, float max)
+    {
+        return (float) rnd.NextDouble() * (max - min) + min;
+    }
+
+    void moveAround()
+    {
+        if (Vector3.Distance(transform.position, targetPosition) < 0.2)
+        {
+            if (movementProba > rnd.NextDouble())
+            {
+                targetPosition = originPosition + new Vector3(computeRndInterval(-maxMovementRadiusDistance, maxMovementRadiusDistance),
+                    computeRndInterval(-maxMovementHightRadiusDistance, maxMovementHightRadiusDistance),
+                    computeRndInterval(-maxMovementRadiusDistance, maxMovementRadiusDistance));
+            }
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * (bodyMovementSpeed + (speedChange * computeRndInterval(-bodyMovementSpeed, bodyMovementSpeed))));
         }
     }
 
@@ -120,7 +152,9 @@ public class AIPlayer : ArenaPlayer
         if (timeCurrentPointLeftMovement >= speedOfMovement && currentPointInMovementLeft < pointsLeftHand.Count)
         {
             Quaternion rotation = isSpellTwoHanded(spellSelected) ? head.rotation : leftHand.rotation;
-            leftHand.localPosition = leftOriginLocalPosition + rotation * pointsLeftHand[currentPointInMovementLeft++].toVector3();
+            Vector3 ts = Quaternion.Euler(0, rotation.eulerAngles.y, 0) * pointsLeftHand[currentPointInMovementLeft++].toVector3();
+            ts = Quaternion.Euler(rotation.eulerAngles.x, 0, rotation.eulerAngles.z) * ts;
+            leftHand.localPosition = leftOriginLocalPosition + ts;
             specialSpellPositionCorrection(leftHand);
             pointsLeftRealWorld.Add(new CustomPoint(leftHand.position, HandSideEnum.Left));
             timeCurrentPointLeftMovement = 0.0f;
@@ -133,7 +167,9 @@ public class AIPlayer : ArenaPlayer
         if (timeCurrentPointRightMovement >= speedOfMovement && currentPointInMovementRight < pointsRightHand.Count)
         {
             Quaternion rotation = isSpellTwoHanded(spellSelected) ? head.rotation : rightHand.rotation;
-            rightHand.localPosition = rightOriginLocalPosition + rotation * pointsRightHand[currentPointInMovementRight++].toVector3();
+            Vector3 ts = Quaternion.Euler(0, rotation.eulerAngles.y, 0) * pointsRightHand[currentPointInMovementRight++].toVector3();
+            ts = Quaternion.Euler(rotation.eulerAngles.x, 0, rotation.eulerAngles.z) * ts;
+            rightHand.localPosition = rightOriginLocalPosition + ts;
             specialSpellPositionCorrection(rightHand);
             pointsRightRealWorld.Add(new CustomPoint(rightHand.position, HandSideEnum.Right));
             timeCurrentPointRightMovement = 0.0f;
@@ -142,10 +178,9 @@ public class AIPlayer : ArenaPlayer
 
     void specialSpellPositionCorrection(Transform hand)
     {
-        hand.localPosition += new Vector3(0, 0.4f, 0);
         if (spellSelected == SpellCdEnum.Cross)
         {
-            hand.localPosition += new Vector3(0, 0.5f, 0);
+            hand.localPosition += new Vector3(0, 0.8f, 0);
         }
     }
 

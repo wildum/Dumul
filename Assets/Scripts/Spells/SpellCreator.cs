@@ -35,6 +35,12 @@ public class SpellCreator
     public void createFireball(List<CustomPoint> points)
     {
         Vector3 direction = computeFireballDirection(points);
+        createFireballWithDirection(points, direction);
+    }
+
+    
+    public void createFireballWithDirection(List<CustomPoint> points, Vector3 direction)
+    {   
         Vector3 position = points[points.Count - 1].toVector3();
         GameObject fireball = PhotonNetwork.Instantiate("Fireball", position, Quaternion.identity);
         fireball.GetComponent<Rigidbody>().AddForce(direction.normalized * Fireball.FIREBALL_SPEED, ForceMode.Force);

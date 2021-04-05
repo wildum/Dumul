@@ -79,7 +79,6 @@ MonoBehaviour:
   leftHand: {fileID: 5822648598990514684}
   leftHandAnimator: {fileID: 8953539032024700161}
   rightHandAnimator: {fileID: 8917305769621847070}
-  rotationSpeed: 2
 --- !u!1 &1892748383657079329
 GameObject:
   m_ObjectHideFlags: 0
