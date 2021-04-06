@@ -7,7 +7,7 @@ public class SpellCreator
 {
     private int team = -1;
 
-    public void createGrenade(List<CustomPoint> points)
+    public GameObject createGrenade(List<CustomPoint> points)
     {
         float mx = 0;
         float my = 0;
@@ -18,7 +18,7 @@ public class SpellCreator
             my += p.y;
             mz += p.z;
         }
-        PhotonNetwork.Instantiate("Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity);
+        return PhotonNetwork.Instantiate("Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity);
     }
 
     public void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)

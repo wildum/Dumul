@@ -18,6 +18,7 @@ public class AIPlayer : ArenaPlayer
     private float handMovementSpeed = 1.0f;
     private float speedChange = 0.3f;
     private float rotationSpeed = 100.0f;
+    private float grenadeForce = 1.0f;
 
     const float distanceTrigger = 0.2f;
 
@@ -255,6 +256,12 @@ public class AIPlayer : ArenaPlayer
                 case SpellCdEnum.FireballRight:
                     pointsRightHand = new List<CustomPoint>(availableGestures[spellSelected].getCustomPoints());
                     break;
+                case SpellCdEnum.GrenadeLeft:
+                    pointsLeftHand = new List<CustomPoint>(availableGestures[spellSelected].getCustomPoints());
+                    break;
+                case SpellCdEnum.GrenadeRight:
+                    pointsRightHand = new List<CustomPoint>(availableGestures[spellSelected].getCustomPoints());
+                    break;
             }
         }
     }
@@ -311,8 +318,14 @@ public class AIPlayer : ArenaPlayer
                     if (isSpellAvailable(SpellCdEnum.Cross, Cross.CROSS_CD))
                         availableGestures.Add(SpellCdEnum.Cross, gesture);
                     break;
-                // case SpellRecognition.GrenadeRight:
-                // case SpellRecognition.GrenadeLeft:
+                case SpellRecognition.GrenadeLeft:
+                    if (isSpellAvailable(SpellCdEnum.GrenadeLeft, Grenade.GRENADE_CD))
+                        availableGestures.Add(SpellCdEnum.GrenadeLeft, gesture);
+                    break;
+                case SpellRecognition.GrenadeRight:
+                    if (isSpellAvailable(SpellCdEnum.GrenadeRight, Grenade.GRENADE_CD))
+                        availableGestures.Add(SpellCdEnum.GrenadeRight, gesture);
+                    break;
             }
         }
     }
@@ -328,10 +341,20 @@ public class AIPlayer : ArenaPlayer
         spellSelected = l[rnd.Next(l.Count)];
         spellCds[spellSelected].CurrentCd = 0.0f;
     }
+    
+    void handleGrenade(GameObject grenade, ArenaPlayer enemy)
+    {
+        grenade.GetComponent<Rigidbody>().useGravity = true;
+        // aim above the enemy
+        Vector3 direction = enemy.getPosition() - grenade.transform.position;
+        float heightBonus = Vector3.Distance(grenade.transform.position, enemy.getPosition()) / 2.0f;
+        direction.y += heightBonus;
+        grenade.GetComponent<Rigidbody>().AddForce(direction * grenadeForce, ForceMode.Impulse);    }
 
     void sendSpell(ArenaPlayer enemy)
     {
         CustomGesture gesture = availableGestures[spellSelected];
+        GameObject grenade;
         switch (spellSelected)
         {
             case SpellCdEnum.FireballLeft:
@@ -345,6 +368,14 @@ public class AIPlayer : ArenaPlayer
                 break;
             case SpellCdEnum.Thunder:
                 spellCreator.createThunder(enemy.getPosition());
+                break;
+            case SpellCdEnum.GrenadeLeft:
+                grenade = spellCreator.createGrenade(pointsLeftRealWorld);
+                handleGrenade(grenade, enemy);
+                break;
+            case SpellCdEnum.GrenadeRight:
+                grenade = spellCreator.createGrenade(pointsRightRealWorld);
+                handleGrenade(grenade, enemy);
                 break;
         }
         timeLastSpell = 0.0f;

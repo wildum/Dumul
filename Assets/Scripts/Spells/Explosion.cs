@@ -37,7 +37,7 @@ public class Explosion : MonoBehaviour
     {
         // scaled in an uniform way so we can just use x
         float colliderRad = GetComponent<SphereCollider>().radius * transform.localScale.x;
-        foreach (NetworkPlayer p in InformationCenter.getPlayers())
+        foreach (ArenaPlayer p in InformationCenter.getPlayers())
         {
             float distCollisionHead = Vector3.Distance(gameObject.transform.position, p.getPosition()) - p.getScaledHeadRadius();
             if (!playerTouched.Contains(p.photonView.Owner.ActorNumber) &&  distCollisionHead < colliderRad)
