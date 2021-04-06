@@ -16,13 +16,6 @@ namespace menu
         // Start is called before the first frame update
         void Start()
         {
-                     // test
-        Debug.Log(Quaternion.Euler(0, 250, 0) * new Vector3(0.5f, 0, 0));
-        Debug.Log(Quaternion.Euler(0, 250, 0) * new Vector3(1.0f, 0, 0));
-        Debug.Log(Quaternion.Euler(350, 250, 0) * new Vector3(0.5f, 0, 0));
-        Debug.Log(Quaternion.Euler(350, 250, 0) * new Vector3(1.0f, 0, 0));
-        Debug.Log(Quaternion.Euler(350, 0, 0) * (Quaternion.Euler(0, 250, 0) * new Vector3(0.5f, 0, 0)));
-        Debug.Log(Quaternion.Euler(350, 0, 0) * (Quaternion.Euler(0, 250, 0) * new Vector3(1f, 0, 0)));
             if (AppState.currentState == State.Starter)
             {
                 ConnectedToServer();

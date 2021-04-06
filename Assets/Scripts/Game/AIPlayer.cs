@@ -15,8 +15,11 @@ public class AIPlayer : ArenaPlayer
     private float maxMovementHightRadiusDistance = 0.1f;
     private float movementProba = 0.3f;
     private float bodyMovementSpeed = 1.0f;
+    private float handMovementSpeed = 1.0f;
     private float speedChange = 0.3f;
     private float rotationSpeed = 100.0f;
+
+    const float distanceTrigger = 0.2f;
 
     private System.Random rnd = new System.Random();
     private Dictionary<SpellCdEnum, CustomGesture> availableGestures = new Dictionary<SpellCdEnum, CustomGesture>();
@@ -81,10 +84,15 @@ public class AIPlayer : ArenaPlayer
                 updateAllSpellCds();
                 if (performingSpell())
                 {
-                    moveLeftHandToNextPosition();
-                    moveRightHandToNextPosition();
+                    if (reachedFirstPosition(pointsLeftHand, currentPointInMovementLeft, leftHand, leftOriginLocalPosition))
+                    {
+                        moveLeftHandToNextPosition();
+                    }
+                    if (reachedFirstPosition(pointsRightHand, currentPointInMovementRight, rightHand, rightOriginLocalPosition))
+                    {
+                        moveRightHandToNextPosition();
+                    }
                     wasPerformingSpell = true;
-                    timeLastSpell += Time.deltaTime;
                 }
                 else if (wasPerformingSpell)
                 {
@@ -101,6 +109,7 @@ public class AIPlayer : ArenaPlayer
                 else
                 {
                     moveAround();
+                    resetHandPosition();
                     updateRotationToFixEnemy(enemy, head);
                     updateRotationToFixEnemy(enemy, leftHand);
                     updateRotationToFixEnemy(enemy, rightHand);
@@ -111,6 +120,22 @@ public class AIPlayer : ArenaPlayer
         }
     }
 
+    bool reachedFirstPosition(List<CustomPoint> points, int index, Transform hand, Vector3 startingPosition)
+    {
+        if (points.Count != 0 && index == 0)
+        {
+            Quaternion rotation = isSpellTwoHanded(spellSelected) ? head.rotation : hand.rotation;
+            Vector3 p = computeNextHandPosition(rotation, points[0].toVector3());
+            float d = Vector3.Distance(hand.localPosition, startingPosition + p + specialSpellPositionCorrection());
+            if (d > distanceTrigger)
+            {
+                hand.localPosition = Vector3.Lerp(hand.localPosition, startingPosition + p + specialSpellPositionCorrection(), Time.deltaTime * handMovementSpeed);
+                return false;
+            }
+        }
+        return true;
+    }
+
     float computeRndInterval(float min, float max)
     {
         return (float) rnd.NextDouble() * (max - min) + min;
@@ -118,7 +143,7 @@ public class AIPlayer : ArenaPlayer
 
     void moveAround()
     {
-        if (Vector3.Distance(transform.position, targetPosition) < 0.2)
+        if (Vector3.Distance(transform.position, targetPosition) < distanceTrigger)
         {
             if (movementProba > rnd.NextDouble())
             {
@@ -135,8 +160,8 @@ public class AIPlayer : ArenaPlayer
 
     void resetHandPosition()
     {
-        rightHand.localPosition = rightOriginLocalPosition;
-        leftHand.localPosition = leftOriginLocalPosition;
+        rightHand.localPosition = Vector3.Lerp(rightHand.localPosition, rightOriginLocalPosition, Time.deltaTime * handMovementSpeed);
+        leftHand.localPosition = Vector3.Lerp(leftHand.localPosition, leftOriginLocalPosition, Time.deltaTime * handMovementSpeed);
     }
 
     void updateRotationToFixEnemy(ArenaPlayer enemy, Transform bodypart)
@@ -152,10 +177,8 @@ public class AIPlayer : ArenaPlayer
         if (timeCurrentPointLeftMovement >= speedOfMovement && currentPointInMovementLeft < pointsLeftHand.Count)
         {
             Quaternion rotation = isSpellTwoHanded(spellSelected) ? head.rotation : leftHand.rotation;
-            Vector3 ts = Quaternion.Euler(0, rotation.eulerAngles.y, 0) * pointsLeftHand[currentPointInMovementLeft++].toVector3();
-            ts = Quaternion.Euler(rotation.eulerAngles.x, 0, rotation.eulerAngles.z) * ts;
-            leftHand.localPosition = leftOriginLocalPosition + ts;
-            specialSpellPositionCorrection(leftHand);
+            leftHand.localPosition = leftOriginLocalPosition + computeNextHandPosition(rotation, pointsLeftHand[currentPointInMovementLeft++].toVector3());
+            leftHand.localPosition += specialSpellPositionCorrection();
             pointsLeftRealWorld.Add(new CustomPoint(leftHand.position, HandSideEnum.Left));
             timeCurrentPointLeftMovement = 0.0f;
         }
@@ -167,21 +190,28 @@ public class AIPlayer : ArenaPlayer
         if (timeCurrentPointRightMovement >= speedOfMovement && currentPointInMovementRight < pointsRightHand.Count)
         {
             Quaternion rotation = isSpellTwoHanded(spellSelected) ? head.rotation : rightHand.rotation;
-            Vector3 ts = Quaternion.Euler(0, rotation.eulerAngles.y, 0) * pointsRightHand[currentPointInMovementRight++].toVector3();
-            ts = Quaternion.Euler(rotation.eulerAngles.x, 0, rotation.eulerAngles.z) * ts;
-            rightHand.localPosition = rightOriginLocalPosition + ts;
-            specialSpellPositionCorrection(rightHand);
+            rightHand.localPosition = rightOriginLocalPosition + computeNextHandPosition(rotation, pointsRightHand[currentPointInMovementRight++].toVector3());
+            rightHand.localPosition += specialSpellPositionCorrection();
             pointsRightRealWorld.Add(new CustomPoint(rightHand.position, HandSideEnum.Right));
             timeCurrentPointRightMovement = 0.0f;
         }
     }
 
-    void specialSpellPositionCorrection(Transform hand)
+    Vector3 computeNextHandPosition(Quaternion rotation, Vector3 position)
     {
+        Vector3 newPos = Quaternion.Euler(0, rotation.eulerAngles.y, 0) * position;
+        return Quaternion.Euler(rotation.eulerAngles.x, 0, rotation.eulerAngles.z) * newPos;
+    }
+
+    Vector3 specialSpellPositionCorrection()
+    {
+        Vector3 v = new Vector3(0, 0, 0);
         if (spellSelected == SpellCdEnum.Cross)
         {
-            hand.localPosition += new Vector3(0, 0.8f, 0);
+            v.y = 0.8f;
+            return v;
         }
+        return v;
     }
 
 
@@ -302,7 +332,6 @@ public class AIPlayer : ArenaPlayer
     void sendSpell(ArenaPlayer enemy)
     {
         CustomGesture gesture = availableGestures[spellSelected];
-        resetHandPosition();
         switch (spellSelected)
         {
             case SpellCdEnum.FireballLeft:
