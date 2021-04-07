@@ -20,10 +20,10 @@ static class AiPlayerConfig
     public static AiPlayerParams loadEasyConfig()
     {
         AiPlayerParams config;
-        config.reactionTimeInSecond = 2.5f;
+        config.reactionTimeInSecond = 3.0f;
         config.decisionThreshold = 0.6f;
         config.speedOfMovement = 0.01f;
-        config.maxMovementRadiusDistance = 1.0f;
+        config.maxMovementRadiusDistance = 0.0f;
         config.maxMovementHightRadiusDistance = 0.1f;
         config.movementProba = 0.3f;
         config.bodyMovementSpeed = 1.0f;
@@ -40,7 +40,7 @@ static class AiPlayerConfig
         config.reactionTimeInSecond = 1.5f;
         config.decisionThreshold = 0.6f;
         config.speedOfMovement = 0.01f;
-        config.maxMovementRadiusDistance = 1.2f;
+        config.maxMovementRadiusDistance = 0.75f;
         config.maxMovementHightRadiusDistance = 0.1f;
         config.movementProba = 0.3f;
         config.bodyMovementSpeed = 1.5f;
@@ -54,7 +54,7 @@ static class AiPlayerConfig
     public static AiPlayerParams loadHardConfig()
     {
         AiPlayerParams config;
-        config.reactionTimeInSecond = 0.8f;
+        config.reactionTimeInSecond = 0.75f;
         config.decisionThreshold = 0.6f;
         config.speedOfMovement = 0.01f;
         config.maxMovementRadiusDistance = 1.5f;
