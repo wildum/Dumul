@@ -8,6 +8,7 @@ TagManager:
   - Bullet
   - Thunder
   - Arena
+  - Ground
   layers:
   - Default
   - TransparentFX

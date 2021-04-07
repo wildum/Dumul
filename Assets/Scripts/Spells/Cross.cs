@@ -46,12 +46,12 @@ public class Cross : Spell
     {
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine &&
-            (collision.collider.GetComponent<TerrainCollider>() != null ||
-            // avoid self destruct of the cross
+            (// avoid self destruct of the cross
             (collision.collider.tag == "Player" && (player != null && team != player.Team)) ||
             collision.collider.tag == "Shield" ||
             collision.collider.tag == "Thunder" ||
-            collision.collider.tag == "Arena"))
+            collision.collider.tag == "Arena" ||
+            collision.collider.tag == "Ground"))
         {
             PhotonNetwork.Destroy(gameObject);
         }

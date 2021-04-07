@@ -47,7 +47,7 @@ public class Thunder : Spell
     {
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine && 
-            (collision.collider.GetComponent<TerrainCollider>() != null ||
+            (collision.collider.tag == "Ground" ||
             collision.collider.tag == "Player" ||
             collision.collider.tag == "Shield"))
         {
