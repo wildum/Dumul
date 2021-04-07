@@ -8,17 +8,7 @@ public class AIPlayer : ArenaPlayer
 {
     
     // params
-    private float reactionTimeInSecond = 2.0f;
-    private float decisionThreshold = 0.6f;
-    private float speedOfMovement = 0.01f;
-    private float maxMovementRadiusDistance = 1.0f;
-    private float maxMovementHightRadiusDistance = 0.1f;
-    private float movementProba = 0.3f;
-    private float bodyMovementSpeed = 1.0f;
-    private float handMovementSpeed = 1.0f;
-    private float speedChange = 0.3f;
-    private float rotationSpeed = 100.0f;
-    private float grenadeForce = 1.0f;
+    private AiPlayerParams config;
 
     const float distanceTrigger = 0.2f;
 
@@ -64,8 +54,9 @@ public class AIPlayer : ArenaPlayer
                 shield = PhotonNetwork.Instantiate("Shield", transform.position, transform.rotation);
             }
         }
-        timeCurrentPointLeftMovement = speedOfMovement;
-        timeCurrentPointRightMovement = speedOfMovement;
+        loadConfig();
+        timeCurrentPointLeftMovement = config.speedOfMovement;
+        timeCurrentPointRightMovement = config.speedOfMovement;
         rightOriginLocalPosition = rightHand.localPosition;
         leftOriginLocalPosition = leftHand.localPosition;
         spellCreator.Team = 1;
@@ -121,6 +112,22 @@ public class AIPlayer : ArenaPlayer
         }
     }
 
+    void loadConfig()
+    {
+        switch(AppState.currentAiDifficulty)
+        {
+            case AiDifficulty.Easy:
+                config = AiPlayerConfig.loadEasyConfig();
+                break;
+            case AiDifficulty.Medium:
+                config = AiPlayerConfig.loadMediumConfig();
+                break;
+            case AiDifficulty.Hard:
+                config = AiPlayerConfig.loadHardConfig();
+                break;
+        }
+    }
+
     bool reachedFirstPosition(List<CustomPoint> points, int index, Transform hand, Vector3 startingPosition)
     {
         if (points.Count != 0 && index == 0)
@@ -130,7 +137,7 @@ public class AIPlayer : ArenaPlayer
             float d = Vector3.Distance(hand.localPosition, startingPosition + p + specialSpellPositionCorrection());
             if (d > distanceTrigger)
             {
-                hand.localPosition = Vector3.Lerp(hand.localPosition, startingPosition + p + specialSpellPositionCorrection(), Time.deltaTime * handMovementSpeed);
+                hand.localPosition = Vector3.Lerp(hand.localPosition, startingPosition + p + specialSpellPositionCorrection(), Time.deltaTime * config.handMovementSpeed);
                 return false;
             }
         }
@@ -146,36 +153,36 @@ public class AIPlayer : ArenaPlayer
     {
         if (Vector3.Distance(transform.position, targetPosition) < distanceTrigger)
         {
-            if (movementProba > rnd.NextDouble())
+            if (config.movementProba > rnd.NextDouble())
             {
-                targetPosition = originPosition + new Vector3(computeRndInterval(-maxMovementRadiusDistance, maxMovementRadiusDistance),
-                    computeRndInterval(-maxMovementHightRadiusDistance, maxMovementHightRadiusDistance),
-                    computeRndInterval(-maxMovementRadiusDistance, maxMovementRadiusDistance));
+                targetPosition = originPosition + new Vector3(computeRndInterval(-config.maxMovementRadiusDistance, config.maxMovementRadiusDistance),
+                    computeRndInterval(-config.maxMovementHightRadiusDistance, config.maxMovementHightRadiusDistance),
+                    computeRndInterval(-config.maxMovementRadiusDistance, config.maxMovementRadiusDistance));
             }
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * (bodyMovementSpeed + (speedChange * computeRndInterval(-bodyMovementSpeed, bodyMovementSpeed))));
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * (config.bodyMovementSpeed + (config.speedChange * computeRndInterval(-config.bodyMovementSpeed, config.bodyMovementSpeed))));
         }
     }
 
     void resetHandPosition()
     {
-        rightHand.localPosition = Vector3.Lerp(rightHand.localPosition, rightOriginLocalPosition, Time.deltaTime * handMovementSpeed);
-        leftHand.localPosition = Vector3.Lerp(leftHand.localPosition, leftOriginLocalPosition, Time.deltaTime * handMovementSpeed);
+        rightHand.localPosition = Vector3.Lerp(rightHand.localPosition, rightOriginLocalPosition, Time.deltaTime * config.handMovementSpeed);
+        leftHand.localPosition = Vector3.Lerp(leftHand.localPosition, leftOriginLocalPosition, Time.deltaTime * config.handMovementSpeed);
     }
 
     void updateRotationToFixEnemy(ArenaPlayer enemy, Transform bodypart)
     {
         Vector3 direction = (enemy.getPosition() - bodypart.position).normalized;
         Quaternion rotation = Quaternion.LookRotation(direction);
-        bodypart.rotation = Quaternion.Slerp(bodypart.rotation, rotation, Time.deltaTime * rotationSpeed);
+        bodypart.rotation = Quaternion.Slerp(bodypart.rotation, rotation, Time.deltaTime * config.rotationSpeed);
     }
 
     void moveLeftHandToNextPosition()
     {
         timeCurrentPointLeftMovement += Time.deltaTime;
-        if (timeCurrentPointLeftMovement >= speedOfMovement && currentPointInMovementLeft < pointsLeftHand.Count)
+        if (timeCurrentPointLeftMovement >= config.speedOfMovement && currentPointInMovementLeft < pointsLeftHand.Count)
         {
             Quaternion rotation = isSpellTwoHanded(spellSelected) ? head.rotation : leftHand.rotation;
             leftHand.localPosition = leftOriginLocalPosition + computeNextHandPosition(rotation, pointsLeftHand[currentPointInMovementLeft++].toVector3());
@@ -188,7 +195,7 @@ public class AIPlayer : ArenaPlayer
     void moveRightHandToNextPosition()
     {
         timeCurrentPointRightMovement += Time.deltaTime;
-        if (timeCurrentPointRightMovement >= speedOfMovement && currentPointInMovementRight < pointsRightHand.Count)
+        if (timeCurrentPointRightMovement >= config.speedOfMovement && currentPointInMovementRight < pointsRightHand.Count)
         {
             Quaternion rotation = isSpellTwoHanded(spellSelected) ? head.rotation : rightHand.rotation;
             rightHand.localPosition = rightOriginLocalPosition + computeNextHandPosition(rotation, pointsRightHand[currentPointInMovementRight++].toVector3());
@@ -294,7 +301,7 @@ public class AIPlayer : ArenaPlayer
 
     bool shouldDoSomething()
     {
-        return timeLastSpell > reactionTimeInSecond && rnd.NextDouble() > decisionThreshold;
+        return timeLastSpell > config.reactionTimeInSecond && rnd.NextDouble() > config.decisionThreshold;
     }
 
     void updateAvailableSpellList()
@@ -349,7 +356,7 @@ public class AIPlayer : ArenaPlayer
         Vector3 direction = enemy.getPosition() - grenade.transform.position;
         float heightBonus = Vector3.Distance(grenade.transform.position, enemy.getPosition()) / 2.0f;
         direction.y += heightBonus;
-        grenade.GetComponent<Rigidbody>().AddForce(direction * grenadeForce, ForceMode.Impulse);    }
+        grenade.GetComponent<Rigidbody>().AddForce(direction * config.grenadeForce, ForceMode.Impulse);    }
 
     void sendSpell(ArenaPlayer enemy)
     {

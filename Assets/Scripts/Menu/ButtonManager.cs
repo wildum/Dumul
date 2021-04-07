@@ -11,9 +11,11 @@ namespace menu
     {
         public RoomsHandler roomHandler;
         public Text queueText;
+        public AiPopup aiPopup;
 
         void Start()
         {
+            aiPopup.gameObject.SetActive(false);
             queueText.gameObject.SetActive(false);
             updateButtonSetActiveByName("CancelQueue", false);
         }
@@ -145,7 +147,7 @@ namespace menu
 
         public void loadOneVsAI()
         {
-            roomHandler.startOneVsAI();
+            aiPopup.gameObject.SetActive(true);
         }
 
         public void cancelQueue()

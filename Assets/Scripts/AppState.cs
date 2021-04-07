@@ -13,9 +13,18 @@ public enum State
     Starter
 }
 
+public enum AiDifficulty
+{
+    Easy,
+    Medium,
+    Hard
+}
+
+// TODO HANDLE THE STATE PROPERLY OVER THE NETWORK
 public static class AppState
 {
     public static State currentState = State.Starter;
+    public static AiDifficulty currentAiDifficulty = AiDifficulty.Easy;
 
     [PunRPC]
     public static void setCurrentState(State state)
