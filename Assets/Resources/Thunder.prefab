@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3879910722136577842}
   - component: {fileID: 7445273632148770291}
   - component: {fileID: 9040069093957278110}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hitbox
   m_TagString: Thunder
   m_Icon: {fileID: 0}

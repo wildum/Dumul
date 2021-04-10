@@ -45,15 +45,16 @@ public class Cross : Spell
     void handleDestruction(Collision collision, ArenaPlayer player)
     {
         PhotonView photonView = PhotonView.Get(this);
-        if (photonView.IsMine &&
-            (// avoid self destruct of the cross
-            (collision.collider.tag == "Player" && (player != null && team != player.Team)) ||
-            collision.collider.tag == "Shield" ||
-            collision.collider.tag == "Thunder" ||
-            collision.collider.tag == "Arena" ||
-            collision.collider.tag == "Ground"))
+        if (photonView.IsMine)
         {
-            PhotonNetwork.Destroy(gameObject);
+            if ((collision.collider.tag == "Player" && (player != null && team != player.Team)) ||
+            collision.collider.tag == "Shield" ||
+            collision.collider.tag == "Arena" ||
+            collision.collider.tag == "Ground")
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
+
     }
 }

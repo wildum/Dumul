@@ -44,7 +44,6 @@ public class Explosion : MonoBehaviour
             {
                 p.photonView.RPC("takeDamage", RpcTarget.All, damage);
                 playerTouched.Add(p.photonView.Owner.ActorNumber);
-                Debug.Log("player touched");
             }
         }
     }
