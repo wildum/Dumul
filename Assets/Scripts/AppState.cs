@@ -23,12 +23,6 @@ public enum AiDifficulty
 // TODO HANDLE THE STATE PROPERLY OVER THE NETWORK
 public static class AppState
 {
-    public static State currentState = State.Starter;
+    // add this in the room properties
     public static AiDifficulty currentAiDifficulty = AiDifficulty.Easy;
-
-    [PunRPC]
-    public static void setCurrentState(State state)
-    {
-        currentState = state;
-    }
 }

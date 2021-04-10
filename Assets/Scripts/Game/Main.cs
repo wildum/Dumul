@@ -24,14 +24,29 @@ public class Main : MonoBehaviourPunCallbacks
 
     bool loadingMenu = false;
 
+    private State currentState = State.OneVsOne;
+
     void Start()
     {
         resetGameState();
+        setCurrentState();
         setNbOfPlayers();
         spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player", transform.position, transform.rotation);
         SpellRecognizer.init();
         ruleModeSpecific();
         startTime = Time.time;
+    }
+
+    void setCurrentState()
+    {
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
+        {
+            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties["currentState"];
+        }
+        else
+        {
+            Debug.Log("snh current state of the room not set");
+        }
     }
 
     void resetGameState()
@@ -45,11 +60,16 @@ public class Main : MonoBehaviourPunCallbacks
 
     void ruleModeSpecific()
     {
-        if (AppState.currentState == State.Pratice)
+        if (currentState == State.Pratice)
         {
             GameSettings.timeBeforeStart = 0;
         }
-        else if (AppState.currentState == State.OneVsAI)
+        else
+        {
+            GameSettings.timeBeforeStart = 10.0f;
+        }
+        
+        if (currentState == State.OneVsAI)
         {
             // AI is always in the enemy team
             StartPosition s = GameSettings.getStartPositionFromTeam(1);
@@ -60,7 +80,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        AppState.currentState = State.NoRoom;
+        currentState = State.NoRoom;
         if (spawnedPlayerPrefab != null)
             PhotonNetwork.Destroy(spawnedPlayerPrefab);
         SceneManager.LoadScene("Menu");
@@ -104,13 +124,13 @@ public class Main : MonoBehaviourPunCallbacks
                 }
             }
 
-            if (AppState.currentState != State.Pratice && checkGameEnd())
+            if (currentState != State.Pratice && checkGameEnd())
             {
                 endTime += Time.deltaTime;
                 if (!loadingMenu && endTime > GameSettings.endGameTimer)
                 {
                     loadingMenu = true;
-                    AppState.currentState = State.Lobby;
+                    currentState = State.Lobby;
                     PhotonNetwork.LoadLevel("Menu");
                 }
             }
@@ -124,11 +144,11 @@ public class Main : MonoBehaviourPunCallbacks
 
     private void setNbOfPlayers()
     {
-        if (AppState.currentState == State.OneVsOne || AppState.currentState == State.OneVsAI)
+        if (currentState == State.OneVsOne || currentState == State.OneVsAI)
         {
             GameSettings.nbPlayers = 2;
         }
-        else if (AppState.currentState == State.Pratice)
+        else if (currentState == State.Pratice)
         {
             GameSettings.nbPlayers = 1;
         }

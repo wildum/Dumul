@@ -9,19 +9,24 @@ namespace menu
     public enum RoomState
     {
         Chill,
-        Searching
+        Searching,
+        ReadyToStart
     }
     public class RoomsHandler : MonoBehaviourPunCallbacks
     {
         private RoomState roomState = RoomState.Chill;
         private byte numberOfPlayerExpected = 4;
+        private ExitGames.Client.Photon.Hashtable myCustomProperties = new ExitGames.Client.Photon.Hashtable();
+        public const string stateProperty = "currentState";
+
         public void handle1v1Matchmaking()
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
             {
                 Debug.Log("load scene 1 v 1");
-                AppState.currentState = State.OneVsOne;
-                PhotonNetwork.LoadLevel("Arena");
+                myCustomProperties[stateProperty] = (int) State.OneVsOne;
+                PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
+                roomState = RoomState.ReadyToStart;
             }
             else
             {
@@ -32,18 +37,32 @@ namespace menu
             }
         }
 
+        public void loadArena()
+        {
+            if (RoomState == RoomState.ReadyToStart)
+            {
+                PhotonNetwork.LoadLevel("Arena");
+            }
+            else
+            {
+                Debug.Log("Property was changed but the room is not ready to start");
+            }
+        }
+
         public void startPratice()
         {
             Debug.Log("Pratice");
-            AppState.currentState = State.Pratice;
-            PhotonNetwork.LoadLevel("Arena");
+            myCustomProperties[stateProperty] = (int)State.Pratice;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
+            roomState = RoomState.ReadyToStart;
         }
 
         public void startOneVsAI()
         {
             Debug.Log("OneVsAI");
-            AppState.currentState = State.OneVsAI;
-            PhotonNetwork.LoadLevel("Arena");
+            myCustomProperties[stateProperty] = (int)State.OneVsAI;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
+            roomState = RoomState.ReadyToStart;
         }
 
         public void joinRandomRoom()
@@ -56,8 +75,9 @@ namespace menu
             if (PhotonNetwork.CurrentRoom.PlayerCount == numberOfPlayerExpected)
             {
                 Debug.Log("load scene 1 v 1");
-                AppState.currentState = State.OneVsOne;
-                PhotonNetwork.LoadLevel("Arena");
+                myCustomProperties[stateProperty] = (int) State.OneVsOne;
+                PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
+                roomState = RoomState.ReadyToStart;
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public enum EndGameStatus
 {
@@ -32,7 +33,17 @@ public class InfoCanvas : MonoBehaviour
         victory.gameObject.SetActive(false);
         defeat.gameObject.SetActive(false);
         draw.gameObject.SetActive(false);
-        if (AppState.currentState == State.Pratice)
+
+        State currentState = State.Pratice;
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
+        {
+            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties["currentState"];
+        }
+        else
+        {
+            Debug.Log("snh current state of the room not set");
+        }
+        if (currentState == State.Pratice)
         {
             timer.gameObject.SetActive(false);
             myHealth.gameObject.SetActive(false);

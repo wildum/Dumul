@@ -16,18 +16,31 @@ namespace menu
         // Start is called before the first frame update
         void Start()
         {
-            if (AppState.currentState == State.Starter)
+            State currentState = State.Starter;
+            if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(RoomsHandler.stateProperty))
+            {
+                currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[RoomsHandler.stateProperty];
+            }
+
+            if (currentState == State.Starter)
             {
                 ConnectedToServer();
                 Core.Initialize();
                 Entitlements.IsUserEntitledToApplication().OnComplete(callbackMethod);
                 updateFriendsList();
             }
-            else if (AppState.currentState == State.Lobby)
+            else if (currentState == State.Lobby)
             {
                 buttonManager.updateButtonsStatus();
+                // TODO : fix this ?
                 Invoke("spawnWithDelay", 2.0f);
             }
+        }
+
+        public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+        {
+            base.OnRoomPropertiesUpdate(propertiesThatChanged);
+            roomHandler.loadArena();
         }
 
         void spawnWithDelay()
@@ -67,12 +80,6 @@ namespace menu
             Debug.Log("Joined a room");
             base.OnJoinedRoom();
 
-            // TODO : FIX THIS
-            if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
-            {
-                AppState.currentState = State.OneVsOne;
-            }
-
             if (roomHandler.RoomState != RoomState.Searching)
             {
                 buttonManager.updateButtonsStatus();
@@ -90,12 +97,6 @@ namespace menu
         {
             Debug.Log("A new player joined the room");
             base.OnPlayerEnteredRoom(newPlayer);
-
-            // TODO : FIX THIS
-            if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
-            {
-                AppState.currentState = State.OneVsOne;
-            }
 
             if (roomHandler.RoomState == RoomState.Chill)
             {
