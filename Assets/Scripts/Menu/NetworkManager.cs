@@ -22,6 +22,11 @@ namespace menu
                 currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[RoomsHandler.stateProperty];
             }
 
+            updateRelatedToState(currentState);
+        }
+        
+        void updateRelatedToState(State currentState)
+        {
             if (currentState == State.Starter)
             {
                 ConnectedToServer();
@@ -40,6 +45,14 @@ namespace menu
         public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
         {
             base.OnRoomPropertiesUpdate(propertiesThatChanged);
+            if (propertiesThatChanged.ContainsKey(RoomsHandler.stateProperty))
+            {
+                updateRelatedToState((State) propertiesThatChanged[RoomsHandler.stateProperty]);
+            }
+            else
+            {
+                Debug.Log("Property current state not set");
+            }
             roomHandler.loadArena();
         }
 

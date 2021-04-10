@@ -25,6 +25,7 @@ public class Main : MonoBehaviourPunCallbacks
     bool loadingMenu = false;
 
     private State currentState = State.OneVsOne;
+    private ExitGames.Client.Photon.Hashtable myCustomProperties = new ExitGames.Client.Photon.Hashtable();
 
     void Start()
     {
@@ -80,7 +81,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        currentState = State.NoRoom;
+        // currentState = State.NoRoom;
         if (spawnedPlayerPrefab != null)
             PhotonNetwork.Destroy(spawnedPlayerPrefab);
         SceneManager.LoadScene("Menu");
@@ -130,7 +131,8 @@ public class Main : MonoBehaviourPunCallbacks
                 if (!loadingMenu && endTime > GameSettings.endGameTimer)
                 {
                     loadingMenu = true;
-                    currentState = State.Lobby;
+                    myCustomProperties["currentState"] = (int) State.Lobby;
+                    PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
                     PhotonNetwork.LoadLevel("Menu");
                 }
             }
