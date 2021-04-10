@@ -11,6 +11,9 @@ public class Cross : Spell
 
     private int team = 0;
 
+    // needed because the cross has two collider so we dont want to trigger both when dealing damage
+    private bool alreadyTookDamage = false;
+
     private void Awake()
     {
         cd = CROSS_CD;
@@ -35,8 +38,9 @@ public class Cross : Spell
     void playerTakeDamage(Collision collision)
     {
         ArenaPlayer player = getPlayerFromCollision(collision);
-        if (player != null && player.Team != team)
+        if (player != null && player.Team != team && !alreadyTookDamage)
         {
+            alreadyTookDamage = true;
             player.photonView.RPC("takeDamage", RpcTarget.All, damage);
         }
         handleDestruction(collision, player);

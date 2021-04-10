@@ -24,6 +24,13 @@ public class Shield : MonoBehaviourPunCallbacks
     void OnCollisionEnter(Collision collision)
     {
         Spell spell = collision.collider.GetComponent<Spell>();
+
+        // special handling for the cross spell
+        if (spell == null)
+        {
+            spell = collision.collider.transform.GetParentComponent<Spell>();
+        }
+
         if (spell != null)
         {
             takeDamage(spell.Damage);
