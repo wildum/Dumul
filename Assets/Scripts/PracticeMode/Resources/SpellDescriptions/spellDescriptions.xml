@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Spells>
+    <Spell Name="fireball" Description="A ball of fire following the hand movement with a slight attraction toward an opponent."/>
+    <Spell Name="cross" Description="A cross of fire going in a straight line."/>
+    <Spell Name="thunder" Description="Create a lightning strike above an opponent."/>
+    <Spell Name="grenade" Description="A ball of energy that the player can grab and throw with the grip command. Explodes on collision."/>
+</Spells>

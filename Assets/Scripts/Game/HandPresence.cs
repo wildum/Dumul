@@ -25,6 +25,7 @@ public class HandPresence : MonoBehaviour
     public string actionNameTrigger;
     public string actionNameGrip;
     public string actionNamePause;
+    public string actionNameJoystick;
     public HandSideEnum side;
 
     public GameObject pausePopup;
@@ -35,12 +36,14 @@ public class HandPresence : MonoBehaviour
     private InputAction _inputActionPosition;
     private InputAction _inputActionRotation;
     private InputAction _inputActionPause;
+    private InputAction _inputActionJoystick;
 
     private Animator _handAnimator;
 
     private Control grip = new Control();
     private Control trigger = new Control();
     private Control pause = new Control();
+    private Vector2 joystickData = new Vector2(0,0);
 
     private TrailRenderer trailRenderer;
 
@@ -70,7 +73,10 @@ public class HandPresence : MonoBehaviour
         _inputActionRotation = _actionMap.FindAction("Rotation");
 
         if (side == HandSideEnum.Left)
+        {
             _inputActionPause = _actionMap.FindAction(actionNamePause);
+            _inputActionJoystick = _actionMap.FindAction(actionNameJoystick);
+        }
 
         spawnedHandModel = Instantiate(handModelPrefab, transform);
         _handAnimator = spawnedHandModel.GetComponent<Animator>();
@@ -160,30 +166,6 @@ public class HandPresence : MonoBehaviour
 
     public CustomRecognizerData getCustomRecognizerData()
     {
-        // string xp = "";
-        // string yp = "";
-        // string zp = "";
-        // if (side == HandSideEnum.Left)
-        // {
-        //     xp = "Left : ";
-        //     yp = "Left : ";
-        //     zp = "Left : ";
-        // }
-        // else
-        // {
-        //     xp = "Right : ";
-        //     yp = "Right : ";
-        //     zp = "Right : ";
-        // }
-        // foreach (var p in customRecognizerData.points)
-        // {
-        //     xp += p.x + ", ";
-        //     yp += p.y + ", ";
-        //     zp += p.z + ", ";
-        // }
-        // Debug.Log(xp);
-        // Debug.Log(yp);
-        // Debug.Log(zp);
         return customRecognizerData;
     }
 
@@ -196,6 +178,7 @@ public class HandPresence : MonoBehaviour
         if (side == HandSideEnum.Left)
         {
             _inputActionPause.Enable();
+            _inputActionJoystick.Enable();
         }
     }
 
@@ -208,6 +191,7 @@ public class HandPresence : MonoBehaviour
         if (side == HandSideEnum.Left)
         {
             _inputActionPause.Disable();
+            _inputActionJoystick.Disable();
         }
     }
 
@@ -219,6 +203,9 @@ public class HandPresence : MonoBehaviour
         if (side == HandSideEnum.Left)
         {
             pause.setValue(_inputActionPause.ReadValue<float>());
+
+           joystickData = _inputActionJoystick.ReadValue<Vector2>();
+
             if (pause.pressing())
             {
                 if (!pausePressed)
@@ -278,5 +265,6 @@ public class HandPresence : MonoBehaviour
     public List<CustomPoint> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
     public float HeadAngley {get {return headAngley;} set {headAngley = value;}}
     public bool Grabbing { get { return grabbing; } }
+    public Vector2 JoystickData { get { return joystickData; } }
 
 }

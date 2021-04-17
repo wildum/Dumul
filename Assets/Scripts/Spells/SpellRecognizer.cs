@@ -16,7 +16,9 @@ static class SpellRecognizer
         List<CustomGestureIOData> gesturesIO = new List<CustomGestureIOData>();
         TextAsset[] customGesturesXml = Resources.LoadAll<TextAsset>("CustomGestureData/");
         foreach (TextAsset gestureXml in customGesturesXml)
+        {
             gesturesIO.Add(CustomGestureIO.ReadGestureFromXML(gestureXml.text));
+        }
         CustomRecognizer.init(gesturesIO);
     }
 

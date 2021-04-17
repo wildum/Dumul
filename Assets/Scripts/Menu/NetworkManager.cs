@@ -164,7 +164,7 @@ namespace menu
         {
             if (!msg.IsError)
             {
-                Debug.LogError("Init for the ");
+                Debug.Log("Init? ");
             }
             else
             {

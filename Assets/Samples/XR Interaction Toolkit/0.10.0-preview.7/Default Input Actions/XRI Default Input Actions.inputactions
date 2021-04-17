@@ -162,6 +162,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Joystick",
+                    "type": "Value",
+                    "id": "088d4253-ff91-4d57-977f-84947a8a6353",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -349,6 +357,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e894e052-427f-4679-8c49-ba2e7e2a0069",
+                    "path": "<XRController>{LeftHand}/joystick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller;Continuous Move",
+                    "action": "Joystick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
