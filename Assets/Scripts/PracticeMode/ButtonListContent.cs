@@ -27,6 +27,7 @@ public class ButtonListContent : MonoBehaviour
     public HandPresence leftHand;
     public Scrollbar scrollbar;
     public SpellInfoPanel spellInfoPanel;
+    public SpellPracticeMovement spellPracticeMovement;
 
     private List<ButtonData> spellsList = new List<ButtonData>
     {
@@ -41,6 +42,7 @@ public class ButtonListContent : MonoBehaviour
     private const float SWITCH_TIMER = 4.0f;
     private int currentIndex = 0;
     private float momentum = 0;
+    private bool startFirstMovement = false;
 
     void Start()
     {
@@ -69,6 +71,11 @@ public class ButtonListContent : MonoBehaviour
 
     void Update()
     {
+        if (!startFirstMovement && CustomRecognizer.candidatesLoaded)
+        {
+            startFirstMovement = true;
+            spellPracticeMovement.setSpellMovement(spellElements[currentIndex].spellEnum);
+        }
         float value = leftHand.JoystickData.y;
         if (value != 0)
         {
@@ -87,6 +94,7 @@ public class ButtonListContent : MonoBehaviour
                 spellElements[currentIndex].image.GetComponent<Outline>().enabled = false;
                 spellElements[currentIndex+1].image.GetComponent<Outline>().enabled = true;
                 setPanelData(spellElements[currentIndex+1]);
+                spellPracticeMovement.setSpellMovement(spellElements[currentIndex+1].spellEnum);
                 currentIndex++;
             }
             else if (value > 0 && currentIndex > 0)
@@ -94,6 +102,7 @@ public class ButtonListContent : MonoBehaviour
                 spellElements[currentIndex].image.GetComponent<Outline>().enabled = false;
                 spellElements[currentIndex-1].image.GetComponent<Outline>().enabled = true;
                 setPanelData(spellElements[currentIndex-1]);
+                spellPracticeMovement.setSpellMovement(spellElements[currentIndex-1].spellEnum);
                 currentIndex--;
             }
             scrollbar.value = 1 - currentIndex / (spellElements.Count - 1.0f);

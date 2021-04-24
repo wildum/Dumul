@@ -30,6 +30,7 @@ public struct CustomRecognizerResult
 
 public class CustomRecognizer : ScriptableObject
 {
+    static public bool candidatesLoaded = false;
     static private List<CustomGesture> candidates = new List<CustomGesture>();
 
     public static void init(List<CustomGestureIOData> data)
@@ -39,7 +40,7 @@ public class CustomRecognizer : ScriptableObject
         {
             candidates.Add(new CustomGesture(d));
         }
-
+        candidatesLoaded = true;
         //debugPrintInFile();
     }
 
