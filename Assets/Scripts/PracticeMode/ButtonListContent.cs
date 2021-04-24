@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 struct ButtonData
 {
@@ -28,6 +29,8 @@ public class ButtonListContent : MonoBehaviour
     public Scrollbar scrollbar;
     public SpellInfoPanel spellInfoPanel;
     public SpellPracticeMovement spellPracticeMovement;
+    public GameObject ControlsPopup;
+    public GameObject PracticeModeCanvas;
 
     private List<ButtonData> spellsList = new List<ButtonData>
     {
@@ -43,70 +46,98 @@ public class ButtonListContent : MonoBehaviour
     private int currentIndex = 0;
     private float momentum = 0;
     private bool startFirstMovement = false;
+    private State currentState = State.Pratice;
 
     void Start()
     {
-        TextAsset[] spellDescriptionXml = Resources.LoadAll<TextAsset>("SpellDescriptions/");
-        Dictionary<SpellEnum, string> spellEnumToDescription = SpellDescriptionIO.ReadSpellDescriptionFromXML(spellDescriptionXml[0].text);
-        GameObject spellTemplate = transform.GetChild(0).gameObject;
-        GameObject g;
-        for (int j = 0; j < spellsList.Count; j++)
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
         {
-            ButtonData buttonData = spellsList[j];
-            g = Instantiate(spellTemplate, transform);
-            g.transform.GetChild(0).GetComponent<Text>().text = buttonData.name;
-            Image i = g.GetComponent<Image>();
-            i.GetComponent<Outline>().enabled = false;
-            buttonData.image = i;
-            buttonData.description = spellEnumToDescription[buttonData.spellEnum];
-            spellElements.Add(buttonData);
+            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties["currentState"];
         }
-        Destroy(spellTemplate);
-        if (spellElements.Count != 0)
+        else
         {
-            spellElements[currentIndex].image.GetComponent<Outline>().enabled = true;
-            setPanelData(spellElements[currentIndex]);
+            Debug.Log("snh current state of the room not set");
+        }
+
+        if (currentState == State.Pratice)
+        {
+            spellInfoPanel.gameObject.SetActive(true);
+            spellPracticeMovement.gameObject.SetActive(true);
+            ControlsPopup.SetActive(true);
+            PracticeModeCanvas.SetActive(true);
+
+            TextAsset[] spellDescriptionXml = Resources.LoadAll<TextAsset>("SpellDescriptions/");
+            Dictionary<SpellEnum, string> spellEnumToDescription = SpellDescriptionIO.ReadSpellDescriptionFromXML(spellDescriptionXml[0].text);
+            GameObject spellTemplate = transform.GetChild(0).gameObject;
+            GameObject g;
+            for (int j = 0; j < spellsList.Count; j++)
+            {
+                ButtonData buttonData = spellsList[j];
+                g = Instantiate(spellTemplate, transform);
+                g.transform.GetChild(0).GetComponent<Text>().text = buttonData.name;
+                Image i = g.GetComponent<Image>();
+                i.GetComponent<Outline>().enabled = false;
+                buttonData.image = i;
+                buttonData.description = spellEnumToDescription[buttonData.spellEnum];
+                spellElements.Add(buttonData);
+            }
+            Destroy(spellTemplate);
+            if (spellElements.Count != 0)
+            {
+                spellElements[currentIndex].image.GetComponent<Outline>().enabled = true;
+                setPanelData(spellElements[currentIndex]);
+            }
+        }
+        else
+        {
+            spellInfoPanel.gameObject.SetActive(false);
+            spellPracticeMovement.gameObject.SetActive(false);
+            ControlsPopup.SetActive(false);
+            PracticeModeCanvas.SetActive(false);
         }
     }
 
     void Update()
     {
-        if (!startFirstMovement && CustomRecognizer.candidatesLoaded)
+        if (currentState == State.Pratice)
         {
-            startFirstMovement = true;
-            spellPracticeMovement.setSpellMovement(spellElements[currentIndex].spellEnum);
-        }
-        float value = leftHand.JoystickData.y;
-        if (value != 0)
-        {
-            timerSinceSwitch += Time.deltaTime * 10;
-        }
-        else
-        {
-            timerSinceSwitch = SWITCH_TIMER;
-        }
-        
-        momentum = Mathf.Min(Mathf.Abs(value) * Time.deltaTime * 20 + momentum * 0.9f, 3.0f);
-        if (value != 0 && (timerSinceSwitch + momentum) >= SWITCH_TIMER)
-        {
-            if (value < 0 && currentIndex < spellElements.Count-1)
+            if (!startFirstMovement && CustomRecognizer.candidatesLoaded)
             {
-                spellElements[currentIndex].image.GetComponent<Outline>().enabled = false;
-                spellElements[currentIndex+1].image.GetComponent<Outline>().enabled = true;
-                setPanelData(spellElements[currentIndex+1]);
-                spellPracticeMovement.setSpellMovement(spellElements[currentIndex+1].spellEnum);
-                currentIndex++;
+                startFirstMovement = true;
+                spellPracticeMovement.setSpellMovement(spellElements[currentIndex].spellEnum);
             }
-            else if (value > 0 && currentIndex > 0)
+            float value = leftHand.JoystickData.y;
+            if (value != 0)
             {
-                spellElements[currentIndex].image.GetComponent<Outline>().enabled = false;
-                spellElements[currentIndex-1].image.GetComponent<Outline>().enabled = true;
-                setPanelData(spellElements[currentIndex-1]);
-                spellPracticeMovement.setSpellMovement(spellElements[currentIndex-1].spellEnum);
-                currentIndex--;
+                timerSinceSwitch += Time.deltaTime * 10;
             }
-            scrollbar.value = 1 - currentIndex / (spellElements.Count - 1.0f);
-            timerSinceSwitch = 0;
+            else
+            {
+                timerSinceSwitch = SWITCH_TIMER;
+            }
+            
+            momentum = Mathf.Min(Mathf.Abs(value) * Time.deltaTime * 20 + momentum * 0.9f, 3.0f);
+            if (value != 0 && (timerSinceSwitch + momentum) >= SWITCH_TIMER)
+            {
+                if (value < 0 && currentIndex < spellElements.Count-1)
+                {
+                    spellElements[currentIndex].image.GetComponent<Outline>().enabled = false;
+                    spellElements[currentIndex+1].image.GetComponent<Outline>().enabled = true;
+                    setPanelData(spellElements[currentIndex+1]);
+                    spellPracticeMovement.setSpellMovement(spellElements[currentIndex+1].spellEnum);
+                    currentIndex++;
+                }
+                else if (value > 0 && currentIndex > 0)
+                {
+                    spellElements[currentIndex].image.GetComponent<Outline>().enabled = false;
+                    spellElements[currentIndex-1].image.GetComponent<Outline>().enabled = true;
+                    setPanelData(spellElements[currentIndex-1]);
+                    spellPracticeMovement.setSpellMovement(spellElements[currentIndex-1].spellEnum);
+                    currentIndex--;
+                }
+                scrollbar.value = 1 - currentIndex / (spellElements.Count - 1.0f);
+                timerSinceSwitch = 0;
+            }
         }
     }
 

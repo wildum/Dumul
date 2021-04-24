@@ -4139,6 +4139,8 @@ MonoBehaviour:
   scrollbar: {fileID: 1457449719}
   spellInfoPanel: {fileID: 2739949531447822872}
   spellPracticeMovement: {fileID: 1969163200}
+  ControlsPopup: {fileID: 1829863942}
+  PracticeModeCanvas: {fileID: 1457449720}
 --- !u!114 &1457449719 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8805659902777069065, guid: 6f3e9da90bd07f043bb2f9cfb0e11763,
@@ -4151,6 +4153,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1457449720 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3751045664254331480, guid: 6f3e9da90bd07f043bb2f9cfb0e11763,
+    type: 3}
+  m_PrefabInstance: {fileID: 1457449716}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1501045140
 GameObject:
   m_ObjectHideFlags: 0
@@ -4910,6 +4918,12 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 6452343676067064991, guid: 07bf246fc98214c4c8b6f5a37b06ada7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 07bf246fc98214c4c8b6f5a37b06ada7, type: 3}
+--- !u!1 &1829863942 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1238164898318876166, guid: 07bf246fc98214c4c8b6f5a37b06ada7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1829863941}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1858374735
 GameObject:
   m_ObjectHideFlags: 0
