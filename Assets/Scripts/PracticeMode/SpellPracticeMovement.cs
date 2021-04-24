@@ -56,13 +56,13 @@ public class SpellPracticeMovement : MonoBehaviour
                 currentSpellTwoHanded = false;
                 break;
             case SpellEnum.Thunder:
-                handLeft.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.ThunderLeft));
-                handRight.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.ThunderRight));
+                handLeft.loadPoints(spellEnum, getPointsFromSpellCdWithSide(SpellRecognition.Thunder, HandSideEnum.Left));
+                handRight.loadPoints(spellEnum, getPointsFromSpellCdWithSide(SpellRecognition.Thunder, HandSideEnum.Right));
                 currentSpellTwoHanded = true;
                 break;
             case SpellEnum.Cross:
-                handLeft.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.CrossLeft));
-                handRight.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.CrossRight));
+                handLeft.loadPoints(spellEnum, getPointsFromSpellCdWithSide(SpellRecognition.Cross, HandSideEnum.Left));
+                handRight.loadPoints(spellEnum, getPointsFromSpellCdWithSide(SpellRecognition.Cross, HandSideEnum.Right));
                 currentSpellTwoHanded = true;
                 break;
             case SpellEnum.Grenade:
@@ -71,6 +71,27 @@ public class SpellPracticeMovement : MonoBehaviour
                 currentSpellTwoHanded = false;
                 break;
         }
+    }
+
+    private List<CustomPoint> getPointsFromSpellCdWithSide(SpellRecognition spellReco, HandSideEnum side)
+    {
+        foreach (CustomGesture gesture in CustomRecognizer.Candidates)
+        {
+            if (gesture.getSpell() == spellReco)
+            {
+                List<CustomPoint> l = new List<CustomPoint>();
+                foreach (CustomPoint p in gesture.getCustomPoints())
+                {
+                    if (side == p.side)
+                    {
+                        l.Add(p);
+                    }
+                }
+                return l;
+            }
+        }
+        Debug.LogError("no spell found, snh");
+        return new List<CustomPoint>();
     }
 
     private List<CustomPoint> getPointsFromSpellCd(SpellRecognition spellReco)

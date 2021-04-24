@@ -85,7 +85,6 @@ public class PracticeHand : MonoBehaviour
 
     private bool hasReachCurrentTarget(Vector3 currentTarget)
     {
-        Debug.Log(Vector3.Distance(transform.position, currentTarget) - distanceTrigger);
         return Vector3.Distance(transform.position, currentTarget) < distanceTrigger;
     }
 
