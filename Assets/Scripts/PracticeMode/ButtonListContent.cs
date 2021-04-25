@@ -31,6 +31,7 @@ public class ButtonListContent : MonoBehaviour
     public SpellPracticeMovement spellPracticeMovement;
     public GameObject ControlsPopup;
     public GameObject PracticeModeCanvas;
+    public AudioSource Music;
 
     private List<ButtonData> spellsList = new List<ButtonData>
     {
@@ -65,6 +66,7 @@ public class ButtonListContent : MonoBehaviour
             spellPracticeMovement.gameObject.SetActive(true);
             ControlsPopup.SetActive(true);
             PracticeModeCanvas.SetActive(true);
+            Music.Play();
 
             TextAsset[] spellDescriptionXml = Resources.LoadAll<TextAsset>("SpellDescriptions/");
             Dictionary<SpellEnum, string> spellEnumToDescription = SpellDescriptionIO.ReadSpellDescriptionFromXML(spellDescriptionXml[0].text);
@@ -94,6 +96,7 @@ public class ButtonListContent : MonoBehaviour
             spellPracticeMovement.gameObject.SetActive(false);
             ControlsPopup.SetActive(false);
             PracticeModeCanvas.SetActive(false);
+            Music.Stop();
         }
     }
 
