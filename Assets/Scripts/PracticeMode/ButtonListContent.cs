@@ -49,6 +49,13 @@ public class ButtonListContent : MonoBehaviour
     private bool startFirstMovement = false;
     private State currentState = State.Pratice;
 
+    private float epsilon = 0.01f;
+
+    private bool floatCompareZero(float value)
+    {
+        return value < epsilon && value > -epsilon;
+    }
+
     void Start()
     {
         if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
@@ -110,7 +117,7 @@ public class ButtonListContent : MonoBehaviour
                 spellPracticeMovement.setSpellMovement(spellElements[currentIndex].spellEnum);
             }
             float value = leftHand.JoystickData.y;
-            if (value != 0)
+            if (!floatCompareZero(value))
             {
                 timerSinceSwitch += Time.deltaTime * 10;
             }
@@ -120,7 +127,7 @@ public class ButtonListContent : MonoBehaviour
             }
             
             momentum = Mathf.Min(Mathf.Abs(value) * Time.deltaTime * 20 + momentum * 0.9f, 3.0f);
-            if (value != 0 && (timerSinceSwitch + momentum) >= SWITCH_TIMER)
+            if (!floatCompareZero(value) && (timerSinceSwitch + momentum) >= SWITCH_TIMER)
             {
                 if (value < 0 && currentIndex < spellElements.Count-1)
                 {
