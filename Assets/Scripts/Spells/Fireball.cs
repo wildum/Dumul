@@ -9,6 +9,12 @@ public class Fireball : Spell
     public const int FIREBALL_SPEED = 250;
     public const int FIREBALL_DAMAGE = 50;
 
+
+    private float fireBallAttractForce = 2.0f;
+    private float forceTime = 0;
+    private float FORCEFREQUENCY = 0.2f;
+    private float decrementForceFactor = 0.9f;
+
     private int team = 0;
 
     private void Awake()
@@ -16,6 +22,22 @@ public class Fireball : Spell
         cd = FIREBALL_CD;
         speed = FIREBALL_SPEED;
         damage = FIREBALL_DAMAGE;
+    }
+
+    void Update()
+    {
+        forceTime += Time.deltaTime;
+        if (forceTime > FORCEFREQUENCY)
+        {
+            ArenaPlayer player = InformationCenter.getFirstPlayerOppositeTeam(team);
+            if (player != null)
+            {
+                Vector3 direction = player.getPosition() - transform.position;
+                gameObject.GetComponent<Rigidbody>().AddForce(direction.normalized * fireBallAttractForce, ForceMode.Impulse);
+                fireBallAttractForce *= decrementForceFactor;
+            }
+            forceTime = 0;
+        }
     }
 
     public void setTeam(int iteam)
