@@ -39,8 +39,29 @@ public class SpellBook
 
     private int team;
 
+    private State currentState;
+
+    private bool init = false;
+
+    private void initState()
+    {
+        if (!init)
+        {
+            init = true;
+            if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
+            {
+                currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties["currentState"];
+            }
+            else
+            {
+                Debug.LogError("snh current state of the room not set");
+            }
+        }
+    }
+
     public void handleSpells(Transform head, HandPresence leftHand, HandPresence rightHand)
     {
+        initState();
         handleSpell(head, leftHand, rightHand);
         handleSpell(head, rightHand, leftHand);
         updateAllSpellCds();
@@ -67,7 +88,7 @@ public class SpellBook
     {
         foreach (SpellCdEnum spell in SPELLS)
         {
-            spellCds[spell].CurrentCd += Time.deltaTime;
+            spellCds[spell].CurrentCd += currentState == State.Pratice ? 999 : Time.deltaTime;
         }
     }
 

@@ -64,18 +64,20 @@ public class Main : MonoBehaviourPunCallbacks
         if (currentState == State.Pratice)
         {
             GameSettings.timeBeforeStart = 0;
+            StartPosition s = GameSettings.getStartPositionFromTeam(1);
+            Quaternion rotation = Quaternion.Euler(s.rotation);
+            aiPlayerPrefab = PhotonNetwork.Instantiate("PracticeTarget", s.position, rotation);
         }
         else
         {
             GameSettings.timeBeforeStart = 10.0f;
-        }
-        
-        if (currentState == State.OneVsAI)
-        {
-            // AI is always in the enemy team
-            StartPosition s = GameSettings.getStartPositionFromTeam(1);
-            Quaternion rotation = Quaternion.Euler(s.rotation);
-            aiPlayerPrefab = PhotonNetwork.Instantiate("AI Player", s.position, rotation);
+            if (currentState == State.OneVsAI)
+            {
+                // AI is always in the enemy team
+                StartPosition s = GameSettings.getStartPositionFromTeam(1);
+                Quaternion rotation = Quaternion.Euler(s.rotation);
+                aiPlayerPrefab = PhotonNetwork.Instantiate("AI Player", s.position, rotation);
+            }
         }
     }
 
@@ -146,13 +148,9 @@ public class Main : MonoBehaviourPunCallbacks
 
     private void setNbOfPlayers()
     {
-        if (currentState == State.OneVsOne || currentState == State.OneVsAI)
+        if (currentState == State.OneVsOne || currentState == State.OneVsAI || currentState == State.Pratice)
         {
             GameSettings.nbPlayers = 2;
-        }
-        else if (currentState == State.Pratice)
-        {
-            GameSettings.nbPlayers = 1;
         }
     }
 

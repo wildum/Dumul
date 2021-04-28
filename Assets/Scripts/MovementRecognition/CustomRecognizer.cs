@@ -41,7 +41,7 @@ public class CustomRecognizer : ScriptableObject
             candidates.Add(new CustomGesture(d));
         }
         candidatesLoaded = true;
-        //debugPrintInFile();
+        debugPrintInFile();
     }
 
     private static void debugPrintInFile()
