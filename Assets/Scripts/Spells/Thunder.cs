@@ -8,7 +8,7 @@ public class Thunder : Spell
     public const float THUNDER_CD = 10f;
     public const float THUNDER_SCALE_SPEED = 0.8f;
     public const int THUNDER_DAMAGE = 150;
-    public const float yStartingPosition = 6f;
+    public const float yStartingPosition = 5f;
 
     void Awake()
     {
@@ -22,6 +22,11 @@ public class Thunder : Spell
         Vector3 v = transform.parent.transform.localScale;
         v.y += Time.deltaTime * THUNDER_SCALE_SPEED;
         transform.parent.transform.localScale = v;
+        float y = gameObject.GetComponent<CapsuleCollider>().bounds.min.y;
+        if (y <= 0.1)
+        {
+            PhotonNetwork.Destroy(transform.parent.gameObject);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -47,8 +52,7 @@ public class Thunder : Spell
     {
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine && 
-            (collision.collider.tag == "Ground" ||
-            collision.collider.tag == "Player" ||
+            (collision.collider.tag == "Player" ||
             collision.collider.tag == "Shield"))
         {
             PhotonNetwork.Destroy(transform.parent.gameObject);

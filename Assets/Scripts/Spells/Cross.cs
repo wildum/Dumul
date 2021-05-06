@@ -53,8 +53,7 @@ public class Cross : Spell
         {
             if ((collision.collider.tag == "Player" && (player != null && team != player.Team)) ||
             collision.collider.tag == "Shield" ||
-            collision.collider.tag == "Arena" ||
-            collision.collider.tag == "Ground")
+            collision.collider.tag == "Arena")
             {
                 PhotonNetwork.Destroy(gameObject);
             }
