@@ -531,32 +531,10 @@ MonoBehaviour:
       m_Calls: []
   m_OnSelectEntered:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1284456915}
-        m_MethodName: onStartGrabbing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnSelectExited:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1284456915}
-        m_MethodName: onStopGrabbing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_SelectActionTrigger: 1
   m_HideControllerOnSelect: 0
   m_PlayAudioClipOnSelectEntered: 0
@@ -1551,10 +1529,11 @@ MonoBehaviour:
   actionAsset: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
   controllerName: XRI RightHand
-  actionNameTrigger: Activate
-  actionNameGrip: Select
+  actionNameTrigger: Select
+  actionNameGrip: Activate
   actionNamePause: Pause
   actionNameJoystick: Joystick
+  actionNameShield: Shield
   side: 1
   pausePopup: {fileID: 6175714265619810351, guid: 76070ac05072b1742957e23f0c70b442,
     type: 3}
@@ -4372,10 +4351,11 @@ MonoBehaviour:
   actionAsset: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
   controllerName: XRI LeftHand
-  actionNameTrigger: Activate
-  actionNameGrip: Select
+  actionNameTrigger: Select
+  actionNameGrip: Activate
   actionNamePause: Pause
   actionNameJoystick: Joystick
+  actionNameShield: Shield
   side: 0
   pausePopup: {fileID: 6175714265619810351, guid: 76070ac05072b1742957e23f0c70b442,
     type: 3}
@@ -6018,6 +5998,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Color.r
       value: 0.11764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 9116984065242019805, guid: 07bf246fc98214c4c8b6f5a37b06ada7,
+        type: 3}
+      propertyPath: m_Text
+      value: 'Shield : A or X'
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6452343676067064991, guid: 07bf246fc98214c4c8b6f5a37b06ada7, type: 3}

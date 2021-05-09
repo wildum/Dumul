@@ -178,7 +178,7 @@ public class SpellBook
     public void handleShield(GameObject shield, HandPresence hand)
     {
         // cannot use shield when using an attack spell already
-        if (!hand.gripPressing())
+        if (!hand.shielding())
         {
             ControlState triggerState = hand.computeTriggerState();
             if (isJustPressed(triggerState))

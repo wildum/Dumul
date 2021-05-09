@@ -26,6 +26,7 @@ public class HandPresence : MonoBehaviour
     public string actionNameGrip;
     public string actionNamePause;
     public string actionNameJoystick;
+    public string actionNameShield;
     public HandSideEnum side;
 
     public GameObject pausePopup;
@@ -37,11 +38,10 @@ public class HandPresence : MonoBehaviour
     private InputAction _inputActionRotation;
     private InputAction _inputActionPause;
     private InputAction _inputActionJoystick;
-
-    private Animator _handAnimator;
+    private InputAction _inputActionShield;
 
     private Control grip = new Control();
-    private Control trigger = new Control();
+    private Control shield = new Control();
     private Control pause = new Control();
     private Vector2 joystickData = new Vector2(0,0);
 
@@ -61,8 +61,6 @@ public class HandPresence : MonoBehaviour
 
     private float headAngley = 0.0f;
 
-    private bool grabbing = false;
-
     void Awake()
     {
         // get all of our actions
@@ -71,6 +69,7 @@ public class HandPresence : MonoBehaviour
         _inputActionTrigger = _actionMap.FindAction(actionNameTrigger);
         _inputActionPosition = _actionMap.FindAction("Position");
         _inputActionRotation = _actionMap.FindAction("Rotation");
+        _inputActionShield = _actionMap.FindAction(actionNameShield);
 
         if (side == HandSideEnum.Left)
         {
@@ -79,21 +78,9 @@ public class HandPresence : MonoBehaviour
         }
 
         spawnedHandModel = Instantiate(handModelPrefab, transform);
-        _handAnimator = spawnedHandModel.GetComponent<Animator>();
         trailRenderer = GetComponent<TrailRenderer>();
         trailRenderer.emitting = false;
         trailRenderer.time = Mathf.Infinity;
-    }
-
-
-    public void onStartGrabbing()
-    {
-        grabbing = true;
-    }
-
-    public void onStopGrabbing()
-    {
-        grabbing = false;
     }
 
     public void startTrail(TrailType trailType)
@@ -136,7 +123,7 @@ public class HandPresence : MonoBehaviour
 
     public ControlState computeTriggerState()
     {
-        return trigger.computeState();
+        return shield.computeState();
     }
 
     public ControlState computeGripState()
@@ -146,15 +133,15 @@ public class HandPresence : MonoBehaviour
 
     public float getTriggerValue()
     {
-        return trigger.getValue();
+        return shield.getValue();
     }
 
-    public float getGripValue()
+    public float getShieldValue()
     {
         return grip.getValue();
     }
 
-    public bool gripPressing()
+    public bool shielding()
     {
         return grip.pressing();
     }
@@ -175,6 +162,7 @@ public class HandPresence : MonoBehaviour
         _inputActionTrigger.Enable();
         _inputActionPosition.Enable();
         _inputActionRotation.Enable();
+        _inputActionShield.Enable();
         if (side == HandSideEnum.Left)
         {
             _inputActionPause.Enable();
@@ -188,6 +176,7 @@ public class HandPresence : MonoBehaviour
         _inputActionTrigger.Disable();
         _inputActionPosition.Disable();
         _inputActionRotation.Disable();
+        _inputActionShield.Disable();
         if (side == HandSideEnum.Left)
         {
             _inputActionPause.Disable();
@@ -197,8 +186,8 @@ public class HandPresence : MonoBehaviour
 
     void Update()
     {
-        trigger.setValue(_inputActionGrip.ReadValue<float>());
-        grip.setValue(_inputActionTrigger.ReadValue<float>());
+        shield.setValue(_inputActionShield.ReadValue<float>());
+        grip.setValue(_inputActionGrip.ReadValue<float>());
 
         if (side == HandSideEnum.Left)
         {
@@ -223,9 +212,6 @@ public class HandPresence : MonoBehaviour
             }
         }
 
-        _handAnimator.SetFloat("Grip", trigger.getValue());
-        _handAnimator.SetFloat("Trigger", grip.getValue());
-
         if (grip.pressing())
         {
             if (customRecognizerData.points == null || customRecognizerData.rotations == null)
@@ -236,19 +222,9 @@ public class HandPresence : MonoBehaviour
             customRecognizerData.points.Add(new CustomPoint(transform.position, side));
             customRecognizerData.rotations.Add(headAngley);
         }
-        else if (trigger.pressing())
+        else if (shield.pressing())
         {
-            if (!grabbing)
-            {
-                shieldPoints.Add(transform.position);
-            }
-            else
-            {
-                if (shieldPoints.Count > 0)
-                {
-                    shieldPoints.Clear();
-                }
-            }
+            shieldPoints.Add(transform.position);
         }
     }
 
@@ -264,7 +240,6 @@ public class HandPresence : MonoBehaviour
     public int Team { get { return team; } set { team = value; } }
     public List<CustomPoint> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
     public float HeadAngley {get {return headAngley;} set {headAngley = value;}}
-    public bool Grabbing { get { return grabbing; } }
     public Vector2 JoystickData { get { return joystickData; } }
 
 }

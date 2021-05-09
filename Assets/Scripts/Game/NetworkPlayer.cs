@@ -96,10 +96,8 @@ public class NetworkPlayer : ArenaPlayer
             if (Main.gameStarted && !Main.gameEnded)
             {
                 spellBook.handleSpells(head, leftHandPresence, rightHandPresence);
-                if (!leftHandPresence.Grabbing)
-                    spellBook.handleShield(shield, leftHandPresence);
-                if (!rightHandPresence.Grabbing)
-                    spellBook.handleShield(shield, rightHandPresence);
+                spellBook.handleShield(shield, leftHandPresence);
+                spellBook.handleShield(shield, rightHandPresence);
                 updateCdMapInfoCanvas();
             }
 
@@ -109,7 +107,7 @@ public class NetworkPlayer : ArenaPlayer
     void UpdateHandAnimation(Animator handAnimator, HandPresence handPresence)
     {
         handAnimator.SetFloat("Trigger", handPresence.getTriggerValue());
-        handAnimator.SetFloat("Grip", handPresence.getGripValue());
+        handAnimator.SetFloat("Grip", handPresence.getShieldValue());
     }
 
     void MapPosition(Transform target, Transform rigTransform)

@@ -60,7 +60,7 @@ namespace menu
             return trigger.getValue();
         }
 
-        public float getGripValue()
+        public float getShieldValue()
         {
             return grip.getValue();
         }

@@ -170,6 +170,14 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Shield",
+                    "type": "Button",
+                    "id": "26693a6b-c301-4589-87e0-c6bbe9bd551f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -370,6 +378,17 @@
                     "action": "Joystick",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "76ac0d1d-3db5-4068-92d9-a330aee8ab7f",
+                    "path": "<OculusTouchController>{LeftHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shield",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -478,6 +497,14 @@
                     "type": "Value",
                     "id": "6f7cf253-7062-443b-b10f-2be48a33f027",
                     "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Shield",
+                    "type": "Button",
+                    "id": "63031c38-81df-407e-9a12-ff14530ee4f9",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 }
@@ -645,6 +672,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "Haptic Device",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "88af22c6-ab05-43f8-94ec-c26ea87c61e9",
+                    "path": "<OculusTouchController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shield",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

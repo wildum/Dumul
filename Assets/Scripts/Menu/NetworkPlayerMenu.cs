@@ -71,7 +71,7 @@ namespace menu
         void UpdateHandAnimation(Animator handAnimator, MenuHandPresence handPresence)
         {
             handAnimator.SetFloat("Trigger", handPresence.getTriggerValue());
-            handAnimator.SetFloat("Grip", handPresence.getGripValue());
+            handAnimator.SetFloat("Grip", handPresence.getShieldValue());
         }
 
         void MapPosition(Transform target, Transform rigTransform)
