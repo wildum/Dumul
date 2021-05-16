@@ -65,6 +65,17 @@ public class AIPlayer : ArenaPlayer
         targetPosition = originPosition;
     }
 
+    [PunRPC]
+    public void setIdRpc(int iid)
+    {
+        id = iid;
+    }
+
+    public void setId(int id)
+    {
+        photonView.RPC("setIdRpc", RpcTarget.All, id);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -72,7 +83,7 @@ public class AIPlayer : ArenaPlayer
         {
             if (Main.gameStarted && !Main.gameEnded)
             {
-                ArenaPlayer enemy = InformationCenter.getFirstPlayerOppositeTeam(team);
+                ArenaPlayer enemy = InformationCenter.getRandomPlayerOppositeTeam(team);
                 updateAllSpellCds();
                 if (performingSpell())
                 {
@@ -95,7 +106,6 @@ public class AIPlayer : ArenaPlayer
                 {
                     updateAvailableSpellList();
                     selectSpellFromList();
-                    Debug.Log("select spell : " + spellSelected);
                     prepareGesture();
                 }
                 else

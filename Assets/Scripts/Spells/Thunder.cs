@@ -25,7 +25,11 @@ public class Thunder : Spell
         float y = gameObject.GetComponent<CapsuleCollider>().bounds.min.y;
         if (y <= 0.1)
         {
-            PhotonNetwork.Destroy(transform.parent.gameObject);
+            PhotonView photonView = PhotonView.Get(this);
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(transform.parent.gameObject);
+            }
         }
     }
 

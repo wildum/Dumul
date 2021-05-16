@@ -13,8 +13,10 @@ public enum EndGameStatus
 
 public class InfoCanvas : MonoBehaviour
 {
-    public Text myHealth;
-    public Text enemyHealth;
+    public Text orangeHealth1;
+    public Text orangeHealth2;
+    public Text blueHealth1;
+    public Text blueHealth2;
     public Text timer;
     public Text victory;
     public Text defeat;
@@ -22,7 +24,6 @@ public class InfoCanvas : MonoBehaviour
     public CdGrid cdGrid;
 
     private const string tHealth = "HP : ";
-    private const string tOpp = "ENEMY : ";
     private const string tTimerBeforeStart = "Game starts in : ";
 
     private int minuteValue = 0;
@@ -43,11 +44,23 @@ public class InfoCanvas : MonoBehaviour
         {
             Debug.Log("snh current state of the room not set");
         }
+
         if (currentState == State.Pratice)
         {
             timer.gameObject.SetActive(false);
-            myHealth.gameObject.SetActive(false);
-            enemyHealth.gameObject.SetActive(false);
+            orangeHealth1.gameObject.SetActive(false);
+            orangeHealth2.gameObject.SetActive(false);
+            blueHealth1.gameObject.SetActive(false);
+            blueHealth2.gameObject.SetActive(false);
+        }
+        else if (currentState == State.OneVsOne || currentState == State.OneVsAI)
+        {
+            RectTransform rectTransformOrange = orangeHealth1.GetComponent<RectTransform>();
+            rectTransformOrange.anchoredPosition = new Vector3(rectTransformOrange.anchoredPosition.x, rectTransformOrange.anchoredPosition.y - 30, 0);
+            RectTransform rectTransformBlue = blueHealth1.GetComponent<RectTransform>();
+            rectTransformBlue.anchoredPosition = new Vector3(rectTransformBlue.anchoredPosition.x, rectTransformBlue.anchoredPosition.y - 30, 0);
+            orangeHealth2.gameObject.SetActive(false);
+            blueHealth2.gameObject.SetActive(false);
         }
     }
 
@@ -95,10 +108,12 @@ public class InfoCanvas : MonoBehaviour
         cdGrid.updateCdTextOnGrid(spellsCd);
     }
 
-    public void updateHealth(int health, int oppHealth)
+    public void updateHealth(int orangeHealth1Value, int orangeHealth2Value, int blueHealth1Value, int blueHealth2Value)
     {
-        myHealth.text = tHealth + health;
-        enemyHealth.text = tOpp + oppHealth;
+        orangeHealth1.text = tHealth + orangeHealth1Value;
+        orangeHealth2.text = tHealth + orangeHealth2Value;
+        blueHealth1.text = tHealth + blueHealth1Value;
+        blueHealth2.text = tHealth + blueHealth2Value;
     }
 
 }

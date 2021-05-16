@@ -121,7 +121,7 @@ public class SpellBook
                 {
                     if (spell == SpellEnum.Thunder && isSpellAvailable(SpellCdEnum.Thunder, Thunder.THUNDER_CD))
                     {
-                        ArenaPlayer enemy = InformationCenter.getFirstPlayerOppositeTeam(team);
+                        ArenaPlayer enemy = InformationCenter.getRelevantPlayerOppositeTeam(head.forward, head.position, team);
                         if (enemy != null)
                         {
                             spellcreator.createThunder(enemy.getPosition());

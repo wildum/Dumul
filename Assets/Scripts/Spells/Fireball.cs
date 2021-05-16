@@ -17,6 +17,8 @@ public class Fireball : Spell
 
     private int team = 0;
 
+    private ArenaPlayer target;
+
     private void Awake()
     {
         cd = FIREBALL_CD;
@@ -29,10 +31,9 @@ public class Fireball : Spell
         forceTime += Time.deltaTime;
         if (forceTime > FORCEFREQUENCY)
         {
-            ArenaPlayer player = InformationCenter.getFirstPlayerOppositeTeam(team);
-            if (player != null)
+            if (target != null)
             {
-                Vector3 direction = player.getPosition() - transform.position;
+                Vector3 direction = target.getPosition() - transform.position;
                 gameObject.GetComponent<Rigidbody>().AddForce(direction.normalized * fireBallAttractForce, ForceMode.Impulse);
                 fireBallAttractForce *= decrementForceFactor;
             }
@@ -43,6 +44,11 @@ public class Fireball : Spell
     public void setTeam(int iteam)
     {
         team = iteam;
+    }
+
+    public void setTarget(ArenaPlayer arenaPlayer)
+    {
+        target = arenaPlayer;
     }
 
     void OnCollisionEnter(Collision collision)

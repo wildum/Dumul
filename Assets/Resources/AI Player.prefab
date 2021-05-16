@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2548164608060476357}
   - component: {fileID: 9100101460829606583}
   - component: {fileID: 2172517539774623852}
+  - component: {fileID: 7761650521539405405}
   m_Layer: 0
   m_Name: AI Player
   m_TagString: Untagged
@@ -54,6 +55,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
+  - {fileID: 7761650521539405405}
   - {fileID: 356603000403230896}
   - {fileID: 4164989247916507698}
   - {fileID: 4963035613435806755}
@@ -79,6 +81,22 @@ MonoBehaviour:
   leftHand: {fileID: 5822648598990514684}
   leftHandAnimator: {fileID: 8953539032024700161}
   rightHandAnimator: {fileID: 8917305769621847070}
+--- !u!114 &7761650521539405405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 664553592263482256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &1892748383657079329
 GameObject:
   m_ObjectHideFlags: 0

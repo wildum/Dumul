@@ -20,45 +20,52 @@ public class NetworkPlayer : ArenaPlayer
 
     private SpellBook spellBook = new SpellBook();
 
+    private bool initialised = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        rig = FindObjectOfType<XRRig>();
-        headRig = rig.transform.Find("Camera Offset/Main Camera");
-        leftHandRig = rig.transform.Find("Camera Offset/LeftHand Controller");
-        rightHandRig = rig.transform.Find("Camera Offset/RightHand Controller");
+        init();
+    }
 
-        leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
-        rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
-
-        if (photonView != null)
+    private void init()
+    {
+        if (!initialised)
         {
-            if (photonView.IsMine)
+            if (photonView != null)
             {
-                shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
-                foreach (var item in GetComponentsInChildren<Renderer>())
+                if (photonView.IsMine)
                 {
-                    item.enabled = false;
+                    rig = FindObjectOfType<XRRig>();
+                    headRig = rig.transform.Find("Camera Offset/Main Camera");
+                    leftHandRig = rig.transform.Find("Camera Offset/LeftHand Controller");
+                    rightHandRig = rig.transform.Find("Camera Offset/RightHand Controller");
+
+                    leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
+                    rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
+                    shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
+                    foreach (var item in GetComponentsInChildren<Renderer>())
+                    {
+                        item.enabled = false;
+                    }
                 }
             }
+            initialised = true;
         }
     }
 
     [PunRPC]
-    public void setTeamRPC(int teamId)
+    public void setTeamAndIdsRPC(int teamId, int playerId)
     {
+        init();
         team = teamId;
         spellBook.Team = team;
-        leftHandPresence.Team = team;
-        rightHandPresence.Team = team;
+        if (leftHandPresence != null)
+            leftHandPresence.Team = team;
+        if (rightHandPresence != null)
+            rightHandPresence.Team = team;
+        id = playerId;
         setInfoCanvas();
-        if (photonView.IsMine)
-        {
-            StartPosition s = GameSettings.getStartPositionFromTeam(team);
-            Debug.Log(" In RPC : team id : " + teamId + " , actor id : " + photonView.Owner.ActorNumber);
-            rig.transform.position = s.position;
-            rig.transform.eulerAngles = s.rotation;
-        }
     }
     
     void updateCdMapInfoCanvas()
@@ -76,9 +83,10 @@ public class NetworkPlayer : ArenaPlayer
             {
                 teamAssigned = true;
                 int id = photonView.Owner.ActorNumber;
-                int t = GameSettings.getTeamWithId(id);
-                Debug.Log("team id : " + t + " , actor id : " + id);
-                photonView.RPC("setTeamRPC", RpcTarget.All, GameSettings.getTeamWithId(id));
+                PlayerInfo playerInfo = GameSettings.getPlayerInfo(id);
+                rig.transform.position = playerInfo.position.position;
+                rig.transform.eulerAngles = playerInfo.position.rotation;
+                photonView.RPC("setTeamAndIdsRPC", RpcTarget.All, playerInfo.team, playerInfo.id);
             }
 
             MapPosition(head, headRig);

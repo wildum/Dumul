@@ -152,6 +152,9 @@ public class CustomGesture
             if (points[i].side == points[i - 1].side)
             {
                 float d = Tools.dist3dPoints(points[i - 1], points[i]);
+                
+                // avoid null distance
+                d = Mathf.Max(d, 0.000001f);
                 if (D + d >= I)
                 {
                     CustomPoint firstPoint = points[i - 1];

@@ -10,28 +10,44 @@ namespace menu
     public class AiPopup : MonoBehaviour
     {
         public RoomsHandler roomHandler;
+        private int numberOfPlayers;
 
         public void easyButton()
         {
             AppState.currentAiDifficulty = AiDifficulty.Easy;
-            roomHandler.startOneVsAI();
+            startMode();
         }
 
         public void mediumButton()
         {
             AppState.currentAiDifficulty = AiDifficulty.Medium;
-            roomHandler.startOneVsAI();
+            startMode();
         }
 
         public void hardButton()
         {
             AppState.currentAiDifficulty = AiDifficulty.Hard;
-            roomHandler.startOneVsAI();
+            startMode();
+        }
+
+        private void startMode()
+        {
+            if (numberOfPlayers == 1)
+            {
+                roomHandler.startOneVsAI();
+            }
+            else
+            {
+                roomHandler.startTwoVsAI();
+            }
+            gameObject.SetActive(false);
         }
 
         public void returnButton()
         {
             gameObject.SetActive(false);
         }
+
+        public int NumberOfPlayers { set { numberOfPlayers = value;}}
     }
 }

@@ -45,6 +45,8 @@ public class SpellCreator
         GameObject fireball = PhotonNetwork.Instantiate("Fireball", position, Quaternion.identity);
         fireball.GetComponent<Rigidbody>().AddForce(direction.normalized * Fireball.FIREBALL_SPEED, ForceMode.Force);
         fireball.GetComponent<Fireball>().setTeam(team);
+        ArenaPlayer target = InformationCenter.getRelevantPlayerOppositeTeam(direction, position, team);
+        fireball.GetComponent<Fireball>().setTarget(target);
     }
 
     // expects at least 3 elements

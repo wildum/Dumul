@@ -10,7 +10,9 @@ public enum State
     OneVsOne,
     Pratice,
     OneVsAI,
-    Starter
+    Starter,
+    TwoVsTwo,
+    TwoVsAI
 }
 
 public enum AiDifficulty

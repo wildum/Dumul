@@ -1,16 +1,21 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 static class InformationCenter
 {
     private static List<ArenaPlayer> players = new List<ArenaPlayer>();
 
+    private static System.Random rnd = new System.Random();
+
     public static void clearPlayers()
     {
         players.Clear();
     }
-    public static  List<ArenaPlayer> getPlayers()
+
+    // can contain null if a player died
+    public static List<ArenaPlayer> getPlayers()
     {
         if (GameSettings.nbPlayers != players.Count || Main.missingPlayer)
         {
@@ -18,6 +23,7 @@ static class InformationCenter
         }
         return players; 
     }
+
     public static void updatePlayersList()
     {
         ArenaPlayer[] playersArray = GameObject.FindObjectsOfType<ArenaPlayer>();
@@ -27,6 +33,7 @@ static class InformationCenter
             players.Add(p);
         }
     }
+
     public static ArenaPlayer getFirstPlayerOppositeTeam(int team)
     {
         if (GameSettings.nbPlayers != players.Count)
@@ -42,5 +49,54 @@ static class InformationCenter
         }
         Debug.Log("No enemy player alive, return null");
         return null;
+    }
+
+    public static ArenaPlayer getRandomPlayerOppositeTeam(int team)
+    {
+        if (GameSettings.nbPlayers != players.Count)
+        {
+            updatePlayersList();
+        }
+        List<ArenaPlayer> potentialTargets = new List<ArenaPlayer>();
+        foreach (ArenaPlayer p in players)
+        {
+            if (p.Team != team && p.Alive)
+            {
+                potentialTargets.Add(p);
+            }
+        }
+        if (potentialTargets.Count == 0)
+        {
+            Debug.Log("No enemy player alive, return null");
+            return null;
+        }
+        else
+        {
+            return potentialTargets.Count == 1 ? potentialTargets[0] :  potentialTargets[rnd.NextDouble() < 0.5 ? 0 : 1];
+        }
+    }
+
+    public static ArenaPlayer getRelevantPlayerOppositeTeam(Vector3 headDirection, Vector3 headPosition, int team)
+    {
+        if (GameSettings.nbPlayers != players.Count)
+        {
+            updatePlayersList();
+        }
+        float angleDistance = float.MaxValue;
+        ArenaPlayer player = null;
+        foreach (ArenaPlayer p in players)
+        {
+            if (p.Team != team && p.Alive)
+            {
+                Vector3 vHeadPlayer = p.getPosition() - headPosition;
+                float angleValue = Mathf.Abs(Vector3.Angle(headDirection, vHeadPlayer));
+                if (angleValue < angleDistance)
+                {
+                    angleDistance = angleValue;
+                    player = p;
+                }
+            }
+        }
+        return player;
     }
 }

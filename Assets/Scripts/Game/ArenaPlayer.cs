@@ -20,6 +20,8 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     protected int team = 1;
     protected bool alive = true;
 
+    protected int id = 0;
+
     public int getHealth()
     {
         return health;
@@ -42,16 +44,19 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
         }
     }
 
-    public void updateHealthInfoCanvas(int enemyHealth)
-    {
-        if (infoCanvas != null)
-            infoCanvas.updateHealth(health, enemyHealth);
-    }
-
     [PunRPC]
     public void takeDamage(int damageAmount)
     {
         health = Mathf.Max(health - damageAmount, 0);
+        if (health <= 0)
+        {
+            alive = false;
+            if (photonView.IsMine)
+            {
+                gameObject.SetActive(false);
+                PhotonNetwork.Destroy(gameObject);
+            }
+        }
         CommunicationCenter.updateHealth();
     }
 
@@ -69,4 +74,5 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
 
     public int Team { get { return team; } }
     public bool Alive { get { return alive; } }
+    public int Id { get { return id; }}
 }

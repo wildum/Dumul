@@ -140,14 +140,28 @@ namespace menu
             roomHandler.handle1v1Matchmaking();
         }
 
-        public void loadPratice()
+        public void loadTwoVsTwo()
         {
-            roomHandler.startPratice();
+            buttonConfigDuringQueue();
+            roomHandler.handle2v2Matchmaking();
         }
 
         public void loadOneVsAI()
         {
+            aiPopup.NumberOfPlayers = 1;
             aiPopup.gameObject.SetActive(true);
+        }
+
+        public void loadTwoVsIA()
+        {
+            buttonConfigDuringQueue();
+            aiPopup.NumberOfPlayers = 2;
+            aiPopup.gameObject.SetActive(true);
+        }
+
+        public void loadPratice()
+        {
+            roomHandler.startPratice();
         }
 
         public void cancelQueue()

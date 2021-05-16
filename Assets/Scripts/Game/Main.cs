@@ -8,7 +8,7 @@ using Photon.Realtime;
 public class Main : MonoBehaviourPunCallbacks
 {
     private GameObject spawnedPlayerPrefab;
-    private GameObject aiPlayerPrefab;
+    private List<GameObject> aiPlayerPrefabs = new List<GameObject>();
 
     public static bool gameStarted = false;
     public static bool gameEnded = false;
@@ -46,8 +46,9 @@ public class Main : MonoBehaviourPunCallbacks
         }
         else
         {
-            Debug.Log("snh current state of the room not set");
+            Debug.LogError("snh current state of the room not set");
         }
+        GameSettings.currentState = currentState;
     }
 
     void resetGameState()
@@ -56,29 +57,44 @@ public class Main : MonoBehaviourPunCallbacks
         gameEnded = false;
         gameAborted = false;
         missingPlayer = false;
+        GameSettings.aiPositionCount = 0;
         InformationCenter.clearPlayers();
+        CommunicationCenter.resetCommunicationCenter();
     }
 
     void ruleModeSpecific()
     {
-        if (currentState == State.Pratice)
+        // the masterClient is responsible to create the AIs
+        if (PhotonNetwork.IsMasterClient)
         {
-            GameSettings.timeBeforeStart = 0;
-            StartPosition s = GameSettings.getStartPositionFromTeam(1);
-            Quaternion rotation = Quaternion.Euler(s.rotation);
-            aiPlayerPrefab = PhotonNetwork.Instantiate("PracticeTarget", s.position, rotation);
-        }
-        else
-        {
-            GameSettings.timeBeforeStart = 10.0f;
-            if (currentState == State.OneVsAI)
+            if (currentState == State.Pratice)
             {
-                // AI is always in the enemy team
-                StartPosition s = GameSettings.getStartPositionFromTeam(1);
-                Quaternion rotation = Quaternion.Euler(s.rotation);
-                aiPlayerPrefab = PhotonNetwork.Instantiate("AI Player", s.position, rotation);
+                GameSettings.timeBeforeStart = 0;
+                spawnAiPlayer("PracticeTarget", 2);
+            }
+            else
+            {
+                GameSettings.timeBeforeStart = 10.0f;
+                if (currentState == State.OneVsAI)
+                {
+                    spawnAiPlayer("AI Player", 2);
+                }
+                else if (currentState == State.TwoVsAI)
+                {
+                    spawnAiPlayer("AI Player", 2);
+                    spawnAiPlayer("AI Player", 3);
+                }
             }
         }
+    }
+
+    private void spawnAiPlayer(string AIType, int id)
+    {
+        StartPosition s = GameSettings.getStartPositionAI();
+        Quaternion rotation = Quaternion.Euler(s.rotation);
+        GameObject g = PhotonNetwork.Instantiate(AIType, s.position, rotation);
+        aiPlayerPrefabs.Add(g);
+        g.GetComponent<AIPlayer>().setId(id);
     }
 
     public override void OnLeftRoom()
@@ -105,8 +121,8 @@ public class Main : MonoBehaviourPunCallbacks
             {
                 loadingMenu = true;
                 PhotonNetwork.Destroy(spawnedPlayerPrefab);
-                if (aiPlayerPrefab)
-                    PhotonNetwork.Destroy(aiPlayerPrefab);
+                foreach (var aiPlayer in aiPlayerPrefabs)
+                    PhotonNetwork.Destroy(aiPlayer);
                 PhotonNetwork.LeaveRoom();
             }
         }
@@ -152,6 +168,10 @@ public class Main : MonoBehaviourPunCallbacks
         {
             GameSettings.nbPlayers = 2;
         }
+        else if (currentState == State.TwoVsAI || currentState == State.TwoVsTwo)
+        {
+            GameSettings.nbPlayers = 4;
+        }
     }
 
     private bool checkGameEnd()
@@ -159,34 +179,17 @@ public class Main : MonoBehaviourPunCallbacks
         List<ArenaPlayer> players = InformationCenter.getPlayers();
         if (gameStarted && !gameEnded)
         {
-            bool teamZeroWon = false;
-            bool teamOneWon = false;
-            bool teamZeroUp = false;
-            bool teamOneUp = false;
             int playersTeamZeroHealth = 0;
             int playersTeamOneHealth = 0;
             foreach (var p in players)
             {
-                if (p.getHealth() <= 0)
-                {
-                    if (p.Team == 0)
-                    {
-                        teamOneWon = true;
-                    }
-                    else
-                    {
-                        teamZeroWon = true;
-                    }
-                }
-                else if (p.Team == 0)
+                if (p.Team == 0)
                 {
                     playersTeamZeroHealth += p.getHealth();
-                    teamZeroUp = true;
                 }
                 else if (p.Team == 1)
                 {
                     playersTeamOneHealth += p.getHealth();
-                    teamOneUp = true;
                 }
             }
             // game end because of time.
@@ -212,30 +215,26 @@ public class Main : MonoBehaviourPunCallbacks
             }
             else
             {
-                checkTeamWin(0, teamZeroWon, teamOneUp);
-                if (!gameEnded)
-                    checkTeamWin(1, teamOneWon, teamZeroUp);
+                if (playersTeamZeroHealth <= 0 && playersTeamOneHealth <= 0)
+                {
+                    infoCanvas1.updateEndGameText(EndGameStatus.Draw);
+                    infoCanvas2.updateEndGameText(EndGameStatus.Draw);
+                    gameEnded = true;
+                }
+                else if (playersTeamZeroHealth <= 0)
+                {
+                    infoCanvas1.updateEndGameText(EndGameStatus.Defeat);
+                    infoCanvas2.updateEndGameText(EndGameStatus.Victory);
+                    gameEnded = true;
+                }
+                else if (playersTeamOneHealth <= 0)
+                {
+                    infoCanvas1.updateEndGameText(EndGameStatus.Victory);
+                    infoCanvas2.updateEndGameText(EndGameStatus.Defeat);
+                    gameEnded = true;
+                }
             }
         }
         return gameEnded;
-    }
-
-    private void checkTeamWin(int teamNumber, bool teamWon, bool enemyTeamUp)
-    {
-        if (teamWon || !enemyTeamUp)
-        {
-            if (teamNumber == 0)
-            {
-                infoCanvas1.updateEndGameText(EndGameStatus.Victory);
-                infoCanvas2.updateEndGameText(EndGameStatus.Defeat);
-                gameEnded = true;
-            }
-            else
-            {
-                infoCanvas1.updateEndGameText(EndGameStatus.Defeat);
-                infoCanvas2.updateEndGameText(EndGameStatus.Victory);
-                gameEnded = true;
-            }
-        }
     }
 }

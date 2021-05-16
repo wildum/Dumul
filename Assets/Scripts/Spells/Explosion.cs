@@ -22,7 +22,11 @@ public class Explosion : MonoBehaviour
             currentDeltaScale += amountOfDifferent;
             if (currentDeltaScale > maxDeltaScale)
             {
-                PhotonNetwork.Destroy(gameObject);
+                PhotonView photonView = PhotonView.Get(this);
+                if (photonView.IsMine)
+                {
+                    PhotonNetwork.Destroy(gameObject);
+                }
                 alive = false;
             }
             else
@@ -39,11 +43,14 @@ public class Explosion : MonoBehaviour
         float colliderRad = GetComponent<SphereCollider>().radius * transform.localScale.x;
         foreach (ArenaPlayer p in InformationCenter.getPlayers())
         {
-            float distCollisionHead = Vector3.Distance(gameObject.transform.position, p.getPosition()) - p.getScaledHeadRadius();
-            if (!playerTouched.Contains(p.photonView.Owner.ActorNumber) &&  distCollisionHead < colliderRad)
+            if (p != null && p.Alive)
             {
-                p.photonView.RPC("takeDamage", RpcTarget.All, damage);
-                playerTouched.Add(p.photonView.Owner.ActorNumber);
+                float distCollisionHead = Vector3.Distance(gameObject.transform.position, p.getPosition()) - p.getScaledHeadRadius();
+                if (!playerTouched.Contains(p.photonView.Owner.ActorNumber) &&  distCollisionHead < colliderRad)
+                {
+                    p.photonView.RPC("takeDamage", RpcTarget.All, damage);
+                    playerTouched.Add(p.photonView.Owner.ActorNumber);
+                }
             }
         }
     }

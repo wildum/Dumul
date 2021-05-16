@@ -202,6 +202,7 @@ public class HandPresence : MonoBehaviour
                     pausePressed = true;
                     Quaternion rotationPausePopup = Quaternion.identity;
                     rotationPausePopup.eulerAngles = new Vector3(0, team == 0 ? 90 : -90, 0);
+                    Debug.Log("rotation of popup is " + rotationPausePopup.eulerAngles.y + " the team is " + team);
                     pausePopupInstantiated = Instantiate(pausePopup, new Vector3(0, 3, 0), rotationPausePopup);
                 }
             }

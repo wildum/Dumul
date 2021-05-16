@@ -103,6 +103,7 @@ namespace menu
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             base.OnJoinRandomFailed(returnCode, message);
+            Debug.Log("did not find any room, create one to wait, reason : " + message);
             roomHandler.createWaitingRoom();
         }
 

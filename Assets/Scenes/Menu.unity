@@ -3207,11 +3207,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 341928054}
     - target: {fileID: 1142044464892791515, guid: 667e7231b02babe4e9557e1617e18762,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: loadTwoVsIA
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1142044464892791514, guid: 667e7231b02babe4e9557e1617e18762, type: 3}
