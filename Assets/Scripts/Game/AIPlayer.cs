@@ -12,7 +12,7 @@ public class AIPlayer : ArenaPlayer
 
     const float distanceTrigger = 0.2f;
 
-    private System.Random rnd = new System.Random();
+    private static System.Random rnd = new System.Random();
     private Dictionary<SpellCdEnum, CustomGesture> availableGestures = new Dictionary<SpellCdEnum, CustomGesture>();
     private Dictionary<SpellCdEnum, SpellCd> spellCds = new Dictionary<SpellCdEnum, SpellCd>
     {

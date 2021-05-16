@@ -67,6 +67,14 @@ public class NetworkPlayer : ArenaPlayer
         id = playerId;
         setInfoCanvas();
     }
+
+    private void OnDestroy()
+    {
+        if (leftHandPresence != null)
+            Destroy(leftHandPresence.gameObject);
+        if (rightHandPresence != null)
+            Destroy(rightHandPresence.gameObject);
+    }
     
     void updateCdMapInfoCanvas()
     {

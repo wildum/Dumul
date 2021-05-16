@@ -13,6 +13,7 @@ public class Cross : Spell
 
     // needed because the cross has two collider so we dont want to trigger both when dealing damage
     private bool alreadyTookDamage = false;
+    private bool alreadyDestroyed = false;
 
     private void Awake()
     {
@@ -29,7 +30,7 @@ public class Cross : Spell
     void OnCollisionEnter(Collision collision)
     {
         PhotonView photonView = PhotonView.Get(this);
-        if (photonView.IsMine)
+        if (photonView != null && photonView.IsMine)
         {
             playerTakeDamage(collision);
         }
@@ -49,11 +50,12 @@ public class Cross : Spell
     void handleDestruction(Collision collision, ArenaPlayer player)
     {
         // no need to check photonView.IsMine because it is checked earlier
-        if ((collision.collider.tag == "Player" && (player != null && team != player.Team)) ||
+        if (!alreadyDestroyed && ((collision.collider.tag == "Player" && (player != null && team != player.Team)) ||
         collision.collider.tag == "Shield" ||
-        collision.collider.tag == "Arena")
+        collision.collider.tag == "Arena"))
         {
             PhotonNetwork.Destroy(gameObject);
+            alreadyDestroyed = true;
         }
     }
 }
