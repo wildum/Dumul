@@ -24,6 +24,8 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
 
     protected int id = 3;
 
+    private bool immortal = false; 
+
     public int getHealth()
     {
         return health;
@@ -49,24 +51,26 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     [PunRPC]
     public virtual void takeDamage(int damageAmount, int authorId)
     {
-        health = Mathf.Max(health - damageAmount, 0);
-
         ArenaPlayer p = InformationCenter.getPlayerById(authorId);
-        if (p != null && p is NetworkPlayer && p.photonView.IsMine && p.Id != authorId)
+        if (p != null && p is NetworkPlayer && p.photonView.IsMine && id != authorId)
         {
             hitmarker.Play();
         }
 
-        if (health <= 0)
+        if (!immortal)
         {
-            alive = false;
-            if (photonView.IsMine)
+            health = Mathf.Max(health - damageAmount, 0);
+            if (health <= 0)
             {
-                gameObject.SetActive(false);
-                PhotonNetwork.Destroy(gameObject);
+                alive = false;
+                if (photonView.IsMine)
+                {
+                    gameObject.SetActive(false);
+                    PhotonNetwork.Destroy(gameObject);
+                }
             }
+            CommunicationCenter.updateHealth();
         }
-        CommunicationCenter.updateHealth();
     }
 
     public Vector3 getPosition()
@@ -84,4 +88,5 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     public int Team { get { return team; } }
     public bool Alive { get { return alive; } }
     public int Id { get { return id; }}
+    public bool Immortal { set { immortal = value;}}
 }

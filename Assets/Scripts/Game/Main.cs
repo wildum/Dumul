@@ -71,6 +71,8 @@ public class Main : MonoBehaviourPunCallbacks
             {
                 GameSettings.timeBeforeStart = 0;
                 spawnAiPlayer("PracticeTarget", 2);
+                spawnedPlayerPrefab.GetComponent<NetworkPlayer>().Immortal = true;
+                aiPlayerPrefabs[0].GetComponent<ArenaPlayer>().Immortal = true;
             }
             else
             {
