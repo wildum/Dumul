@@ -337,6 +337,11 @@ public class SpellBook
         shield.transform.localScale = new Vector3(xscale, yscale, shield.transform.localScale.z);
     }
 
+    public void setIdPlayerSpellCreator(int id)
+    {
+        spellcreator.PlayerId = id;
+    }
+
     public int Team { set { team = value; spellcreator.Team = value;} }
     public Dictionary<SpellCdEnum, SpellCd> SpellCds { get { return spellCds; } }
 }

@@ -6,6 +6,7 @@ using Photon.Pun;
 public class SpellCreator
 {
     private int team = -1;
+    private int playerId;
 
     public GameObject createGrenade(List<CustomPoint> points)
     {
@@ -18,7 +19,9 @@ public class SpellCreator
             my += p.y;
             mz += p.z;
         }
-        return PhotonNetwork.Instantiate("Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity);
+        GameObject grenade =  PhotonNetwork.Instantiate("Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity);
+        grenade.GetComponent<Grenade>().PlayerId = playerId;
+        return grenade;
     }
 
     public void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)
@@ -30,6 +33,7 @@ public class SpellCreator
         GameObject cross = PhotonNetwork.Instantiate("Cross", position, quaternion);
         cross.GetComponent<Rigidbody>().AddForce(direction * Cross.CROSS_SPEED, ForceMode.VelocityChange);
         cross.GetComponent<Cross>().setTeam(team);
+        cross.GetComponent<Cross>().PlayerId = playerId;
     }
 
     public void createFireball(List<CustomPoint> points)
@@ -47,6 +51,7 @@ public class SpellCreator
         fireball.GetComponent<Fireball>().setTeam(team);
         ArenaPlayer target = InformationCenter.getRelevantPlayerOppositeTeam(direction, position, team);
         fireball.GetComponent<Fireball>().setTarget(target);
+        fireball.GetComponent<Fireball>().PlayerId = playerId;
     }
 
     // expects at least 3 elements
@@ -60,9 +65,11 @@ public class SpellCreator
         Vector3 position = new Vector3(enemyPosition.x, Thunder.yStartingPosition, enemyPosition.z);
         Quaternion rotation = Quaternion.identity;
         rotation.eulerAngles = new Vector3(0,0,180);
-        PhotonNetwork.Instantiate("Thunder", position, rotation);
+        GameObject thunder = PhotonNetwork.Instantiate("Thunder", position, rotation);
+        thunder.GetComponentInChildren<Thunder>().PlayerId = playerId;
     }
 
     public int Team { set {team = value;}}
+    public int PlayerId { set { playerId = value; } get { return playerId; }}
 
 }

@@ -94,7 +94,8 @@ public class Main : MonoBehaviourPunCallbacks
         Quaternion rotation = Quaternion.Euler(s.rotation);
         GameObject g = PhotonNetwork.Instantiate(AIType, s.position, rotation);
         aiPlayerPrefabs.Add(g);
-        g.GetComponent<AIPlayer>().setId(id);
+        if (AIType == "AI Player")
+            g.GetComponent<AIPlayer>().setId(id);
     }
 
     public override void OnLeftRoom()

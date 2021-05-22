@@ -42,7 +42,7 @@ public class Cross : Spell
         if (player != null && player.Team != team && !alreadyTookDamage)
         {
             alreadyTookDamage = true;
-            player.photonView.RPC("takeDamage", RpcTarget.All, damage);
+            player.photonView.RPC("takeDamage", RpcTarget.All, damage, playerId);
         }
         handleDestruction(collision, player);
     }

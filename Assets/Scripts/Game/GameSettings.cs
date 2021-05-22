@@ -81,7 +81,6 @@ static class GameSettings
             Debug.LogError("snh current state of the room not set");
         }
 
-
         for (int i = 0; i < actorNumbers.Count; i++)
         {
             if (actorNumbers[i] == id)

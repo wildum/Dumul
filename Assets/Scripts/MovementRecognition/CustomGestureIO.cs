@@ -38,7 +38,6 @@ public class CustomGestureIO : ScriptableObject
         {
             xmlReader = new XmlTextReader(new StringReader(xml));
             gesture = ReadGesture(xmlReader);
-
         }
         finally
         {

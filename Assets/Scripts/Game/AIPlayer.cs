@@ -69,6 +69,7 @@ public class AIPlayer : ArenaPlayer
     public void setIdRpc(int iid)
     {
         id = iid;
+        spellCreator.PlayerId = id;
     }
 
     public void setId(int id)

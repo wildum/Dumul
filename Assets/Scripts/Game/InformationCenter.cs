@@ -24,6 +24,25 @@ static class InformationCenter
         return players; 
     }
 
+    public static ArenaPlayer getPlayerById(int id)
+    {
+        if (GameSettings.nbPlayers != players.Count || Main.missingPlayer)
+        {
+            updatePlayersList();
+        }
+
+        foreach (var p in players)
+        {
+            Debug.Log(p.Id + " " + id);
+            if (p.Id == id)
+            {
+                return p;
+            }
+        }
+        Debug.Log("id not found, player quit ?");
+        return null; 
+    }
+
     public static void updatePlayersList()
     {
         ArenaPlayer[] playersArray = GameObject.FindObjectsOfType<ArenaPlayer>();

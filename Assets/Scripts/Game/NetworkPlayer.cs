@@ -7,6 +7,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class NetworkPlayer : ArenaPlayer
 {
+    public AudioSource hurt;
+
     private Transform headRig;
     private Transform leftHandRig;
     private Transform rightHandRig;
@@ -60,12 +62,23 @@ public class NetworkPlayer : ArenaPlayer
         init();
         team = teamId;
         spellBook.Team = team;
+        spellBook.setIdPlayerSpellCreator(playerId);
         if (leftHandPresence != null)
             leftHandPresence.Team = team;
         if (rightHandPresence != null)
             rightHandPresence.Team = team;
         id = playerId;
         setInfoCanvas();
+    }
+
+    [PunRPC]
+    public override void takeDamage(int damageAmount, int authorId)
+    {
+        if (photonView.IsMine && gameObject != null)
+        {
+            hurt.Play();
+        }
+        base.takeDamage(damageAmount, authorId);
     }
 
     private void OnDestroy()

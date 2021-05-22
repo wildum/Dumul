@@ -12,6 +12,8 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     public Animator leftHandAnimator;
     public Animator rightHandAnimator;
 
+    public AudioSource hitmarker;
+
     protected int health = GameSettings.PLAYER_HEALTH;
 
     protected GameObject shield;
@@ -20,7 +22,7 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     protected int team = 1;
     protected bool alive = true;
 
-    protected int id = 0;
+    protected int id = 3;
 
     public int getHealth()
     {
@@ -45,9 +47,16 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void takeDamage(int damageAmount)
+    public virtual void takeDamage(int damageAmount, int authorId)
     {
         health = Mathf.Max(health - damageAmount, 0);
+
+        ArenaPlayer p = InformationCenter.getPlayerById(authorId);
+        if (p != null && p is NetworkPlayer && p.photonView.IsMine && p.Id != authorId)
+        {
+            hitmarker.Play();
+        }
+
         if (health <= 0)
         {
             alive = false;

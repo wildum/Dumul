@@ -724,6 +724,36 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4570213770342913599, guid: 51049379cff1f2647adadaa0d18056bd,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -1428,6 +1458,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: InfoCanvasP1
       objectReference: {fileID: 0}
+    - target: {fileID: 4570213769532156952, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: debug
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4570213769532156958, guid: 51049379cff1f2647adadaa0d18056bd,
         type: 3}
       propertyPath: m_Camera
@@ -1536,6 +1571,36 @@ PrefabInstance:
     - target: {fileID: 4570213769532156959, guid: 51049379cff1f2647adadaa0d18056bd,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570213770046475261, guid: 51049379cff1f2647adadaa0d18056bd,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4570213770342913599, guid: 51049379cff1f2647adadaa0d18056bd,

@@ -59,6 +59,7 @@ public class Spell : MonoBehaviour
     protected float cd = 10f;
     protected int speed = 50;
     protected int damage = 150;
+    protected int playerId = 0;
 
     protected ArenaPlayer getPlayerFromCollision(Collision collision)
     {
@@ -80,5 +81,6 @@ public class Spell : MonoBehaviour
     public float Cd { get { return cd; } }
     public int Speed { get { return speed; } }
     public int Damage { get { return damage; } }
+    public int PlayerId { get { return playerId; } set { playerId = value;} }
 }
 

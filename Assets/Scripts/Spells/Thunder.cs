@@ -48,7 +48,7 @@ public class Thunder : Spell
         ArenaPlayer player = getPlayerFromCollision(collision);
         if (player != null)
         {
-            player.photonView.RPC("takeDamage", RpcTarget.All, damage);
+            player.photonView.RPC("takeDamage", RpcTarget.All, damage, playerId);
         }
     }
 

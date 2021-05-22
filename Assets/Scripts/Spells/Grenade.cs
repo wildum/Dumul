@@ -27,6 +27,7 @@ public class Grenade : Spell
             alive = false;
             GameObject explosion = PhotonNetwork.Instantiate("Explosion", gameObject.transform.position, Quaternion.identity);
             explosion.GetComponent<Explosion>().Damage = GRENADE_DAMAGE;
+            explosion.GetComponent<Explosion>().PlayerId = playerId;
             // should be in an RPC ?
             gameObject.GetComponent<XRGrabInteractable>().colliders.Clear();
             PhotonNetwork.Destroy(gameObject);

@@ -11,6 +11,7 @@ public class Explosion : MonoBehaviour
     private float duration = 1.0f;
     private float currentDeltaScale = 0.0f;
     private bool alive = true;
+    private int playerId;
 
     private List<int> playerTouched = new List<int>();
 
@@ -48,7 +49,7 @@ public class Explosion : MonoBehaviour
                 float distCollisionHead = Vector3.Distance(gameObject.transform.position, p.getPosition()) - p.getScaledHeadRadius();
                 if (!playerTouched.Contains(p.photonView.Owner.ActorNumber) &&  distCollisionHead < colliderRad)
                 {
-                    p.photonView.RPC("takeDamage", RpcTarget.All, damage);
+                    p.photonView.RPC("takeDamage", RpcTarget.All, damage, playerId);
                     playerTouched.Add(p.photonView.Owner.ActorNumber);
                 }
             }
@@ -58,4 +59,5 @@ public class Explosion : MonoBehaviour
     public int Damage {get {return damage;} set {damage = value;}}
     public float MaxDeltaScale {get {return maxDeltaScale;} set {maxDeltaScale = value;}}
     public float Duration {get {return duration;} set {duration = value;}}
+    public int PlayerId { get { return playerId; } set { playerId = value;}}
 }

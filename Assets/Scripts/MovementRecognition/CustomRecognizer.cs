@@ -41,7 +41,7 @@ public class CustomRecognizer : ScriptableObject
             candidates.Add(new CustomGesture(d));
         }
         candidatesLoaded = true;
-        debugPrintInFile();
+        //debugPrintInFile();
     }
 
     private static void debugPrintInFile()
@@ -69,7 +69,7 @@ public class CustomRecognizer : ScriptableObject
             // first compare score between candidate and gesture
             float score = eval(gesture, candidate);
             // then compare score between gesture and candidate
-            Debug.Log(candidate.getSpell() + " " + score);
+            //Debug.Log(candidate.getSpell() + " " + score);
             //score += eval(candidate, gesture);
             if (score > result.score)
             {
