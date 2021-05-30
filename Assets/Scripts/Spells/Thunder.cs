@@ -10,6 +10,9 @@ public class Thunder : Spell
     public const int THUNDER_DAMAGE = 150;
     public const float yStartingPosition = 5f;
 
+    private const float TIME_BEFORE_SPAWN = 0.74f;
+    private float t = 0;
+
     void Awake()
     {
         cd = THUNDER_CD;
@@ -19,16 +22,20 @@ public class Thunder : Spell
 
     void Update()
     {
-        Vector3 v = transform.parent.transform.localScale;
-        v.y += Time.deltaTime * THUNDER_SCALE_SPEED;
-        transform.parent.transform.localScale = v;
-        float y = gameObject.GetComponent<CapsuleCollider>().bounds.min.y;
-        if (y <= 0.1)
+        t += Time.deltaTime;
+        if (t > TIME_BEFORE_SPAWN)
         {
-            PhotonView photonView = PhotonView.Get(this);
-            if (photonView.IsMine)
+            Vector3 v = transform.parent.transform.localScale;
+            v.y += Time.deltaTime * THUNDER_SCALE_SPEED;
+            transform.parent.transform.localScale = v;
+            float y = gameObject.GetComponent<CapsuleCollider>().bounds.min.y;
+            if (y <= 0.1)
             {
-                PhotonNetwork.Destroy(transform.parent.gameObject);
+                PhotonView photonView = PhotonView.Get(this);
+                if (photonView.IsMine)
+                {
+                    PhotonNetwork.Destroy(transform.parent.gameObject);
+                }
             }
         }
     }
