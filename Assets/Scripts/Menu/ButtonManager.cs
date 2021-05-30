@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace menu
 {
-    public class ButtonManager : MonoBehaviour
+    public class ButtonManager : MonoBehaviour, IOnEventCallback
     {
         public RoomsHandler roomHandler;
         public Text lobbyText;
@@ -19,10 +19,25 @@ namespace menu
             lobbyText.gameObject.SetActive(false);
         }
 
-        public void readyToStartText()
+        public void OnEvent(EventData photonEvent)
         {
-            lobbyText.gameObject.SetActive(true);
-            lobbyText.text = "The game is about to start";
+            byte eventCode = photonEvent.Code;
+
+            if (eventCode == NetworkManager.StartGameTextEventCode)
+            {
+                lobbyText.gameObject.SetActive(true);
+                lobbyText.text = "The game is about to start";
+            }
+        }
+
+        private void OnEnable()
+        {
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        private void OnDisable()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
         }
 
         public void updateButtonsWaitingRoom()

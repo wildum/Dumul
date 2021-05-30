@@ -90,7 +90,7 @@ public class SpellPracticeMovement : MonoBehaviour
                 return l;
             }
         }
-        Debug.LogError("no spell found, snh");
+        Debug.LogError("no spell found");
         return new List<CustomPoint>();
     }
 
@@ -103,7 +103,7 @@ public class SpellPracticeMovement : MonoBehaviour
                 return new List<CustomPoint>(gesture.getCustomPoints());
             }
         }
-        Debug.LogError("no spell found, snh");
+        Debug.LogError("no spell found");
         return new List<CustomPoint>();
     }
 

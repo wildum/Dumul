@@ -72,13 +72,13 @@ static class GameSettings
         playerInfo.id = 0;
         
         State currentState = State.Practice;
-        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(menu.RoomsHandler.stateProperty))
         {
-            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties["currentState"];
+            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[menu.RoomsHandler.stateProperty];
         }
         else
         {
-            Debug.LogError("snh current state of the room not set");
+            Debug.LogError("current state of the room not set");
         }
 
         for (int i = 0; i < actorNumbers.Count; i++)

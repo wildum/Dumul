@@ -125,17 +125,27 @@ public class AIPlayer : ArenaPlayer
 
     void loadConfig()
     {
-        switch(AppState.currentAiDifficulty)
+        AiDifficulty aiDiff = AiDifficulty.Easy;
+
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(menu.RoomsHandler.aiDifficultyProperty))
         {
-            case AiDifficulty.Easy:
-                config = AiPlayerConfig.loadEasyConfig();
-                break;
-            case AiDifficulty.Medium:
-                config = AiPlayerConfig.loadMediumConfig();
-                break;
-            case AiDifficulty.Hard:
-                config = AiPlayerConfig.loadHardConfig();
-                break;
+            aiDiff = (AiDifficulty) PhotonNetwork.CurrentRoom.CustomProperties[menu.RoomsHandler.aiDifficultyProperty];
+            switch(aiDiff)
+            {
+                case AiDifficulty.Easy:
+                    config = AiPlayerConfig.loadEasyConfig();
+                    break;
+                case AiDifficulty.Medium:
+                    config = AiPlayerConfig.loadMediumConfig();
+                    break;
+                case AiDifficulty.Hard:
+                    config = AiPlayerConfig.loadHardConfig();
+                    break;
+            }
+        }
+        else
+        {
+            Debug.LogError("AI diff not set, switchting to default easy");
         }
     }
 
@@ -293,7 +303,7 @@ public class AIPlayer : ArenaPlayer
                 return new List<CustomPoint>(gesture.getCustomPoints());
             }
         }
-        Debug.Log("no spell found, snh");
+        Debug.LogError("no spell found");
         return new List<CustomPoint>();
     }
 

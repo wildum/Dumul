@@ -56,7 +56,7 @@ namespace menu
                     return playersStartPos[i%playersStartPos.Count];
                 }
             }
-            Debug.LogError("Actor not found, snh");
+            Debug.LogError("Actor not found");
             return new MenuStartPosition();
         }
     }

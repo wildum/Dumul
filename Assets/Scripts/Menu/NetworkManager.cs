@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using Oculus.Platform;
 using Oculus.Platform.Models;
+using ExitGames.Client.Photon;
 
 namespace menu
 {
@@ -13,6 +14,7 @@ namespace menu
         public RoomsHandler roomHandler;
         public ButtonManager buttonManager;
         private GameObject spawnedPlayerPrefab;
+        public const byte StartGameTextEventCode = 1;
 
         private const float timeDelayStartGame = 5;
 
@@ -58,7 +60,8 @@ namespace menu
             {
                 if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 {
-                    buttonManager.readyToStartText();
+                    RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                    PhotonNetwork.RaiseEvent(StartGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
                     Invoke("loadArena", timeDelayStartGame);
                 }
                 else

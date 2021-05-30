@@ -14,31 +14,28 @@ namespace menu
 
         public void easyButton()
         {
-            AppState.currentAiDifficulty = AiDifficulty.Easy;
-            startMode();
+            startMode(AiDifficulty.Easy);
         }
 
         public void mediumButton()
         {
-            AppState.currentAiDifficulty = AiDifficulty.Medium;
-            startMode();
+            startMode(AiDifficulty.Medium);
         }
 
         public void hardButton()
         {
-            AppState.currentAiDifficulty = AiDifficulty.Hard;
-            startMode();
+            startMode(AiDifficulty.Hard);
         }
 
-        private void startMode()
+        private void startMode(AiDifficulty difficulty)
         {
             if (numberOfPlayers == 1)
             {
-                roomHandler.startOneVsAI();
+                roomHandler.startOneVsAI(difficulty);
             }
             else
             {
-                roomHandler.startTwoVsAI();
+                roomHandler.startTwoVsAI(difficulty);
             }
             gameObject.SetActive(false);
         }

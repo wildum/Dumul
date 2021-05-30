@@ -27,34 +27,40 @@ namespace menu
         private ExitGames.Client.Photon.Hashtable myCustomProperties = new ExitGames.Client.Photon.Hashtable();
         public const string stateProperty = "currentState";
         public const string roomTypeProperty = "roomType";
+        public const string aiDifficultyProperty = "aiDifficulty";
 
         public void handle1v1Matchmaking()
         {
             Debug.Log("1 v 1");
+            myCustomProperties.Remove(aiDifficultyProperty);
             handleMatchmaking(State.OneVsOne, 2);
         }
 
         public void handle2v2Matchmaking()
         {
             Debug.Log("2 v 2");
+            myCustomProperties.Remove(aiDifficultyProperty);
             handleMatchmaking(State.TwoVsTwo, 4);
         }
 
         public void startPractice()
         {
             Debug.Log("Practice");
+            myCustomProperties.Remove(aiDifficultyProperty);
             handleMatchmaking(State.Practice, 1);
         }
 
-        public void startOneVsAI()
+        public void startOneVsAI(AiDifficulty difficulty)
         {
             Debug.Log("1 v AI");
+            myCustomProperties[aiDifficultyProperty] = difficulty;
             handleMatchmaking(State.OneVsAI, 1);
         }
 
-        public void startTwoVsAI()
+        public void startTwoVsAI(AiDifficulty difficulty)
         {
             Debug.Log("2 v AI");
+            myCustomProperties[aiDifficultyProperty] = difficulty;
             handleMatchmaking(State.TwoVsAI, 2);
         }
 
@@ -107,7 +113,15 @@ namespace menu
             roomOptions.IsVisible = true;
             roomOptions.IsOpen = true;
             myCustomProperties[roomTypeProperty] = (int) RoomType.Lobby;
-            string[] roomPropsInLobby =  { stateProperty, roomTypeProperty };
+            string[] roomPropsInLobby;
+            if ((State) myCustomProperties[stateProperty] == State.TwoVsAI)
+            {
+                roomPropsInLobby = new string[] { stateProperty, roomTypeProperty, aiDifficultyProperty };
+            }
+            else
+            {
+                roomPropsInLobby = new string[] { stateProperty, roomTypeProperty };
+            }
             roomOptions.CustomRoomPropertiesForLobby = roomPropsInLobby;
             roomOptions.CustomRoomProperties = myCustomProperties;
             Debug.Log("Create a lobby room with properties " + myCustomProperties[stateProperty]);

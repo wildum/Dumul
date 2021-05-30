@@ -21,10 +21,3 @@ public enum AiDifficulty
     Medium,
     Hard
 }
-
-// TODO HANDLE THE STATE PROPERLY OVER THE NETWORK
-public static class AppState
-{
-    // add this in the room properties
-    public static AiDifficulty currentAiDifficulty = AiDifficulty.Easy;
-}
