@@ -35,7 +35,7 @@ static class GameSettings
     public static int PLAYER_HEALTH = 1000;
     public static int nbPlayers = 2;
     public static float timeBeforeStart = 10.0f;
-    public const float endGameTimer = 10.0f;
+    public const float endGameTimer = 5.0f;
     public const float gameTimer = 300.0f;
     public const float pauseTimePopup = 5.0f;
 
@@ -71,7 +71,7 @@ static class GameSettings
         playerInfo.position = new StartPosition();
         playerInfo.id = 0;
         
-        State currentState = State.Pratice;
+        State currentState = State.Practice;
         if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
         {
             currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties["currentState"];

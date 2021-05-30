@@ -77,6 +77,7 @@ public class NetworkPlayer : ArenaPlayer
         if (photonView.IsMine && gameObject != null)
         {
             hurt.Play();
+            Debug.Log("aie");
         }
         base.takeDamage(damageAmount, authorId);
     }

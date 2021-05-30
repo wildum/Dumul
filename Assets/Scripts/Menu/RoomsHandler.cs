@@ -10,82 +10,76 @@ namespace menu
     {
         Chill,
         Searching,
-        ReadyToStart
+        ReadyToStart,
+        Started
     }
+
+    public enum RoomType
+    {
+        Waiting,
+        Lobby
+    }
+
     public class RoomsHandler : MonoBehaviourPunCallbacks
     {
         private RoomState roomState = RoomState.Chill;
         private byte numberOfPlayerExpected = 4;
         private ExitGames.Client.Photon.Hashtable myCustomProperties = new ExitGames.Client.Photon.Hashtable();
         public const string stateProperty = "currentState";
+        public const string roomTypeProperty = "roomType";
 
         public void handle1v1Matchmaking()
         {
-            myCustomProperties[stateProperty] = (int) State.OneVsOne;
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
-            {
-                Debug.Log("load scene 1 v 1");
-                PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
-                roomState = RoomState.ReadyToStart;
-            }
-            else
-            {
-                roomState = RoomState.Searching;
-                numberOfPlayerExpected = 2;
-                // when matchmaking with more people, they should all come together
-                PhotonNetwork.LeaveRoom();
-            }
+            Debug.Log("1 v 1");
+            handleMatchmaking(State.OneVsOne, 2);
         }
 
         public void handle2v2Matchmaking()
         {
-
+            Debug.Log("2 v 2");
+            handleMatchmaking(State.TwoVsTwo, 4);
         }
 
-        public void loadArena()
+        public void startPractice()
         {
-            if (RoomState == RoomState.ReadyToStart)
-            {
-                PhotonNetwork.LoadLevel("Arena");
-            }
-            else
-            {
-                Debug.Log("Property was changed but the room is not ready to start");
-            }
-        }
-
-        public void startPratice()
-        {
-            Debug.Log("Pratice");
-            myCustomProperties[stateProperty] = (int)State.Pratice;
-            PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
-            roomState = RoomState.ReadyToStart;
+            Debug.Log("Practice");
+            handleMatchmaking(State.Practice, 1);
         }
 
         public void startOneVsAI()
         {
-            Debug.Log("OneVsAI");
-            myCustomProperties[stateProperty] = (int)State.OneVsAI;
-            PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
-            roomState = RoomState.ReadyToStart;
+            Debug.Log("1 v AI");
+            handleMatchmaking(State.OneVsAI, 1);
         }
 
         public void startTwoVsAI()
         {
-            myCustomProperties[stateProperty] = (int) State.TwoVsAI;
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+            Debug.Log("2 v AI");
+            handleMatchmaking(State.TwoVsAI, 2);
+        }
+
+        public void handleMatchmaking(State state, byte nbPlayers)
+        {
+            myCustomProperties[stateProperty] = (int) state;
+            myCustomProperties[roomTypeProperty] = (int) RoomType.Lobby;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
+            numberOfPlayerExpected = nbPlayers;
+            if (PhotonNetwork.CurrentRoom.PlayerCount == nbPlayers)
             {
-                Debug.Log("load scene 2 vs AI");
-                PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
                 roomState = RoomState.ReadyToStart;
             }
             else
             {
                 roomState = RoomState.Searching;
-                numberOfPlayerExpected = 2;
-                // when matchmaking with more people, they should all come together
                 PhotonNetwork.LeaveRoom();
             }
+        }
+
+        public void loadArena()
+        {
+            roomState = RoomState.Started;
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.LoadLevel("Arena");
         }
 
         public void joinRandomRoom()
@@ -96,7 +90,9 @@ namespace menu
 
         public void startGameIfFull()
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == numberOfPlayerExpected)
+            if (PhotonNetwork.IsMasterClient
+                && PhotonNetwork.CurrentRoom.PlayerCount == numberOfPlayerExpected
+                && getMyCurrentRoomType() == RoomType.Lobby)
             {
                 PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
                 roomState = RoomState.ReadyToStart;
@@ -104,27 +100,47 @@ namespace menu
             }
         }
 
-        public void resetRoom()
+        public void createLobbyRoom()
         {
-            roomState = RoomState.Chill;
-            PhotonNetwork.CurrentRoom.MaxPlayers = 4;
-            PhotonNetwork.CurrentRoom.IsVisible = false;
-        }
-
-        public void createWaitingRoom()
-        {
-            Debug.Log("Create a waiting room with properties " + myCustomProperties[stateProperty]);
             RoomOptions roomOptions = new RoomOptions();
             roomOptions.MaxPlayers = numberOfPlayerExpected;
             roomOptions.IsVisible = true;
             roomOptions.IsOpen = true;
-            string[] roomPropsInLobby =  { stateProperty };
+            myCustomProperties[roomTypeProperty] = (int) RoomType.Lobby;
+            string[] roomPropsInLobby =  { stateProperty, roomTypeProperty };
             roomOptions.CustomRoomPropertiesForLobby = roomPropsInLobby;
             roomOptions.CustomRoomProperties = myCustomProperties;
+            Debug.Log("Create a lobby room with properties " + myCustomProperties[stateProperty]);
             PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
             PhotonNetwork.AutomaticallySyncScene = true;
         }
 
-        public RoomState RoomState { get {return roomState;} }
+        public void createWaitingRoom()
+        {
+            Photon.Realtime.RoomOptions roomOptions = new RoomOptions();
+            roomOptions.MaxPlayers = 4;
+            roomOptions.IsVisible = false;
+            roomOptions.IsOpen = true;
+            myCustomProperties[roomTypeProperty] = (int) RoomType.Waiting;
+            myCustomProperties[stateProperty] = (int) State.WaitingRoom;
+            string[] roomPropsInLobby =  { stateProperty, roomTypeProperty };
+            roomOptions.CustomRoomPropertiesForLobby = roomPropsInLobby;
+            roomOptions.CustomRoomProperties = myCustomProperties;
+            Debug.Log("Create a waiting room with properties " + myCustomProperties[stateProperty]);
+            PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+            PhotonNetwork.AutomaticallySyncScene = true;
+        }
+
+        public State getMyCurrentRoomState()
+        {
+            return (State) myCustomProperties[stateProperty];
+        }
+
+        public RoomType getMyCurrentRoomType()
+        {
+            return (RoomType) myCustomProperties[roomTypeProperty];
+        }
+
+        public RoomState RoomState { get {return roomState;} set {roomState = value;} }
     }
 }

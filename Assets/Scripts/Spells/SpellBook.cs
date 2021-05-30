@@ -88,7 +88,7 @@ public class SpellBook
     {
         foreach (SpellCdEnum spell in SPELLS)
         {
-            spellCds[spell].CurrentCd += currentState == State.Pratice ? 999 : Time.deltaTime;
+            spellCds[spell].CurrentCd += currentState == State.Practice ? 999 : Time.deltaTime;
         }
     }
 

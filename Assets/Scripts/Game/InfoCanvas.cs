@@ -35,7 +35,7 @@ public class InfoCanvas : MonoBehaviour
         defeat.gameObject.SetActive(false);
         draw.gameObject.SetActive(false);
 
-        State currentState = State.Pratice;
+        State currentState = State.Practice;
         if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("currentState"))
         {
             currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties["currentState"];
@@ -45,7 +45,7 @@ public class InfoCanvas : MonoBehaviour
             Debug.Log("snh current state of the room not set");
         }
 
-        if (currentState == State.Pratice)
+        if (currentState == State.Practice)
         {
             timer.gameObject.SetActive(false);
             orangeHealth1.gameObject.SetActive(false);

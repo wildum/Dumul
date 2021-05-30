@@ -6,9 +6,9 @@ using Photon.Pun;
 public enum State
 {
     NoRoom,
-    Lobby,
+    WaitingRoom,
     OneVsOne,
-    Pratice,
+    Practice,
     OneVsAI,
     Starter,
     TwoVsTwo,

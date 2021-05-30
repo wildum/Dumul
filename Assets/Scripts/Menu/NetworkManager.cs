@@ -13,6 +13,10 @@ namespace menu
         public RoomsHandler roomHandler;
         public ButtonManager buttonManager;
         private GameObject spawnedPlayerPrefab;
+
+        private const float timeDelayStartGame = 5;
+
+
         // Start is called before the first frame update
         void Start()
         {
@@ -34,11 +38,11 @@ namespace menu
                 Entitlements.IsUserEntitledToApplication().OnComplete(callbackMethod);
                 updateFriendsList();
             }
-            else if (currentState == State.Lobby)
+            else if (currentState == State.WaitingRoom)
             {
-                buttonManager.updateButtonsStatus();
+                buttonManager.updateButtonsWaitingRoom();
                 // TODO : fix this ?
-                Invoke("spawnWithDelay", 2.0f);
+                //Invoke("spawnWithDelay", 2.0f);
             }
         }
 
@@ -49,10 +53,23 @@ namespace menu
             {
                 updateRelatedToState((State) propertiesThatChanged[RoomsHandler.stateProperty]);
             }
-            else
+
+            if (roomHandler.RoomState == RoomState.ReadyToStart)
             {
-                Debug.Log("Property current state not set");
+                if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+                {
+                    buttonManager.readyToStartText();
+                    Invoke("loadArena", timeDelayStartGame);
+                }
+                else
+                {
+                    loadArena();
+                }
             }
+        }
+
+        void loadArena()
+        {
             roomHandler.loadArena();
         }
 
@@ -78,13 +95,7 @@ namespace menu
             }
             else
             {
-                Debug.Log("Create room");
-                Photon.Realtime.RoomOptions roomOptions = new Photon.Realtime.RoomOptions();
-                roomOptions.MaxPlayers = 4;
-                roomOptions.IsVisible = false;
-                roomOptions.IsOpen = true;
-                PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
-                PhotonNetwork.AutomaticallySyncScene = true;
+                roomHandler.createWaitingRoom();
             }
         }
 
@@ -92,10 +103,9 @@ namespace menu
         {
             Debug.Log("Joined a room");
             base.OnJoinedRoom();
-
-            if (roomHandler.RoomState != RoomState.Searching)
+            updateButtonsWithRoomType();
+            if (spawnedPlayerPrefab == null)
             {
-                buttonManager.updateButtonsStatus();
                 spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player Menu", transform.position, transform.rotation);
             }
         }
@@ -104,32 +114,29 @@ namespace menu
         {
             base.OnJoinRandomFailed(returnCode, message);
             Debug.Log("did not find any room, create one to wait, reason : " + message);
-            roomHandler.createWaitingRoom();
+            buttonManager.buttonInLobbyConfig(roomHandler.getMyCurrentRoomState());
+            roomHandler.createLobbyRoom();
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             Debug.Log("A new player joined the room");
             base.OnPlayerEnteredRoom(newPlayer);
-
-            if (roomHandler.RoomState == RoomState.Chill)
-            {
-                buttonManager.updateButtonsStatus();
-            }
-            else
-            {
-                roomHandler.startGameIfFull();
-            }
+            roomHandler.startGameIfFull();
         }
 
-        public override void OnPlayerLeftRoom(Player newPlayer)
+        public override void OnPlayerLeftRoom(Player oldPlayer)
         {
-            base.OnPlayerLeftRoom(newPlayer);
-            buttonManager.updateButtonsStatus();
-            if (roomHandler.RoomState == RoomState.Searching)
-            {
-                roomHandler.resetRoom();
-            }
+            base.OnPlayerLeftRoom(oldPlayer);
+            updateButtonsWithRoomType();
+        }
+
+        private void updateButtonsWithRoomType()
+        {
+            if (roomHandler.getMyCurrentRoomType() == RoomType.Waiting)
+                buttonManager.updateButtonsWaitingRoom();
+            if (roomHandler.getMyCurrentRoomType() == RoomType.Lobby)
+                buttonManager.buttonInLobbyConfig(roomHandler.getMyCurrentRoomState());
         }
 
         public override void OnLeftRoom()

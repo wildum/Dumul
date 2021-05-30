@@ -47,7 +47,7 @@ public class ButtonListContent : MonoBehaviour
     private int currentIndex = 0;
     private float momentum = 0;
     private bool startFirstMovement = false;
-    private State currentState = State.Pratice;
+    private State currentState = State.Practice;
 
     private float epsilon = 0.01f;
 
@@ -67,7 +67,7 @@ public class ButtonListContent : MonoBehaviour
             Debug.Log("snh current state of the room not set");
         }
 
-        if (currentState == State.Pratice)
+        if (currentState == State.Practice)
         {
             spellInfoPanel.gameObject.SetActive(true);
             spellPracticeMovement.gameObject.SetActive(true);
@@ -109,7 +109,7 @@ public class ButtonListContent : MonoBehaviour
 
     void Update()
     {
-        if (currentState == State.Pratice)
+        if (currentState == State.Practice)
         {
             if (!startFirstMovement && CustomRecognizer.candidatesLoaded)
             {

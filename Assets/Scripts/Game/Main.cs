@@ -67,7 +67,7 @@ public class Main : MonoBehaviourPunCallbacks
         // the masterClient is responsible to create the AIs
         if (PhotonNetwork.IsMasterClient)
         {
-            if (currentState == State.Pratice)
+            if (currentState == State.Practice)
             {
                 GameSettings.timeBeforeStart = 0;
                 spawnAiPlayer("PracticeTarget", 2);
@@ -146,15 +146,13 @@ public class Main : MonoBehaviourPunCallbacks
                 }
             }
 
-            if (currentState != State.Pratice && checkGameEnd())
+            if (currentState != State.Practice && checkGameEnd())
             {
                 endTime += Time.deltaTime;
                 if (!loadingMenu && endTime > GameSettings.endGameTimer)
                 {
                     loadingMenu = true;
-                    myCustomProperties["currentState"] = (int) State.Lobby;
-                    PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
-                    PhotonNetwork.LoadLevel("Menu");
+                    PhotonNetwork.LeaveRoom();
                 }
             }
             else if (gameStarted)
@@ -167,7 +165,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     private void setNbOfPlayers()
     {
-        if (currentState == State.OneVsOne || currentState == State.OneVsAI || currentState == State.Pratice)
+        if (currentState == State.OneVsOne || currentState == State.OneVsAI || currentState == State.Practice)
         {
             GameSettings.nbPlayers = 2;
         }
