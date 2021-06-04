@@ -13,10 +13,34 @@ namespace menu
         public Text lobbyText;
         public AiPopup aiPopup;
 
+        public static bool tryingToJoinFriend = false;
+        public static string roomNameToJoin = "";
+
+        private TouchScreenKeyboard overlayKeyboard;
+
+        private bool tryingToJoin = false;
+
         void Start()
         {
+            tryingToJoinFriend = false;
+            roomNameToJoin = "";
             aiPopup.gameObject.SetActive(false);
             lobbyText.gameObject.SetActive(false);
+        }
+
+        void Update()
+        {
+            if (overlayKeyboard != null)
+            {
+                if (!tryingToJoin && overlayKeyboard.text != "" && overlayKeyboard.status == TouchScreenKeyboard.Status.Done)
+                {
+                    roomNameToJoin =  overlayKeyboard.text;
+                    Debug.Log("Try to join " + roomNameToJoin);
+                    PhotonNetwork.LeaveRoom();
+                    tryingToJoinFriend = true;
+                    tryingToJoin = true;
+                }
+            }
         }
 
         public void OnEvent(EventData photonEvent)
@@ -168,6 +192,13 @@ namespace menu
         private void updateButtonSetActiveByName(string name, bool status)
         {
             gameObject.transform.Find(name).gameObject.SetActive(status);
+        }
+
+        public void joinRoomByName()
+        {
+            roomNameToJoin = "";
+            tryingToJoin = false;
+            overlayKeyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default);
         }
 
         public void loadOneVsOne()

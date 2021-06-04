@@ -21,3 +21,8 @@ public enum AiDifficulty
     Medium,
     Hard
 }
+
+static class AppState
+{
+    public static string MasterFriendId = "";
+}

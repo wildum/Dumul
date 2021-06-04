@@ -22,6 +22,7 @@ namespace menu
 
     public class RoomsHandler : MonoBehaviourPunCallbacks
     {
+        private System.Random rnd = new System.Random();
         private RoomState roomState = RoomState.Chill;
         private byte numberOfPlayerExpected = 4;
         private ExitGames.Client.Photon.Hashtable myCustomProperties = new ExitGames.Client.Photon.Hashtable();
@@ -106,6 +107,15 @@ namespace menu
             }
         }
 
+        private string getRandomRoomName()
+        {
+            string collection = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var name = new char[5];
+            for (int i = 0; i < name.Length; i++)
+                name[i] = collection[rnd.Next(collection.Length)];
+            return new string(name); 
+        }
+
         public void createLobbyRoom()
         {
             RoomOptions roomOptions = new RoomOptions();
@@ -124,8 +134,9 @@ namespace menu
             }
             roomOptions.CustomRoomPropertiesForLobby = roomPropsInLobby;
             roomOptions.CustomRoomProperties = myCustomProperties;
+            roomOptions.PublishUserId = true;
             Debug.Log("Create a lobby room with properties " + myCustomProperties[stateProperty]);
-            PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+            PhotonNetwork.CreateRoom(getRandomRoomName(), roomOptions, TypedLobby.Default);
             PhotonNetwork.AutomaticallySyncScene = true;
         }
 
@@ -140,8 +151,9 @@ namespace menu
             string[] roomPropsInLobby =  { stateProperty, roomTypeProperty };
             roomOptions.CustomRoomPropertiesForLobby = roomPropsInLobby;
             roomOptions.CustomRoomProperties = myCustomProperties;
+            roomOptions.PublishUserId = true;
             Debug.Log("Create a waiting room with properties " + myCustomProperties[stateProperty]);
-            PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+            PhotonNetwork.CreateRoom(getRandomRoomName(), roomOptions, TypedLobby.Default);
             PhotonNetwork.AutomaticallySyncScene = true;
         }
 
