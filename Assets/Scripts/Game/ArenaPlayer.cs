@@ -21,7 +21,7 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
 
     protected int team = 1;
     protected bool alive = true;
-
+    protected int idInTeam = 0;
     protected int id = 3;
 
     private bool immortal = false; 
@@ -89,4 +89,5 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     public bool Alive { get { return alive; } }
     public int Id { get { return id; }}
     public bool Immortal { set { immortal = value;}}
+    public int IdInTeam { get { return idInTeam; }}
 }

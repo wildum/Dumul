@@ -27,6 +27,7 @@ struct PlayerInfo
     public StartPosition position;
     public int team;
     public int id;
+    public int idInTeam;
 }
 
 
@@ -43,63 +44,66 @@ static class GameSettings
 
     public static int aiPositionCount = 0;
 
-    private static List<StartPosition> startPos2Players = new List<StartPosition> {
-        new StartPosition(new Vector3(-5, 0, 0), new Vector3(0, 90, 0)),
-        new StartPosition(new Vector3(5, 0, 0), new Vector3(0, -90, 0))
-    };
+    private static StartPosition startPos2PlayersOne = new StartPosition(new Vector3(-5, 0, 0), new Vector3(0, 90, 0));
+    private static StartPosition startPos2PlayersTwo = new StartPosition(new Vector3(5, 0, 0), new Vector3(0, -90, 0));
     
-    private static List<StartPosition> startPos4Players = new List<StartPosition> {
-        new StartPosition(new Vector3(-5, 0, 1), new Vector3(0, 90, 0)),
-        new StartPosition(new Vector3(-5, 0, -1), new Vector3(0, 90, 0)),
-        new StartPosition(new Vector3(5, 0, 1), new Vector3(0, -90, 0)),
-        new StartPosition(new Vector3(5, 0, -1), new Vector3(0, -90, 0))
-    };
+    private static StartPosition startPos4PlayersOneOne = new StartPosition(new Vector3(-5, 0, 1), new Vector3(0, 90, 0));
+    private static StartPosition startPos4PlayersTwoOne = new StartPosition(new Vector3(-5, 0, -1), new Vector3(0, 90, 0));
+    private static StartPosition startPos4PlayersOneTwo = new StartPosition(new Vector3(5, 0, 1), new Vector3(0, -90, 0));
+    private static StartPosition startPos4PlayersTwoTwo = new StartPosition(new Vector3(5, 0, -1), new Vector3(0, -90, 0));
 
     public static PlayerInfo getPlayerInfo(int id)
     {
         Dictionary<int, Photon.Realtime.Player> dict = PhotonNetwork.CurrentRoom.Players;
-        List<int> actorNumbers = new List<int>();
-        foreach (KeyValuePair<int, Photon.Realtime.Player> entry in dict)
-        {
-            actorNumbers.Add(entry.Value.ActorNumber);
-        }
-
-        actorNumbers.Sort();
-
+        List<Photon.Realtime.Player> actors = new List<Photon.Realtime.Player>();
         PlayerInfo playerInfo;
         playerInfo.team = 0;
         playerInfo.position = new StartPosition();
         playerInfo.id = 0;
-        
-        State currentState = State.Practice;
-        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(menu.RoomsHandler.stateProperty))
+        playerInfo.idInTeam = 0;
+        int countFirstTeam = 0;
+        int countSecondTeam = 0;   
+
+        foreach (KeyValuePair<int, Photon.Realtime.Player> entry in dict)
         {
-            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[menu.RoomsHandler.stateProperty];
-        }
-        else
-        {
-            Debug.LogError("current state of the room not set");
+            actors.Add(entry.Value);
+            PhotonTeam team = entry.Value.GetPhotonTeam();
+            if (entry.Value.ActorNumber == id)
+                playerInfo.team = team.Code - 1;
         }
 
-        for (int i = 0; i < actorNumbers.Count; i++)
+        actors.Sort((p, q) => p.ActorNumber.CompareTo(q.ActorNumber));
+
+        for (int i = 0; i < actors.Count; i++)
         {
-            if (actorNumbers[i] == id)
+            PhotonTeam team = actors[i].GetPhotonTeam();
+            if (team.Code == 1)
+                countFirstTeam++;
+            else
+                countSecondTeam++;
+            if (actors[i].ActorNumber == id)
             {
-                // playing against AI the team is always 0
-                if (currentState == State.TwoVsAI)
+                if (nbPlayers <= 2)
                 {
-                    playerInfo.team = 0;
+                    if (playerInfo.team == 0)
+                        playerInfo.position = startPos2PlayersOne;
+                    else
+                        playerInfo.position = startPos2PlayersTwo;
+                    playerInfo.idInTeam = 0;
                 }
                 else
                 {
-                    // little trick here to assign the teams
-                    // if 1v1 then it is 0/2 = 0 => team 0, 1/2 = 0.5 => team 1
-                    // if 2v2 then it is 0/4 = 0 => team 0, 1/4 = 0.25 => team 0, 2/4 = 0.5 => team 1, 3/4 = 0.75 => team 1
-                    playerInfo.team = (i /(float) actorNumbers.Count) < 0.4 ? 0 : 1;
+                    if (playerInfo.team == 0)
+                    {
+                        playerInfo.position = countFirstTeam == 1 ? startPos4PlayersOneOne : startPos4PlayersTwoOne;
+                        playerInfo.idInTeam = countFirstTeam-1;
+                    }
+                    else
+                    {
+                        playerInfo.position = countSecondTeam == 1 ? startPos4PlayersOneTwo : startPos4PlayersTwoTwo;
+                        playerInfo.idInTeam = countSecondTeam-1;
+                    }
                 }
-                
-
-                playerInfo.position = nbPlayers <= 2 ? startPos2Players[i] : startPos4Players[i];
                 playerInfo.id = i;
                 return playerInfo;
             }
@@ -111,8 +115,7 @@ static class GameSettings
 
     public static StartPosition getStartPositionAI()
     {
-        // hack so that the startPos4Players is 2 and then 3
         aiPositionCount++;
-        return nbPlayers <= 2 ? startPos2Players[1] : startPos4Players[aiPositionCount + 1];
+        return nbPlayers <= 2 ? startPos2PlayersTwo : aiPositionCount == 1 ? startPos4PlayersOneTwo : startPos4PlayersTwoTwo;
     }
 }

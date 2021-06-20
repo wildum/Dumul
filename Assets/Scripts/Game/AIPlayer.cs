@@ -66,15 +66,16 @@ public class AIPlayer : ArenaPlayer
     }
 
     [PunRPC]
-    public void setIdRpc(int iid)
+    public void setIdsRpc(int iid, int iidInTeam)
     {
         id = iid;
+        idInTeam = iidInTeam;
         spellCreator.PlayerId = id;
     }
 
-    public void setId(int id)
+    public void setId(int id, int iidInTeam)
     {
-        photonView.RPC("setIdRpc", RpcTarget.All, id);
+        photonView.RPC("setIdRpc", RpcTarget.All, id, iidInTeam);
     }
 
     // Update is called once per frame

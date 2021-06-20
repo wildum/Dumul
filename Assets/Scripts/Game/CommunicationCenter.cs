@@ -34,29 +34,28 @@ static class CommunicationCenter
 
             foreach (ArenaPlayer p in players)
             {
-                switch (p.Id)
+                if (p.Team == 0)
                 {
-                    case 0:
+                    if (p.IdInTeam == 0)
+                    {
                         orangeHealth1 = p.getHealth();
-                        break;
-                    case 1:
-                        if (GameSettings.currentState == State.OneVsOne)
-                        {
-                            blueHealth1 = p.getHealth();
-                        }
-                        else
-                        {
-                            orangeHealth2 = p.getHealth();
-                        }
-                        break;
-                    case 2:
-                        blueHealth1 = p.getHealth();
-                        break;
-                    case 3:
-                        blueHealth2 = p.getHealth();
-                        break;
+                    }
+                    else
+                    {
+                        orangeHealth2 = p.getHealth();
+                    }
                 }
-                
+                else
+                {
+                    if (p.IdInTeam == 0)
+                    {
+                        blueHealth1 = p.getHealth();
+                    }
+                    else
+                    {
+                        blueHealth2 = p.getHealth();
+                    }
+                }
             }
             infoCanvas1.updateHealth(orangeHealth1, orangeHealth2, blueHealth1, blueHealth2);
             infoCanvas2.updateHealth(orangeHealth1, orangeHealth2, blueHealth1, blueHealth2);

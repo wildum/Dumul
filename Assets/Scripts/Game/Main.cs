@@ -70,7 +70,7 @@ public class Main : MonoBehaviourPunCallbacks
             if (currentState == State.Practice)
             {
                 GameSettings.timeBeforeStart = 0;
-                spawnAiPlayer("PracticeTarget", 2);
+                spawnAiPlayer("PracticeTarget", 2, 0);
                 spawnedPlayerPrefab.GetComponent<NetworkPlayer>().Immortal = true;
                 aiPlayerPrefabs[0].GetComponent<ArenaPlayer>().Immortal = true;
             }
@@ -79,25 +79,25 @@ public class Main : MonoBehaviourPunCallbacks
                 GameSettings.timeBeforeStart = 10.0f;
                 if (currentState == State.OneVsAI)
                 {
-                    spawnAiPlayer("AI Player", 2);
+                    spawnAiPlayer("AI Player", 2, 0);
                 }
                 else if (currentState == State.TwoVsAI)
                 {
-                    spawnAiPlayer("AI Player", 2);
-                    spawnAiPlayer("AI Player", 3);
+                    spawnAiPlayer("AI Player", 2, 0);
+                    spawnAiPlayer("AI Player", 3, 1);
                 }
             }
         }
     }
 
-    private void spawnAiPlayer(string AIType, int id)
+    private void spawnAiPlayer(string AIType, int id, int iidInTeam)
     {
         StartPosition s = GameSettings.getStartPositionAI();
         Quaternion rotation = Quaternion.Euler(s.rotation);
         GameObject g = PhotonNetwork.Instantiate(AIType, s.position, rotation);
         aiPlayerPrefabs.Add(g);
         if (AIType == "AI Player")
-            g.GetComponent<AIPlayer>().setId(id);
+            g.GetComponent<AIPlayer>().setId(id, iidInTeam);
     }
 
     public override void OnLeftRoom()

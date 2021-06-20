@@ -23,12 +23,12 @@ public class Explosion : MonoBehaviour
             currentDeltaScale += amountOfDifferent;
             if (currentDeltaScale > maxDeltaScale)
             {
+                alive = false;
                 PhotonView photonView = PhotonView.Get(this);
                 if (photonView.IsMine)
                 {
                     PhotonNetwork.Destroy(gameObject);
                 }
-                alive = false;
             }
             else
             {

@@ -10,30 +10,33 @@ using UnityEngine.UI;
 
 namespace menu
 {
-    public class NetworkManager : MonoBehaviourPunCallbacks
+    public class NetworkManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         public RoomsHandler roomHandler;
         public ButtonManager buttonManager;
         public Text roomName;
         private GameObject spawnedPlayerPrefab;
         public const byte StartGameTextEventCode = 1;
+        public const string masterTeamMateProp = "masterTeamMate";
 
         private const float timeDelayStartGame = 5;
-        private bool findFriends = false;
 
         private const float TIME_RETRY_FRIENDS = 2.0f;
         private float timeRetryFriends = TIME_RETRY_FRIENDS;
-        private int TRIES_JOIN_FRIEND = 5;
         private int triesJoinFriend = 0;
+
+        private bool lookingForFriend = false;
 
 
         // Start is called before the first frame update
         void Start()
         {
             State currentState = State.Starter;
-            if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(RoomsHandler.stateProperty))
+            if (PhotonNetwork.CurrentRoom != null)
             {
-                currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[RoomsHandler.stateProperty];
+                roomName.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
+                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(RoomsHandler.stateProperty))
+                    currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[RoomsHandler.stateProperty];
             }
 
             updateRelatedToState(currentState);
@@ -41,15 +44,12 @@ namespace menu
 
         void Update()
         {
-            if (findFriends)
+            if (buttonManager.WaitingForFriend)
             {
-                if (triesJoinFriend > TRIES_JOIN_FRIEND)
+                lookingForFriend = true;
+                if (timeRetryFriends >= TIME_RETRY_FRIENDS)
                 {
-                    Debug.Log("did not found friend");
-                    resetFriendsParam();
-                }
-                else if (timeRetryFriends >= TIME_RETRY_FRIENDS)
-                {
+                    Debug.Log("try to join, try : " + triesJoinFriend);
                     timeRetryFriends = 0.0f;
                     triesJoinFriend++;
                     PhotonNetwork.FindFriends(new string[1]{AppState.MasterFriendId});
@@ -59,19 +59,28 @@ namespace menu
                     timeRetryFriends += Time.deltaTime;
                 }
             }
+            else if (lookingForFriend)
+            {
+                lookingForFriend = false;
+                roomHandler.createWaitingRoom();
+            }
         }
 
-        void resetFriendsParam()
+        public void OnEvent(EventData photonEvent)
         {
-            findFriends = false;
-            triesJoinFriend = 0;
+            byte eventCode = photonEvent.Code;
+
+            if (eventCode == RoomsHandler.WaitForGameTextEventCode)
+            {
+                buttonManager.WaitingForFriend = true;
+                PhotonNetwork.LeaveRoom();
+            }
         }
 
         public override void OnFriendListUpdate(List<FriendInfo> friendsInfo)
         {
             if (friendsInfo.Count != 0 && friendsInfo[0].IsInRoom)
             {
-                resetFriendsParam();
                 PhotonNetwork.JoinRoom(friendsInfo[0].Room);
             }
         }
@@ -82,8 +91,6 @@ namespace menu
             {
                 ConnectedToServer();
                 Core.Initialize();
-                Entitlements.IsUserEntitledToApplication().OnComplete(callbackMethod);
-                updateFriendsList();
             }
             else if (currentState == State.WaitingRoom)
             {
@@ -103,10 +110,12 @@ namespace menu
 
             if (roomHandler.RoomState == RoomState.ReadyToStart)
             {
+                roomHandler.setTeams();
                 if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 {
                     RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
                     PhotonNetwork.RaiseEvent(StartGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
+                    buttonManager.buttonConfigAllDeactivate();
                     Invoke("loadArena", timeDelayStartGame);
                 }
                 else
@@ -129,28 +138,32 @@ namespace menu
         void ConnectedToServer()
         {
             PhotonNetwork.GameVersion = "0.0.1";
+            PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "eu";
             PhotonNetwork.ConnectUsingSettings();
             Debug.Log("Trying to connect to the server...");
         }
 
         public override void OnConnectedToMaster()
         {
-            Debug.Log("Connect to the server");
             base.OnConnectedToMaster();
             if (ButtonManager.tryingToJoinFriend)
             {
+                Debug.Log("TryingToJoinFriend");
                 PhotonNetwork.JoinRoom(ButtonManager.roomNameToJoin);
             }
             else if (AppState.MasterFriendId != "")
             {
-                findFriends = true;
+                Debug.Log("EnableJoinFriend");
+                buttonManager.enableJoinFriend();
             }
             else if (roomHandler.RoomState == RoomState.Searching)
             {
+                Debug.Log("JoinRandomRoom");
                 roomHandler.joinRandomRoom();
             }
             else
             {
+                Debug.Log("CreateWaitingRoom");
                 roomHandler.createWaitingRoom();
             }
         }
@@ -160,22 +173,31 @@ namespace menu
             Debug.Log("Joined a room");
             base.OnJoinedRoom();
             roomName.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
+            roomHandler.synchRoomProperties();
             updateButtonsWithRoomType();
             if (spawnedPlayerPrefab == null)
             {
                 spawnedPlayerPrefab = PhotonNetwork.Instantiate("Network Player Menu", transform.position, transform.rotation);
             }
 
-            if (ButtonManager.tryingToJoinFriend)
+            ExitGames.Client.Photon.Hashtable customPropertiesPlayer = new ExitGames.Client.Photon.Hashtable();
+            if (ButtonManager.tryingToJoinFriend || lookingForFriend)
             {
                 ButtonManager.tryingToJoinFriend = false;
-                int masterClientId = PhotonNetwork.CurrentRoom.MasterClientId;
-                AppState.MasterFriendId = PhotonNetwork.CurrentRoom.Players[masterClientId].UserId;
+                buttonManager.WaitingForFriend = false;
+                lookingForFriend = false;
+                if (AppState.MasterFriendId == "")
+                {
+                    int masterClientId = PhotonNetwork.CurrentRoom.MasterClientId;
+                    AppState.MasterFriendId = PhotonNetwork.CurrentRoom.Players[masterClientId].UserId;
+                    customPropertiesPlayer[masterTeamMateProp] = AppState.MasterFriendId;
+                }
             }
             else
             {
                 AppState.MasterFriendId = "";
             }
+            PhotonNetwork.LocalPlayer.CustomProperties = customPropertiesPlayer;
         }
 
         public override void OnJoinRandomFailed(short returnCode, string message)
@@ -198,6 +220,7 @@ namespace menu
         {
             Debug.Log("A new player joined the room");
             base.OnPlayerEnteredRoom(newPlayer);
+            updateButtonsWithRoomType();
             roomHandler.startGameIfFull();
         }
 
@@ -220,40 +243,6 @@ namespace menu
             base.OnLeftRoom();
             if (spawnedPlayerPrefab != null)
                 PhotonNetwork.Destroy(spawnedPlayerPrefab);
-        }
-
-        private void updateFriendsList()
-        {
-            Users.GetLoggedInUser().OnComplete((Message<User> msg) => {
-                Debug.Log("User ID: " + msg.Data.ID);
-                Debug.Log("Oculus ID: " + msg.Data.OculusID);
-            });
-            Debug.Log("GET FRIENDS LIST !");
-            Users.GetLoggedInUserFriends().OnComplete((Message<UserList> msg) => {
-                if (msg.IsError)
-                {
-                    Debug.Log(msg.GetError());
-                    return;
-                }
-
-                Debug.Log("Here is the list of all your occulus friends : ");
-                foreach (var friend in msg.Data)
-                {
-                    Debug.Log("Your friend's name is " + friend.OculusID);
-                }
-            });
-        }
-
-        void callbackMethod(Message msg)
-        {
-            if (!msg.IsError)
-            {
-                Debug.Log("Init? ");
-            }
-            else
-            {
-                Debug.Log("Init went fine");
-            }
         }
     }
 }

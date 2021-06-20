@@ -57,10 +57,11 @@ public class NetworkPlayer : ArenaPlayer
     }
 
     [PunRPC]
-    public void setTeamAndIdsRPC(int teamId, int playerId)
+    public void setTeamAndIdsRPC(int teamId, int playerId, int iidInTeam)
     {
         init();
         team = teamId;
+        idInTeam = iidInTeam;
         spellBook.Team = team;
         spellBook.setIdPlayerSpellCreator(playerId);
         if (leftHandPresence != null)
@@ -77,7 +78,6 @@ public class NetworkPlayer : ArenaPlayer
         if (photonView.IsMine && gameObject != null)
         {
             hurt.Play();
-            Debug.Log("aie");
         }
         base.takeDamage(damageAmount, authorId);
     }
@@ -108,7 +108,7 @@ public class NetworkPlayer : ArenaPlayer
                 PlayerInfo playerInfo = GameSettings.getPlayerInfo(id);
                 rig.transform.position = playerInfo.position.position;
                 rig.transform.eulerAngles = playerInfo.position.rotation;
-                photonView.RPC("setTeamAndIdsRPC", RpcTarget.All, playerInfo.team, playerInfo.id);
+                photonView.RPC("setTeamAndIdsRPC", RpcTarget.All, playerInfo.team, playerInfo.id, playerInfo.idInTeam);
             }
 
             MapPosition(head, headRig);

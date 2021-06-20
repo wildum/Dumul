@@ -16,9 +16,13 @@ namespace menu
         public static bool tryingToJoinFriend = false;
         public static string roomNameToJoin = "";
 
+        private bool waitingForFriend = false;
+
         private TouchScreenKeyboard overlayKeyboard;
 
         private bool tryingToJoin = false;
+
+        private bool test2 = false;
 
         void Start()
         {
@@ -30,15 +34,19 @@ namespace menu
 
         void Update()
         {
+            if (!tryingToJoin && test2)
+            {
+                tryingToJoinFriend = true;
+                tryingToJoin = true;
+                PhotonNetwork.LeaveRoom();
+            }
             if (overlayKeyboard != null)
             {
                 if (!tryingToJoin && overlayKeyboard.text != "" && overlayKeyboard.status == TouchScreenKeyboard.Status.Done)
                 {
-                    roomNameToJoin =  overlayKeyboard.text;
+                    roomNameToJoin = overlayKeyboard.text;
                     Debug.Log("Try to join " + roomNameToJoin);
-                    PhotonNetwork.LeaveRoom();
-                    tryingToJoinFriend = true;
-                    tryingToJoin = true;
+                    
                 }
             }
         }
@@ -66,8 +74,10 @@ namespace menu
 
         public void updateButtonsWaitingRoom()
         {
+            updateButtonInteractableByName("CancelJoiningFriend", false);
             if (PhotonNetwork.IsConnected)
             {
+                updateButtonInteractableByName("JoinOtherRoom", true);
                 lobbyText.gameObject.SetActive(false);
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -103,6 +113,8 @@ namespace menu
 
         public void buttonInLobbyConfig(State state)
         {
+            updateButtonInteractableByName("CancelJoiningFriend", false);
+            updateButtonInteractableByName("JoinOtherRoom", false);
             updateButtonInteractableByName("1v1", false);
             updateButtonInteractableByName("2v2", false);
             updateButtonInteractableByName("2vAI", false);
@@ -183,6 +195,36 @@ namespace menu
             updateButtonInteractableByName("QuitLobby", true);
         }
 
+        public void buttonConfigAllDeactivate()
+        {
+            updateButtonInteractableByName("1v1", false);
+            updateButtonInteractableByName("2v2", false);
+            updateButtonInteractableByName("2vAI", false);
+            updateButtonInteractableByName("1vAI", false);
+            updateButtonInteractableByName("Practice", false);
+            updateButtonInteractableByName("QuitLobby", false);
+            updateButtonInteractableByName("QuitGame", false);
+            updateButtonInteractableByName("JoinOtherRoom", false);
+        }
+
+        public void enableJoinFriend()
+        {
+            waitingForFriend = true;
+            updateButtonInteractableByName("CancelJoiningFriend", true);
+            updateButtonInteractableByName("1v1", false);
+            updateButtonInteractableByName("2v2", false);
+            updateButtonInteractableByName("2vAI", false);
+            updateButtonInteractableByName("1vAI", false);
+            updateButtonInteractableByName("Practice", false);
+            updateButtonInteractableByName("QuitLobby", false);
+        }
+
+        public void disableJoinFriend()
+        {
+            AppState.MasterFriendId = "";
+            waitingForFriend = false;
+        }
+
         private void updateButtonInteractableByName(string name, bool status)
         {
             GameObject g = gameObject.transform.Find(name).gameObject;
@@ -198,6 +240,8 @@ namespace menu
         {
             roomNameToJoin = "";
             tryingToJoin = false;
+            test2 = true;
+            AppState.MasterFriendId = "";
             overlayKeyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default);
         }
 
@@ -230,6 +274,8 @@ namespace menu
 
         public void quitLobby()
         {
+            disableJoinFriend();
+            updateButtonInteractableByName("CancelJoiningFriend", false);
             roomHandler.RoomState = RoomState.Chill;
             PhotonNetwork.LeaveRoom();
         }
@@ -238,5 +284,7 @@ namespace menu
         {
             Application.Quit();
         }
+
+        public bool WaitingForFriend { get { return waitingForFriend;} set {waitingForFriend = value;}}
     }
 }

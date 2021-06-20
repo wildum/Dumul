@@ -2,7 +2,12 @@
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
+using System;
 using UnityEngine.SceneManagement;
+using Photon.Pun.UtilityScripts;
+using System.Linq;
+using ExitGames.Client.Photon;
 
 namespace menu
 {
@@ -25,10 +30,13 @@ namespace menu
         private System.Random rnd = new System.Random();
         private RoomState roomState = RoomState.Chill;
         private byte numberOfPlayerExpected = 4;
+        private byte numberOfPlayersInTeam = 0;
         private ExitGames.Client.Photon.Hashtable myCustomProperties = new ExitGames.Client.Photon.Hashtable();
+        private List<string> userIds = new List<string>();
         public const string stateProperty = "currentState";
         public const string roomTypeProperty = "roomType";
         public const string aiDifficultyProperty = "aiDifficulty";
+        public const byte WaitForGameTextEventCode = 2;
 
         public void handle1v1Matchmaking()
         {
@@ -71,15 +79,33 @@ namespace menu
             myCustomProperties[roomTypeProperty] = (int) RoomType.Lobby;
             PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
             numberOfPlayerExpected = nbPlayers;
+            userIds = new List<string>();
             if (PhotonNetwork.CurrentRoom.PlayerCount == nbPlayers)
             {
                 roomState = RoomState.ReadyToStart;
             }
             else
             {
+                if (PhotonNetwork.CurrentRoom.PlayerCount != 1)
+                {
+                    numberOfPlayersInTeam = PhotonNetwork.CurrentRoom.PlayerCount;
+                    userIds = PhotonNetwork.CurrentRoom.Players.Values.Select(p => p.UserId).ToList();
+                    tellFriendsToWaitForARoom();
+                }
+                else
+                {
+                    numberOfPlayersInTeam = 0;
+                }
                 roomState = RoomState.Searching;
                 PhotonNetwork.LeaveRoom();
             }
+        }
+
+
+        private void tellFriendsToWaitForARoom()
+        {
+            RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others };
+            PhotonNetwork.RaiseEvent(WaitForGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
         }
 
         public void loadArena()
@@ -91,8 +117,11 @@ namespace menu
 
         public void joinRandomRoom()
         {
-            Debug.Log("Join random room with property : " + myCustomProperties[stateProperty]);
-            PhotonNetwork.JoinRandomRoom(myCustomProperties, numberOfPlayerExpected);
+            Debug.Log("Join random room with property : " + myCustomProperties[stateProperty] + " and " + myCustomProperties[roomTypeProperty]);
+            if (numberOfPlayersInTeam == 0)
+                PhotonNetwork.JoinRandomRoom(myCustomProperties, numberOfPlayerExpected);
+            else
+                PhotonNetwork.JoinRandomRoom(myCustomProperties, numberOfPlayerExpected, MatchmakingMode.FillRoom, null, null, userIds.ToArray());
         }
 
         public void startGameIfFull()
@@ -109,7 +138,7 @@ namespace menu
 
         private string getRandomRoomName()
         {
-            string collection = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            string collection = "abcdefghijklmnopqrstuvwxyz0123456789";
             var name = new char[5];
             for (int i = 0; i < name.Length; i++)
                 name[i] = collection[rnd.Next(collection.Length)];
@@ -135,7 +164,7 @@ namespace menu
             roomOptions.CustomRoomPropertiesForLobby = roomPropsInLobby;
             roomOptions.CustomRoomProperties = myCustomProperties;
             roomOptions.PublishUserId = true;
-            Debug.Log("Create a lobby room with properties " + myCustomProperties[stateProperty]);
+            Debug.Log("Create a lobby room with properties " + myCustomProperties[stateProperty] + " and " + myCustomProperties[roomTypeProperty]);
             PhotonNetwork.CreateRoom(getRandomRoomName(), roomOptions, TypedLobby.Default);
             PhotonNetwork.AutomaticallySyncScene = true;
         }
@@ -157,6 +186,96 @@ namespace menu
             PhotonNetwork.AutomaticallySyncScene = true;
         }
 
+        public void setTeams()
+        {
+            switch ((State) myCustomProperties[stateProperty])
+            {
+                case State.OneVsAI:
+                case State.TwoVsAI:
+                case State.Practice:
+                    Debug.Log("set the team for the practice");
+                    foreach (KeyValuePair<int, Photon.Realtime.Player> entry in PhotonNetwork.CurrentRoom.Players)
+                    {
+                        if (!entry.Value.JoinTeam(1))
+                        {
+                            PhotonTeam t = entry.Value.GetPhotonTeam();
+                            if (t == null)
+                                Debug.LogError("Join team failed");
+                            else if (t.Code != 1)
+                                entry.Value.SwitchTeam(1);
+                        }
+                    }
+                    break;
+                case State.OneVsOne:
+                    byte team = 1;
+                    foreach (KeyValuePair<int, Photon.Realtime.Player> entry in PhotonNetwork.CurrentRoom.Players)
+                    {
+                        if (!entry.Value.JoinTeam(team))
+                        {
+                            PhotonTeam t = entry.Value.GetPhotonTeam();
+                            if (t == null)
+                                Debug.LogError("Join team failed");
+                            else if (t.Code != team)
+                                entry.Value.SwitchTeam(team);
+                        }
+                        team = (byte) Math.Max(team + 1, 2);
+                    }
+                    break;
+                case State.TwoVsTwo:
+                    List<string> userIdsTeam0 = new List<string>();
+                    foreach (KeyValuePair<int, Photon.Realtime.Player> entry in PhotonNetwork.CurrentRoom.Players)
+                    {
+                        if (entry.Value.CustomProperties.ContainsKey(NetworkManager.masterTeamMateProp))
+                        {
+                            userIdsTeam0.Add(entry.Value.UserId);
+                            userIdsTeam0.Add((string) entry.Value.CustomProperties[NetworkManager.masterTeamMateProp]);
+                        }
+                    }
+                    if (userIdsTeam0.Count != 0)
+                    {
+                        int nbPlayerTeam0 = 0;
+                        foreach (KeyValuePair<int, Photon.Realtime.Player> entry in PhotonNetwork.CurrentRoom.Players)
+                        {
+                            byte teamm = 0;
+                            if (userIdsTeam0.Contains(entry.Value.UserId) && nbPlayerTeam0 < 2)
+                            {
+                                teamm = 1;
+                                nbPlayerTeam0++;
+                            }
+                            else
+                                teamm = 2;
+                            if (!entry.Value.JoinTeam(teamm))
+                            {
+                                PhotonTeam t = entry.Value.GetPhotonTeam();
+                                if (t == null)
+                                    Debug.LogError("Join team failed");
+                                else if (t.Code != teamm)
+                                    entry.Value.SwitchTeam(teamm);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        byte it = 0;
+                        foreach (KeyValuePair<int, Photon.Realtime.Player> entry in PhotonNetwork.CurrentRoom.Players)
+                        {
+                            byte teammm = (byte) (it <= 1 ? 1 : 2);
+                            if (!entry.Value.JoinTeam(teammm))
+                            {
+                                PhotonTeam t = entry.Value.GetPhotonTeam();
+                                if (t == null)
+                                    Debug.LogError("Join team failed");
+                                else if (t.Code != teammm)
+                                    entry.Value.SwitchTeam(teammm);
+                            }
+                            it++;
+                        }
+                    }
+
+                    break;
+            }
+        }
+
         public State getMyCurrentRoomState()
         {
             return (State) myCustomProperties[stateProperty];
@@ -165,6 +284,12 @@ namespace menu
         public RoomType getMyCurrentRoomType()
         {
             return (RoomType) myCustomProperties[roomTypeProperty];
+        }
+
+        public void synchRoomProperties()
+        {
+            myCustomProperties[stateProperty] = PhotonNetwork.CurrentRoom.CustomProperties[stateProperty];
+            myCustomProperties[roomTypeProperty] = PhotonNetwork.CurrentRoom.CustomProperties[roomTypeProperty];
         }
 
         public RoomState RoomState { get {return roomState;} set {roomState = value;} }
