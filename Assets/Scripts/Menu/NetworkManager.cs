@@ -95,8 +95,6 @@ namespace menu
             else if (currentState == State.WaitingRoom)
             {
                 buttonManager.updateButtonsWaitingRoom();
-                // TODO : fix this ?
-                //Invoke("spawnWithDelay", 2.0f);
             }
         }
 
@@ -111,17 +109,17 @@ namespace menu
             if (roomHandler.RoomState == RoomState.ReadyToStart)
             {
                 roomHandler.setTeams();
-                if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
-                {
+                // if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+                // {
                     RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
                     PhotonNetwork.RaiseEvent(StartGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
                     buttonManager.buttonConfigAllDeactivate();
                     Invoke("loadArena", timeDelayStartGame);
-                }
-                else
-                {
-                    loadArena();
-                }
+                // }
+                // else
+                // {
+                //     loadArena();
+                // }
             }
         }
 

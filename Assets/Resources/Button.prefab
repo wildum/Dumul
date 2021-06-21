@@ -221,3 +221,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b7dfe7a3918cc54a87c1e14080e3f9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomHandler: {fileID: 0}
+  lobbyText: {fileID: 0}
+  aiPopup: {fileID: 0}

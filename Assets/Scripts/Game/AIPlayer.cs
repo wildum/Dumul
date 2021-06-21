@@ -75,7 +75,7 @@ public class AIPlayer : ArenaPlayer
 
     public void setId(int id, int iidInTeam)
     {
-        photonView.RPC("setIdRpc", RpcTarget.All, id, iidInTeam);
+        photonView.RPC("setIdsRpc", RpcTarget.All, id, iidInTeam);
     }
 
     // Update is called once per frame
