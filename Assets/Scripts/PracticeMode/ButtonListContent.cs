@@ -38,7 +38,9 @@ public class ButtonListContent : MonoBehaviour
         new ButtonData(SpellEnum.Cross, "Cross", Cross.CROSS_DAMAGE, Cross.CROSS_CD), 
         new ButtonData(SpellEnum.Fireball, "Fireball", Fireball.FIREBALL_DAMAGE, Fireball.FIREBALL_CD), 
         new ButtonData(SpellEnum.Grenade, "Grenade", Grenade.GRENADE_DAMAGE, Grenade.GRENADE_CD),
-        new ButtonData(SpellEnum.Thunder, "Thunder", Thunder.THUNDER_DAMAGE, Thunder.THUNDER_CD)
+        new ButtonData(SpellEnum.Thunder, "Thunder", Thunder.THUNDER_DAMAGE, Thunder.THUNDER_CD),
+        new ButtonData(SpellEnum.DashLeft, "DashLeft", 0, SpellBook.DASH_CD),
+        new ButtonData(SpellEnum.DashRight, "DashRight", 0, SpellBook.DASH_CD)
     };
     private List<ButtonData> spellElements = new List<ButtonData>();
 

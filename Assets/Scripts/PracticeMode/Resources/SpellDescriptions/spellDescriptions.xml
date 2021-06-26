@@ -4,4 +4,6 @@
     <Spell Name="cross" Description="A cross of fire going in a straight line."/>
     <Spell Name="thunder" Description="Create a lightning strike above an opponent."/>
     <Spell Name="grenade" Description="A ball of energy that the player can grab and throw with the grip command. Explodes on collision."/>
+    <Spell Name="dash left" Description="Move quickly to your left."/>
+    <Spell Name="dash right" Description="Move quickly to your right."/>
 </Spells>

@@ -13,6 +13,10 @@ public enum SpellRecognition
     CrossRight,
     GrenadeRight,
     GrenadeLeft,
+    DashRight,
+    DashLeft,
+    DashLeftOnePart,
+    DashRightOnePart,
     UNDEFINED
 }
 
@@ -22,6 +26,8 @@ public enum SpellEnum
     Thunder,
     Cross,
     Grenade,
+    DashRight,
+    DashLeft,
     UNDEFINED
 }
 
@@ -33,6 +39,8 @@ public enum SpellCdEnum
     Thunder,
     GrenadeLeft,
     GrenadeRight,
+    DashRight,
+    DashLeft,
     UNDEFINED
 }
 

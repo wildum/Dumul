@@ -24,7 +24,10 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     protected int idInTeam = 0;
     protected int id = 3;
 
-    private bool immortal = false; 
+    protected bool dashing = false;
+    protected Vector3 dashTarget = new Vector3(0,0,0);
+
+    private bool immortal = false;
 
     public int getHealth()
     {
@@ -83,6 +86,12 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
         // we take x because the head should be round
         Transform sphere = head.GetChild(0);
         return sphere.GetComponent<SphereCollider>().radius * sphere.localScale.x;
+    }
+
+    public void dash(int direction)
+    {
+        dashing = true;
+        dashTarget = transform.position + new Vector3(0, 0, direction);
     }
 
     public int Team { get { return team; } }

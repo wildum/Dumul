@@ -69,6 +69,13 @@ public class SpellCreator
         thunder.GetComponentInChildren<Thunder>().PlayerId = playerId;
     }
 
+    public void createDash(int direction)
+    {
+        Debug.Log("dash!");
+        ArenaPlayer p = InformationCenter.getPlayerById(playerId);
+        p.dash(direction);
+    }
+
     public int Team { set {team = value;}}
     public int PlayerId { set { playerId = value; } get { return playerId; }}
 

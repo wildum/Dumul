@@ -49,7 +49,7 @@ public class CustomRecognizer : ScriptableObject
         StreamWriter file = new StreamWriter("points.txt");
         foreach(CustomGesture c in candidates)
         {
-            if (c.getSpell() != SpellRecognition.GrenadeLeft && c.getSpell() != SpellRecognition.GrenadeRight)
+            if (c.getSpell() != SpellRecognition.DashRight && c.getSpell() != SpellRecognition.DashRightOnePart)
                 continue;
             file.WriteLine(c.getSpell().ToString());
             for (int i = 0; i < c.getCustomPoints().Length; i++)
@@ -64,6 +64,7 @@ public class CustomRecognizer : ScriptableObject
     public static CustomRecognizerResult classify(CustomGesture gesture)
     {
         CustomRecognizerResult result = new CustomRecognizerResult(SpellRecognition.UNDEFINED, float.MinValue);
+        //Debug.Log("Evaluating : ");
         foreach (CustomGesture candidate in candidates)
         {
             // first compare score between candidate and gesture

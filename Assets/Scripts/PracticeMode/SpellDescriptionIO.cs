@@ -11,6 +11,8 @@ public class SpellDescriptionIO : ScriptableObject
         { "thunder", SpellEnum.Thunder },
         { "grenade", SpellEnum.Grenade },
         { "cross", SpellEnum.Cross },
+        { "dash right", SpellEnum.DashRight },
+        { "dash left", SpellEnum.DashLeft },
     };
     public static Dictionary<SpellEnum, string> ReadSpellDescriptionFromXML(string xml)
     {

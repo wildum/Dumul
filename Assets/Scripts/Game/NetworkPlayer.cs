@@ -134,6 +134,19 @@ public class NetworkPlayer : ArenaPlayer
         }
     }
 
+    void FixedUpdate()
+    {
+        if (dashing)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.Lerp(transform.position.z, dashTarget.z, Time.deltaTime * SpellBook.DASH_SPEED));
+            rig.transform.position = new Vector3(rig.transform.position.x, rig.transform.position.y, transform.position.z);
+            if (Mathf.Abs(transform.position.z - dashTarget.z) < 0.1f)
+            {
+                dashing = false;
+            }
+        }
+    }
+
     void UpdateHandAnimation(Animator handAnimator, HandPresence handPresence)
     {
         handAnimator.SetFloat("Trigger", handPresence.getTriggerValue());

@@ -8,8 +8,12 @@ public class SpellBook
 {
     private const float MAX_TIME_TWO_HANDS_CAST = 2.0f;
 
+    public const float DASH_CD = 6;
+    public const float DASH_SPEED = 4.0f;
+
     public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, 
-        SpellCdEnum.Thunder, SpellCdEnum.Cross,  SpellCdEnum.GrenadeLeft, SpellCdEnum.GrenadeRight };
+        SpellCdEnum.Thunder, SpellCdEnum.Cross,  SpellCdEnum.GrenadeLeft, SpellCdEnum.GrenadeRight, SpellCdEnum.DashLeft,  
+        SpellCdEnum.DashRight };
 
     public static Dictionary<SpellRecognition, SpellEnum> recognitionToSpell = new Dictionary<SpellRecognition, SpellEnum>
     {
@@ -22,6 +26,10 @@ public class SpellBook
         {SpellRecognition.ThunderLeft, SpellEnum.Thunder},
         {SpellRecognition.GrenadeLeft, SpellEnum.Grenade},
         {SpellRecognition.GrenadeRight, SpellEnum.Grenade},
+        {SpellRecognition.DashLeft, SpellEnum.DashLeft},
+        {SpellRecognition.DashLeftOnePart, SpellEnum.DashLeft},
+        {SpellRecognition.DashRight, SpellEnum.DashRight},
+        {SpellRecognition.DashRightOnePart, SpellEnum.DashRight},
         {SpellRecognition.UNDEFINED, SpellEnum.UNDEFINED}
     };
 
@@ -32,7 +40,9 @@ public class SpellBook
         { SpellCdEnum.Thunder, new SpellCd(Thunder.THUNDER_CD, "Thunder") },
         { SpellCdEnum.GrenadeRight, new SpellCd(Grenade.GRENADE_CD, "GrenadeRight") },
         { SpellCdEnum.GrenadeLeft, new SpellCd(Grenade.GRENADE_CD, "GrenadeLeft") },
-        { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") }
+        { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") },
+        { SpellCdEnum.DashRight, new SpellCd(DASH_CD, "DashRight") },
+        { SpellCdEnum.DashLeft, new SpellCd(DASH_CD, "DashLeft") }
     };
 
     private SpellCreator spellcreator = new SpellCreator();
@@ -141,11 +151,24 @@ public class SpellBook
                         spellCds[SpellCdEnum.Cross].CurrentCd = 0.0f;
                         otherHand.resetTwoHandsLoadedSpell();
                     }
+                    else if (spell == SpellEnum.DashLeft && isSpellAvailable(SpellCdEnum.DashLeft, DASH_CD))
+                    {
+                        spellcreator.createDash(2);
+                        spellCds[SpellCdEnum.DashLeft].CurrentCd = 0.0f;
+                        otherHand.resetTwoHandsLoadedSpell();
+                    }
+                    else if (spell == SpellEnum.DashRight && isSpellAvailable(SpellCdEnum.DashRight, DASH_CD))
+                    {
+                        spellcreator.createDash(-2);
+                        spellCds[SpellCdEnum.DashRight].CurrentCd = 0.0f;
+                        otherHand.resetTwoHandsLoadedSpell();
+                    }
                 }
                 else
                 {
                     hand.LoadedTwoHandsSpell = spellReco;
                     hand.LoadedPoints = new List<CustomPoint>(hand.getCustomRecognizerData().points);
+                    Debug.Log("adding points");
                 }
             }
             else
@@ -206,7 +229,7 @@ public class SpellBook
 
     private bool isSpellTwoHanded(SpellEnum spellEnum)
     {
-        return spellEnum == SpellEnum.Thunder || spellEnum == SpellEnum.Cross;
+        return spellEnum == SpellEnum.Thunder || spellEnum == SpellEnum.Cross || spellEnum == SpellEnum.DashRight || spellEnum == SpellEnum.DashLeft;
     }
 
     public bool isSpellAvailable(SpellCdEnum spell, float spellCd)

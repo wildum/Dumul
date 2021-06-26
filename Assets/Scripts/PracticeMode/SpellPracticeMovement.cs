@@ -70,6 +70,16 @@ public class SpellPracticeMovement : MonoBehaviour
                 handRight.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.GrenadeRight));
                 currentSpellTwoHanded = false;
                 break;
+            case SpellEnum.DashLeft:
+                handLeft.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.DashLeftOnePart));
+                handRight.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.DashLeftOnePart));
+                currentSpellTwoHanded = true;
+                break;
+            case SpellEnum.DashRight:
+                handLeft.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.DashRightOnePart));
+                handRight.loadPoints(spellEnum, getPointsFromSpellCd(SpellRecognition.DashRightOnePart));
+                currentSpellTwoHanded = true;
+                break;
         }
     }
 

@@ -26,7 +26,11 @@ public class CustomGestureIO : ScriptableObject
         { "grenadeLeft", SpellRecognition.GrenadeLeft },
         { "cross", SpellRecognition.Cross },
         { "crossLeft", SpellRecognition.CrossLeft },
-        { "crossRight", SpellRecognition.CrossRight }
+        { "crossRight", SpellRecognition.CrossRight },
+        { "dashLeft", SpellRecognition.DashLeft },
+        { "dashLeftOnePart", SpellRecognition.DashLeftOnePart },
+        { "dashRight", SpellRecognition.DashRight },
+        { "dashRightOnePart", SpellRecognition.DashRightOnePart }
     };
     public static CustomGestureIOData ReadGestureFromXML(string xml)
     {
