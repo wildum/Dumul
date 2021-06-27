@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class Shield : MonoBehaviourPunCallbacks
+public class Shield : Spell
 {
-    const float SHIELD_MAX_HEALTH = 1.0f;
-    private float health = SHIELD_MAX_HEALTH;
-    private float MAX_ALPHA = 1.5f;
+    public const float SHIELD_CD = 6.0f;
+    private bool active = false;
+    private bool wasActive = false;
+    private bool destroyed = false;
 
     void Start()
     {
         gameObject.SetActive(false);
-    }
-
-    [PunRPC]
-    public void reset()
-    {
-        health = SHIELD_MAX_HEALTH;
-        updateColor();
     }
 
     void OnCollisionEnter(Collision collision)
@@ -33,32 +27,57 @@ public class Shield : MonoBehaviourPunCallbacks
 
         if (spell != null)
         {
-            takeDamage(spell.Damage);
-            if (health <= 0)
+            if (active)
             {
-                this.gameObject.SetActive(false);
+                updateShield(false);
+                destroyed = true;
             }
         }
     }
 
-    [PunRPC]
-    void takeDamage(float damage)
+    public void activate()
     {
-        health -= damage;
-        updateColor();
+        if (!active)
+        {
+            updateShield(true);
+            wasActive = true;
+        }
     }
 
-    void updateColor()
+    public void deactivate()
     {
-        Color c = this.GetComponent<MeshRenderer>().material.color;
-        c.a = health / MAX_ALPHA;
-        this.GetComponent<MeshRenderer>().material.color = c;
+        if (active)
+        {
+            updateShield(false);
+        }
+    }
+
+    private void updateShield(bool iactive)
+    {
+        PhotonView photonView = PhotonView.Get(this);
+        if (photonView.IsMine)
+        {
+            active = iactive;
+            gameObject.SetActive(iactive);
+            gameObject.GetComponent<MeshRenderer>().enabled = iactive;
+            photonView.RPC("updateActive", RpcTarget.Others, iactive);
+        }
+    }
+
+    public bool isActive()
+    {
+        return active;
     }
 
     [PunRPC]
-    public void updateActive(bool active)
+    public void updateActive(bool iactive)
     {
-        this.gameObject.SetActive(active);
+        active = iactive;
+        gameObject.SetActive(iactive);
+        gameObject.GetComponent<MeshRenderer>().enabled = iactive;
     }
+
+    public bool WasActive { get {return wasActive;} set {wasActive = value;}}
+    public bool Destroyed { get {return destroyed;} set {destroyed = value;}}
 
 }

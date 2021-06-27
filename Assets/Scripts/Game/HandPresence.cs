@@ -49,8 +49,6 @@ public class HandPresence : MonoBehaviour
 
     private CustomRecognizerData customRecognizerData;
 
-    private List<Vector3> shieldPoints = new List<Vector3>();
-
     private SpellRecognition loadedTwoHandsSpell = SpellRecognition.UNDEFINED;
     private List<CustomPoint> loadedPoints = new List<CustomPoint>();
     private float currentTimeTwoHandsSpell = 0.0f;
@@ -100,11 +98,7 @@ public class HandPresence : MonoBehaviour
     {
         trailRenderer.emitting = false;
         trailRenderer.Clear();
-        if (trailType == TrailType.DefenseSpell)
-        {
-            shieldPoints.Clear();
-        }
-        else if (trailType == TrailType.AttackSpell)
+        if (trailType == TrailType.AttackSpell)
         {
             customRecognizerData.points.Clear();
             customRecognizerData.rotations.Clear();
@@ -136,19 +130,14 @@ public class HandPresence : MonoBehaviour
         return shield.getValue();
     }
 
+    public bool activateShield()
+    {
+        return shield.pressing();
+    }
+
     public float getShieldValue()
     {
         return grip.getValue();
-    }
-
-    public bool shielding()
-    {
-        return grip.pressing();
-    }
-
-    public List<Vector3> getShieldPoints()
-    {
-        return shieldPoints;
     }
 
     public CustomRecognizerData getCustomRecognizerData()
@@ -221,10 +210,6 @@ public class HandPresence : MonoBehaviour
             }
             customRecognizerData.points.Add(new CustomPoint(transform.position, side));
             customRecognizerData.rotations.Add(headAngley);
-        }
-        else if (shield.pressing())
-        {
-            shieldPoints.Add(transform.position);
         }
     }
 

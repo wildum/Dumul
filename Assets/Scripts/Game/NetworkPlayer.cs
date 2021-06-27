@@ -45,7 +45,6 @@ public class NetworkPlayer : ArenaPlayer
 
                     leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
                     rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
-                    shield = PhotonNetwork.Instantiate("Shield", headRig.transform.position, headRig.transform.rotation);
                     foreach (var item in GetComponentsInChildren<Renderer>())
                     {
                         item.enabled = false;
@@ -126,8 +125,8 @@ public class NetworkPlayer : ArenaPlayer
             if (Main.gameStarted && !Main.gameEnded)
             {
                 spellBook.handleSpells(head, leftHandPresence, rightHandPresence);
-                spellBook.handleShield(shield, leftHandPresence);
-                spellBook.handleShield(shield, rightHandPresence);
+                spellBook.handleShield(shield, leftHandPresence, rightHandPresence);
+                shield.transform.position = head.position;
                 updateCdMapInfoCanvas();
             }
 

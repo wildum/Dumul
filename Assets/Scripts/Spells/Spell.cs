@@ -41,6 +41,7 @@ public enum SpellCdEnum
     GrenadeRight,
     DashRight,
     DashLeft,
+    Shield,
     UNDEFINED
 }
 

@@ -13,7 +13,7 @@ public class SpellBook
 
     public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, 
         SpellCdEnum.Thunder, SpellCdEnum.Cross,  SpellCdEnum.GrenadeLeft, SpellCdEnum.GrenadeRight, SpellCdEnum.DashLeft,  
-        SpellCdEnum.DashRight };
+        SpellCdEnum.DashRight, SpellCdEnum.Shield };
 
     public static Dictionary<SpellRecognition, SpellEnum> recognitionToSpell = new Dictionary<SpellRecognition, SpellEnum>
     {
@@ -42,7 +42,8 @@ public class SpellBook
         { SpellCdEnum.GrenadeLeft, new SpellCd(Grenade.GRENADE_CD, "GrenadeLeft") },
         { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") },
         { SpellCdEnum.DashRight, new SpellCd(DASH_CD, "DashRight") },
-        { SpellCdEnum.DashLeft, new SpellCd(DASH_CD, "DashLeft") }
+        { SpellCdEnum.DashLeft, new SpellCd(DASH_CD, "DashLeft") },
+        { SpellCdEnum.Shield, new SpellCd(Shield.SHIELD_CD, "Shield")}
     };
 
     private SpellCreator spellcreator = new SpellCreator();
@@ -198,32 +199,26 @@ public class SpellBook
         }
     }
 
-    public void handleShield(GameObject shield, HandPresence hand)
+    public void handleShield(GameObject shield, HandPresence left, HandPresence right)
     {
-        // cannot use shield when using an attack spell already
-        if (!hand.shielding())
+        Shield shieldObj = shield.GetComponent<Shield>();
+        if ((left.activateShield() || right.activateShield())  && isSpellAvailable(SpellCdEnum.Shield, Shield.SHIELD_CD) && !shieldObj.Destroyed)
         {
-            ControlState triggerState = hand.computeTriggerState();
-            if (isJustPressed(triggerState))
-            {
-                hand.startTrail(TrailType.DefenseSpell);
-            }
-            else if (isJustReleased(triggerState))
-            {
-                List<Vector3> shieldPoints = hand.getShieldPoints();
-                Shield shieldObj = shield.GetComponent<Shield>();
-                if (SpellRecognizer.recognizeShield(shieldPoints))
-                {
-                    moveShield(shield, shieldPoints);
-                    shieldObj.photonView.RPC("reset", RpcTarget.All);
-                    shieldObj.photonView.RPC("updateActive", RpcTarget.All, true);
-                }
-                else
-                {
-                    shieldObj.photonView.RPC("updateActive", RpcTarget.All, false);
-                }
-                hand.stopTrail(TrailType.DefenseSpell);
-            }
+            shieldObj.activate();
+        }
+        else if (!shieldObj.Destroyed)
+        {
+            shieldObj.deactivate();
+        }
+        else
+        {
+            shieldObj.Destroyed = false;
+        }
+
+        if (!shieldObj.isActive() && shieldObj.WasActive)
+        {
+            shieldObj.WasActive = false;
+            spellCds[SpellCdEnum.Shield].CurrentCd = 0.0f;
         }
     }
 
@@ -245,119 +240,6 @@ public class SpellBook
     public bool isJustPressed(ControlState state)
     {
         return state == ControlState.JustPressed;
-    }
-
-    public void moveShield(GameObject shield, List<Vector3> shieldPoints)
-    {
-        if (shieldPoints.Count == 0)
-            return;
-        Vector3 smallest = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
-        Vector3 biggest = new Vector3(Single.MinValue, Single.MinValue, Single.MinValue);
-        Vector3 bigX = new Vector3(0,0,0);
-        Vector3 smallX = new Vector3(0,0,0);
-        Vector3 bigY = new Vector3(0,0,0);
-        Vector3 smallY = new Vector3(0,0,0);
-        Vector3 bigZ = new Vector3(0,0,0);
-        Vector3 smallZ = new Vector3(0,0,0);
-        float xcenter = 0;
-        float ycenter = 0;
-        float zcenter = 0;
-        foreach (Vector3 p in shieldPoints)
-        {
-            if (p.x < smallest.x)
-            {
-                smallX = p;
-                smallest.x = p.x;
-            }
-            if (p.x > biggest.x)
-            {
-                bigX = p;
-                biggest.x = p.x;
-            }
-            if (p.y < smallest.y)
-            {
-                smallY = p;
-                smallest.y = p.y;
-            }
-            if (p.y > biggest.y)
-            {
-                bigY = p;
-                biggest.y = p.y;
-            }
-            if (p.z < smallest.z)
-            {
-                smallZ = p;
-                smallest.z = p.z;
-            }
-            if (p.z > biggest.z)
-            {
-                bigZ = p;
-                biggest.z = p.z;
-            }
-            xcenter += p.x;
-            ycenter += p.y;
-            zcenter += p.z;
-        }
-        Vector3 center = new Vector3(xcenter / shieldPoints.Count, ycenter / shieldPoints.Count, zcenter / shieldPoints.Count);
-        shield.transform.position = center;
-        Vector3 rotationX = bigX - center;
-        rotationX.y = 0;
-        Vector3 rotationZ = bigZ - center;
-        rotationZ.y = 0;
-        Vector3 rotationY = bigY - center;
-        rotationY.x = 0;
-        Vector3 rotationToUseForY = rotationX.x > rotationZ.z ? rotationX : rotationZ;
-        float yAngle = Vector3.SignedAngle(Vector3.right, rotationToUseForY, Vector3.up);
-        if (yAngle < 0)
-        {
-            yAngle += 360;
-        }
-        float xAngle = Vector3.SignedAngle(Vector3.up, rotationY, Vector3.right);
-        if (xAngle < 0)
-        {
-            xAngle += 360;
-        }
-        // Debug.Log("Vector x : " + rotationX.x + " " + rotationX.z);
-        // Debug.Log("Vector y : " + rotationY.y + " " + rotationY.z);
-        // Debug.Log("Vector z : " + rotationZ.x + " " + rotationZ.z);
-        Debug.Log(xAngle + " " + yAngle);
-        shield.transform.eulerAngles = new Vector3(xAngle, yAngle, 0);
-
-        // scaling
-        float xValue = Mathf.Abs(biggest.x - smallest.x);
-        float yValue = Mathf.Abs(biggest.y - smallest.y);
-        float zValue = Mathf.Abs(biggest.z - smallest.z);
-        float xscale = 0;
-        float yscale = 0;
-        if (xValue > zValue && yValue > zValue)
-        {
-            xscale = xValue;
-            yscale = yValue;
-        }
-        else if (xValue < zValue && yValue > zValue)
-        {
-            xscale = zValue;
-            yscale = yValue;
-        }
-        else if (yValue < zValue && xValue > zValue)
-        {
-            xscale = xValue;
-            yscale = zValue;
-        }
-        else
-        {
-            if (xValue < yValue)
-            {
-                xscale = zValue;
-                yscale = yValue;
-            }
-            else
-            {
-                xscale = xValue;
-                yscale = zValue;
-            }
-        }
-        shield.transform.localScale = new Vector3(xscale, yscale, shield.transform.localScale.z);
     }
 
     public void setIdPlayerSpellCreator(int id)

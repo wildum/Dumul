@@ -42,14 +42,4 @@ static class SpellRecognizer
         Debug.Log(res.spell + " : " + res.score);
         return res.spell;
     }
-
-    public static bool recognizeShield(List<Vector3> points)
-    {
-        if (points.Count < SHIELD_RECO_MIN_ELEMENT)
-        {
-            Debug.Log("Not enough elements to recognize shield");
-            return false;
-        }
-        return Vector3.Distance(points[0], points[points.Count-1]) < SHIELD_RECO_DISTANCE;
-    }
 }

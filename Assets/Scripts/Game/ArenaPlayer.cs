@@ -14,9 +14,10 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
 
     public AudioSource hitmarker;
 
+    public GameObject shield;
+
     protected int health = GameSettings.PLAYER_HEALTH;
 
-    protected GameObject shield;
     protected InfoCanvas infoCanvas;
 
     protected int team = 1;
