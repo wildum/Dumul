@@ -109,6 +109,8 @@ public class NetworkPlayer : ArenaPlayer
                 rig.transform.eulerAngles = playerInfo.position.rotation;
                 photonView.RPC("setTeamAndIdsRPC", RpcTarget.All, playerInfo.team, playerInfo.id, playerInfo.idInTeam);
             }
+            
+            fixPositionInsideArena(headRig);
 
             MapPosition(head, headRig);
             MapPosition(leftHand, leftHandRig);
@@ -138,12 +140,23 @@ public class NetworkPlayer : ArenaPlayer
         if (dashing)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.Lerp(transform.position.z, dashTarget.z, Time.deltaTime * SpellBook.DASH_SPEED));
+            bool hitWall = fixPositionInsideArena(transform);
             rig.transform.position = new Vector3(rig.transform.position.x, rig.transform.position.y, transform.position.z);
-            if (Mathf.Abs(transform.position.z - dashTarget.z) < 0.1f)
+            if (Mathf.Abs(transform.position.z - dashTarget.z) < 0.1f || hitWall)
             {
                 dashing = false;
             }
         }
+    }
+
+
+    bool fixPositionInsideArena(Transform t)
+    {
+        bool outOfBound = head.transform.position.x <= -9 || head.transform.position.x >= 9
+            || head.transform.position.y <= 0 || head.transform.position.y >= 5.4
+            || head.transform.position.z <= -6 || head.transform.position.z >= 6;
+        t.position = new Vector3(Mathf.Clamp(head.transform.position.x, -9, 9),Mathf.Clamp(head.transform.position.y, 0, 5.4f), Mathf.Clamp(head.transform.position.z, -6, 6));
+        return outOfBound;
     }
 
     void UpdateHandAnimation(Animator handAnimator, HandPresence handPresence)
