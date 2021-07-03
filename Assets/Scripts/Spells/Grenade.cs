@@ -28,8 +28,7 @@ public class Grenade : Spell
             GameObject explosion = PhotonNetwork.Instantiate("Explosion", gameObject.transform.position, Quaternion.identity);
             explosion.GetComponent<Explosion>().Damage = GRENADE_DAMAGE;
             explosion.GetComponent<Explosion>().PlayerId = playerId;
-            // should be in an RPC ?
-            gameObject.GetComponent<XRGrabInteractable>().colliders.Clear();
+            photonView.RPC("resetInteractable", RpcTarget.All);
             PhotonNetwork.Destroy(gameObject);
         }
     }
@@ -38,8 +37,15 @@ public class Grenade : Spell
     {
         if (alive)
         {
+            // RPC ?
             gameObject.GetComponent<Rigidbody>().useGravity = true;
             Debug.Log("use gravity");
         }
+    }
+
+    [PunRPC]
+    public void resetInteractable()
+    {
+        gameObject.GetComponent<XRGrabInteractable>().colliders.Clear();
     }
 }
