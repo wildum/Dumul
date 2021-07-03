@@ -34,6 +34,8 @@ public class SpellCreator
         cross.GetComponent<Rigidbody>().AddForce(direction * Cross.CROSS_SPEED, ForceMode.VelocityChange);
         cross.GetComponent<Cross>().setTeam(team);
         cross.GetComponent<Cross>().PlayerId = playerId;
+        cross.transform.GetChild(0).GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
+        cross.transform.GetChild(1).GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
     }
 
     public void createFireball(List<CustomPoint> points)
@@ -52,6 +54,7 @@ public class SpellCreator
         ArenaPlayer target = InformationCenter.getRelevantPlayerOppositeTeam(direction, position, team);
         fireball.GetComponent<Fireball>().setTarget(target);
         fireball.GetComponent<Fireball>().PlayerId = playerId;
+        fireball.GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
     }
 
     // expects at least 3 elements
@@ -67,6 +70,7 @@ public class SpellCreator
         rotation.eulerAngles = new Vector3(0,0,180);
         GameObject thunder = PhotonNetwork.Instantiate("Thunder", position, rotation);
         thunder.GetComponentInChildren<Thunder>().PlayerId = playerId;
+        thunder.GetComponentInChildren<Renderer>().material.color = GameSettings.getTeamColor(team);
     }
 
     public void createDash(int direction)

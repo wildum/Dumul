@@ -86,11 +86,8 @@ public class HandPresence : MonoBehaviour
         trailRenderer.emitting = true;
         if (trailType == TrailType.AttackSpell)
         {
-            trailRenderer.material.color = Color.red;
-        }
-        else
-        {
-            trailRenderer.material.color = Color.blue;
+            Color c = GameSettings.getTeamColor(team);
+            trailRenderer.material.color = new Color(c.r, c.g, c.g, 0.5f);
         }
     }
 

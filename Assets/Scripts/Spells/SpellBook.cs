@@ -154,13 +154,13 @@ public class SpellBook
                     }
                     else if (spell == SpellEnum.DashLeft && isSpellAvailable(SpellCdEnum.DashLeft, DASH_CD))
                     {
-                        spellcreator.createDash(2);
+                        spellcreator.createDash(team == 0 ? 2 : -2);
                         spellCds[SpellCdEnum.DashLeft].CurrentCd = 0.0f;
                         otherHand.resetTwoHandsLoadedSpell();
                     }
                     else if (spell == SpellEnum.DashRight && isSpellAvailable(SpellCdEnum.DashRight, DASH_CD))
                     {
-                        spellcreator.createDash(-2);
+                        spellcreator.createDash(team == 0 ? -2 : 2);
                         spellCds[SpellCdEnum.DashRight].CurrentCd = 0.0f;
                         otherHand.resetTwoHandsLoadedSpell();
                     }

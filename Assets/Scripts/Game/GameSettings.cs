@@ -38,7 +38,7 @@ static class GameSettings
     public static float timeBeforeStart = 10.0f;
     public const float endGameTimer = 5.0f;
     public const float gameTimer = 300.0f;
-    public const float pauseTimePopup = 5.0f;
+    public const float pauseTimePopup = 3.0f;
 
     public static State currentState;
 
@@ -51,6 +51,14 @@ static class GameSettings
     private static StartPosition startPos4PlayersTwoOne = new StartPosition(new Vector3(-5, 0, -1), new Vector3(0, 90, 0));
     private static StartPosition startPos4PlayersOneTwo = new StartPosition(new Vector3(5, 0, 1), new Vector3(0, -90, 0));
     private static StartPosition startPos4PlayersTwoTwo = new StartPosition(new Vector3(5, 0, -1), new Vector3(0, -90, 0));
+
+    private static Color colorTeam1 = new Color(1.0f, 0.6f, 0.27f);
+    private static Color colorTeam2 = new Color(0.39f, 0.64f, 0.73f);
+
+    public static Color getTeamColor(int team)
+    {
+        return team == 0 ? colorTeam1 : colorTeam2;
+    }
 
     public static PlayerInfo getPlayerInfo(int id)
     {

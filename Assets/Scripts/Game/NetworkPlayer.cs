@@ -109,15 +109,16 @@ public class NetworkPlayer : ArenaPlayer
                 rig.transform.eulerAngles = playerInfo.position.rotation;
                 photonView.RPC("setTeamAndIdsRPC", RpcTarget.All, playerInfo.team, playerInfo.id, playerInfo.idInTeam);
             }
-            
-            fixPositionInsideArena(headRig);
 
-            MapPosition(head, headRig);
+            if (!dashing)
+                MapPosition(head, headRig);
             MapPosition(leftHand, leftHandRig);
             MapPosition(rightHand, rightHandRig);
 
             UpdateHandAnimation(leftHandAnimator, leftHandPresence);
             UpdateHandAnimation(rightHandAnimator, rightHandPresence);
+
+            fixPositionInsideArena(head);
 
             // offset of -90 because the head is turned tower z axis at start and that the 
             // spells as defined as turned toward x axis
@@ -137,12 +138,12 @@ public class NetworkPlayer : ArenaPlayer
 
     void FixedUpdate()
     {
-        if (dashing)
+        if (photonView != null && photonView.IsMine && dashing)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.Lerp(transform.position.z, dashTarget.z, Time.deltaTime * SpellBook.DASH_SPEED));
-            bool hitWall = fixPositionInsideArena(transform);
-            rig.transform.position = new Vector3(rig.transform.position.x, rig.transform.position.y, transform.position.z);
-            if (Mathf.Abs(transform.position.z - dashTarget.z) < 0.1f || hitWall)
+            head.position = new Vector3(head.position.x, head.position.y, Mathf.Lerp(head.position.z, dashTarget.z, Time.deltaTime * SpellBook.DASH_SPEED));
+            bool hitWall = fixPositionInsideArena(head);
+            rig.transform.position = new Vector3(rig.transform.position.x, rig.transform.position.y, head.position.z);
+            if (Mathf.Abs(head.position.z - dashTarget.z) < 0.1f || hitWall)
             {
                 dashing = false;
             }
@@ -152,10 +153,11 @@ public class NetworkPlayer : ArenaPlayer
 
     bool fixPositionInsideArena(Transform t)
     {
-        bool outOfBound = head.transform.position.x <= -9 || head.transform.position.x >= 9
-            || head.transform.position.y <= 0 || head.transform.position.y >= 5.4
-            || head.transform.position.z <= -6 || head.transform.position.z >= 6;
-        t.position = new Vector3(Mathf.Clamp(head.transform.position.x, -9, 9),Mathf.Clamp(head.transform.position.y, 0, 5.4f), Mathf.Clamp(head.transform.position.z, -6, 6));
+        bool outOfBound = t.position.x <= -9 || t.position.x >= 9
+            || t.position.y <= 0 || t.position.y >= 5.4
+            || t.position.z <= -6 || t.position.z >= 6;
+        if (outOfBound)
+            t.position = new Vector3(Mathf.Clamp(t.position.x, -9, 9),Mathf.Clamp(t.position.y, 0, 5.4f), Mathf.Clamp(t.position.z, -6, 6));
         return outOfBound;
     }
 

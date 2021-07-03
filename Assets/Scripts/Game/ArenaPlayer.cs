@@ -92,7 +92,7 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     public void dash(int direction)
     {
         dashing = true;
-        dashTarget = transform.position + new Vector3(0, 0, direction);
+        dashTarget = head.position + new Vector3(0, 0, direction);
     }
 
     public int Team { get { return team; } }
