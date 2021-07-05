@@ -75,7 +75,7 @@ public class HandPresence : MonoBehaviour
             _inputActionJoystick = _actionMap.FindAction(actionNameJoystick);
         }
 
-        spawnedHandModel = Instantiate(handModelPrefab, transform);
+        //spawnedHandModel = Instantiate(handModelPrefab, transform);
         trailRenderer = GetComponent<TrailRenderer>();
         trailRenderer.emitting = false;
         trailRenderer.time = Mathf.Infinity;

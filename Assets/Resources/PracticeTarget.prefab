@@ -272,6 +272,18 @@ MonoBehaviour:
   rightHandAnimator: {fileID: 5539699201338780621}
   hitmarker: {fileID: 4052982699716533188}
   shield: {fileID: 8805394258234394983}
+  player11: {fileID: 2100000, guid: b301c80be30586849870c76c0a5c3332, type: 2}
+  player12: {fileID: 2100000, guid: 940042fb5b6d06f4dbf1859432802ee1, type: 2}
+  player21: {fileID: 2100000, guid: c9664dae0335c8f49b30fa7e79182ba6, type: 2}
+  player22: {fileID: 2100000, guid: 6d2f78cd55090f34784246b4c900c862, type: 2}
+  handR11: {fileID: 2100000, guid: 9c6f9b777e8486748a03360e7fe96dc7, type: 2}
+  handR12: {fileID: 2100000, guid: 9330c25c50c9c944ba58ae8b76de635d, type: 2}
+  handR21: {fileID: 2100000, guid: 8a30cd3150876c14a90e57f123a78d7c, type: 2}
+  handR22: {fileID: 2100000, guid: c49b25c922becb74da8c3c5d3890cba9, type: 2}
+  handL11: {fileID: 2100000, guid: 9beaa1b7491135b45a84463b05cc9c45, type: 2}
+  handL12: {fileID: 2100000, guid: 94b2365e7663e294d8e1f4ce506093b9, type: 2}
+  handL21: {fileID: 2100000, guid: cccf9ea57cf9f08498aa033054a8847a, type: 2}
+  handL22: {fileID: 2100000, guid: 4125e51cf8735a4429e2ab3d15e5fb2d, type: 2}
 --- !u!1 &4853753338123676813
 GameObject:
   m_ObjectHideFlags: 0

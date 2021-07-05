@@ -16,6 +16,10 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
 
     public GameObject shield;
 
+    public Material player11, player12, player21, player22;
+    public Material handR11, handR12, handR21, handR22;
+    public Material handL11, handL12, handL21, handL22;
+
     protected int health = GameSettings.PLAYER_HEALTH;
 
     protected InfoCanvas infoCanvas;
@@ -29,6 +33,44 @@ public class ArenaPlayer : MonoBehaviourPunCallbacks
     protected Vector3 dashTarget = new Vector3(0,0,0);
 
     private bool immortal = false;
+
+    protected void setPlayerMaterials(int team, int idInTeam)
+    {
+        if (team == 0)
+        {
+            if (idInTeam == 0)
+            {
+                Debug.Log("set player11");
+                gameObject.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material = player11;
+                gameObject.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handL11;
+                gameObject.transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handR11;
+            }
+            else
+            {
+                Debug.Log("set player12");
+                gameObject.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material = player12;
+                gameObject.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handL12;
+                gameObject.transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handR12;
+            }
+        }
+        else
+        {
+            if (idInTeam == 0)
+            {
+                Debug.Log("set player21");
+                gameObject.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material = player21;
+                gameObject.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handL21;
+                gameObject.transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handR21;
+            }
+            else
+            {
+                Debug.Log("set player22");
+                gameObject.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material = player22;
+                gameObject.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handL22;
+                gameObject.transform.GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetComponent<Renderer>().material = handR22;
+            }
+        }
+    }
 
     public int getHealth()
     {

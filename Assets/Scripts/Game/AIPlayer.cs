@@ -62,6 +62,7 @@ public class AIPlayer : ArenaPlayer
         timeCurrentPointRightMovement = config.speedOfMovement;
         rightOriginLocalPosition = rightHand.localPosition;
         leftOriginLocalPosition = leftHand.localPosition;
+        team = 1;
         spellCreator.Team = 1;
         setInfoCanvas();
         originPosition = transform.position;
@@ -74,6 +75,7 @@ public class AIPlayer : ArenaPlayer
         id = iid;
         idInTeam = iidInTeam;
         spellCreator.PlayerId = id;
+        setPlayerMaterials(1, idInTeam);
     }
 
     public void setId(int id, int iidInTeam)

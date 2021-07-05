@@ -45,10 +45,10 @@ public class NetworkPlayer : ArenaPlayer
 
                     leftHandPresence = GameObject.Find("Camera Offset/LeftHand Controller/Left Hand Presence").GetComponent<HandPresence>();
                     rightHandPresence = GameObject.Find("Camera Offset/RightHand Controller/Right Hand Presence").GetComponent<HandPresence>();
-                    foreach (var item in GetComponentsInChildren<Renderer>())
-                    {
-                        item.enabled = false;
-                    }
+                    // foreach (var item in GetComponentsInChildren<Renderer>())
+                    // {
+                    //     item.enabled = false;
+                    // }
                 }
             }
             initialised = true;
@@ -63,6 +63,9 @@ public class NetworkPlayer : ArenaPlayer
         idInTeam = iidInTeam;
         spellBook.Team = team;
         spellBook.setIdPlayerSpellCreator(playerId);
+
+        setPlayerMaterials(team, idInTeam);
+
         if (leftHandPresence != null)
             leftHandPresence.Team = team;
         if (rightHandPresence != null)

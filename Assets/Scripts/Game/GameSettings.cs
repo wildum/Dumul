@@ -70,7 +70,7 @@ static class GameSettings
         playerInfo.id = 0;
         playerInfo.idInTeam = 0;
         int countFirstTeam = 0;
-        int countSecondTeam = 0;   
+        int countSecondTeam = 0;
 
         foreach (KeyValuePair<int, Photon.Realtime.Player> entry in dict)
         {
