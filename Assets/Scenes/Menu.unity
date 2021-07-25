@@ -1062,6 +1062,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomHandler: {fileID: 508998469}
   lobbyText: {fileID: 483040368}
+  roomTextToJoin: {fileID: 2121456108}
   aiPopup: {fileID: 1703876470}
 --- !u!1 &355903900
 GameObject:
@@ -5281,7 +5282,7 @@ GameObject:
   - component: {fileID: 2121456109}
   - component: {fileID: 2121456108}
   m_Layer: 5
-  m_Name: DebugRoom
+  m_Name: RoomTextToJoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5332,13 +5333,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: 'Try to join :'
 --- !u!222 &2121456109
 CanvasRenderer:
   m_ObjectHideFlags: 0

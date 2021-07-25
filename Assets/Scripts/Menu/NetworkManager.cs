@@ -166,10 +166,17 @@ namespace menu
             }
         }
 
+        public void deactivateRoomTextToJoin()
+        {
+            buttonManager.roomTextToJoin.gameObject.SetActive(false);
+        }
+
         public override void OnJoinedRoom()
         {
             Debug.Log("Joined a room");
             base.OnJoinedRoom();
+            if (buttonManager.roomTextToJoin.gameObject.activeSelf)
+                Invoke("deactivateRoomTextToJoin", 5.0f);
             roomName.text = "Room : " + PhotonNetwork.CurrentRoom.Name;
             roomHandler.synchRoomProperties();
             updateButtonsWithRoomType();
@@ -198,20 +205,20 @@ namespace menu
             PhotonNetwork.LocalPlayer.CustomProperties = customPropertiesPlayer;
         }
 
+        public override void OnJoinRoomFailed(short returnCode, string message)
+        {
+            base.OnJoinRoomFailed(returnCode, message);
+            ButtonManager.tryingToJoinFriend = false;
+            buttonManager.roomTextToJoin.text = "Joining room failed";
+            roomHandler.createWaitingRoom();
+        }
+
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             base.OnJoinRandomFailed(returnCode, message);
             Debug.Log("did not find any room, create one to wait, reason : " + message);
-            if (ButtonManager.tryingToJoinFriend)
-            {
-                ButtonManager.tryingToJoinFriend = false;
-                roomHandler.createWaitingRoom();
-            }
-            else
-            {
-                buttonManager.buttonInLobbyConfig(roomHandler.getMyCurrentRoomState());
-                roomHandler.createLobbyRoom();
-            }
+            buttonManager.buttonInLobbyConfig(roomHandler.getMyCurrentRoomState());
+            roomHandler.createLobbyRoom();
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)

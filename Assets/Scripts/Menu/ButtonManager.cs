@@ -11,6 +11,7 @@ namespace menu
     {
         public RoomsHandler roomHandler;
         public Text lobbyText;
+        public Text roomTextToJoin;
         public AiPopup aiPopup;
 
         public static bool tryingToJoinFriend = false;
@@ -20,33 +21,30 @@ namespace menu
 
         private TouchScreenKeyboard overlayKeyboard;
 
-        private bool tryingToJoin = false;
-
-        private bool test2 = false;
-
         void Start()
         {
             tryingToJoinFriend = false;
             roomNameToJoin = "";
             aiPopup.gameObject.SetActive(false);
             lobbyText.gameObject.SetActive(false);
+            roomTextToJoin.gameObject.SetActive(false);
         }
 
         void Update()
         {
-            if (!tryingToJoin && test2)
-            {
-                tryingToJoinFriend = true;
-                tryingToJoin = true;
-                PhotonNetwork.LeaveRoom();
-            }
             if (overlayKeyboard != null)
             {
-                if (!tryingToJoin && overlayKeyboard.text != "" && overlayKeyboard.status == TouchScreenKeyboard.Status.Done)
+                if (!roomTextToJoin.gameObject.activeSelf)
+                    roomTextToJoin.gameObject.SetActive(true);
+
+                roomNameToJoin = overlayKeyboard.text;
+                roomTextToJoin.text = "Try to join " + roomNameToJoin;
+                if (overlayKeyboard.status == TouchScreenKeyboard.Status.Done)
                 {
-                    roomNameToJoin = overlayKeyboard.text;
-                    Debug.Log("Try to join " + roomNameToJoin);
-                    
+                    tryingToJoinFriend = true;
+                    overlayKeyboard = null;
+                    roomTextToJoin.text = "Joining " + roomNameToJoin;
+                    PhotonNetwork.LeaveRoom();
                 }
             }
         }
@@ -239,8 +237,6 @@ namespace menu
         public void joinRoomByName()
         {
             roomNameToJoin = "";
-            tryingToJoin = false;
-            test2 = true;
             AppState.MasterFriendId = "";
             overlayKeyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default);
         }
