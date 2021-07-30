@@ -17,6 +17,8 @@ public enum SpellRecognition
     DashLeft,
     DashLeftOnePart,
     DashRightOnePart,
+    LaserLeft,
+    LaserRight,
     UNDEFINED
 }
 
@@ -28,6 +30,7 @@ public enum SpellEnum
     Grenade,
     DashRight,
     DashLeft,
+    Laser,
     UNDEFINED
 }
 
@@ -42,6 +45,8 @@ public enum SpellCdEnum
     DashRight,
     DashLeft,
     Shield,
+    LaserLeft,
+    LaserRight,
     UNDEFINED
 }
 

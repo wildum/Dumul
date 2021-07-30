@@ -13,7 +13,7 @@ public class SpellBook
 
     public static List<SpellCdEnum> SPELLS = new List<SpellCdEnum> { SpellCdEnum.FireballLeft, SpellCdEnum.FireballRight, 
         SpellCdEnum.Thunder, SpellCdEnum.Cross,  SpellCdEnum.GrenadeLeft, SpellCdEnum.GrenadeRight, SpellCdEnum.DashLeft,  
-        SpellCdEnum.DashRight, SpellCdEnum.Shield };
+        SpellCdEnum.DashRight, SpellCdEnum.Shield, SpellCdEnum.LaserLeft, SpellCdEnum.LaserRight };
 
     public static Dictionary<SpellRecognition, SpellEnum> recognitionToSpell = new Dictionary<SpellRecognition, SpellEnum>
     {
@@ -30,6 +30,8 @@ public class SpellBook
         {SpellRecognition.DashLeftOnePart, SpellEnum.DashLeft},
         {SpellRecognition.DashRight, SpellEnum.DashRight},
         {SpellRecognition.DashRightOnePart, SpellEnum.DashRight},
+        {SpellRecognition.LaserLeft, SpellEnum.Laser},
+        {SpellRecognition.LaserRight, SpellEnum.Laser},
         {SpellRecognition.UNDEFINED, SpellEnum.UNDEFINED}
     };
 
@@ -43,7 +45,9 @@ public class SpellBook
         { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") },
         { SpellCdEnum.DashRight, new SpellCd(DASH_CD, "DashRight") },
         { SpellCdEnum.DashLeft, new SpellCd(DASH_CD, "DashLeft") },
-        { SpellCdEnum.Shield, new SpellCd(Shield.SHIELD_CD, "Shield")}
+        { SpellCdEnum.Shield, new SpellCd(Shield.SHIELD_CD, "Shield")},
+        { SpellCdEnum.LaserLeft, new SpellCd(Laser.LASER_CD, "Laser Left")},
+        { SpellCdEnum.LaserRight, new SpellCd(Laser.LASER_CD, "Laser Right")}
     };
 
     private SpellCreator spellcreator = new SpellCreator();
@@ -193,6 +197,20 @@ public class SpellBook
                 {
                     spellcreator.createGrenade(hand.getCustomRecognizerData().points);
                     spellCds[SpellCdEnum.GrenadeRight].CurrentCd = 0.0f;
+                }
+                else if (hand.getHandSide() == HandSideEnum.Right
+                    && spellReco == SpellRecognition.LaserRight
+                    && isSpellAvailable(SpellCdEnum.LaserRight, Laser.LASER_CD))
+                {
+                    spellcreator.createLaser(hand);
+                    spellCds[SpellCdEnum.LaserRight].CurrentCd = 0.0f;
+                }
+                else if (hand.getHandSide() == HandSideEnum.Left
+                    && spellReco == SpellRecognition.LaserLeft
+                    && isSpellAvailable(SpellCdEnum.LaserLeft, Laser.LASER_CD))
+                {
+                    spellcreator.createLaser(hand);
+                    spellCds[SpellCdEnum.LaserLeft].CurrentCd = 0.0f;
                 }
             }
             hand.stopTrail(TrailType.AttackSpell);

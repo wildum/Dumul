@@ -13,6 +13,7 @@ public class SpellDescriptionIO : ScriptableObject
         { "cross", SpellEnum.Cross },
         { "dash right", SpellEnum.DashRight },
         { "dash left", SpellEnum.DashLeft },
+        { "laser", SpellEnum.Laser }
     };
     public static Dictionary<SpellEnum, string> ReadSpellDescriptionFromXML(string xml)
     {

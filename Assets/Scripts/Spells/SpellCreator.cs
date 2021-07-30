@@ -24,6 +24,12 @@ public class SpellCreator
         return grenade;
     }
 
+    public void createLaser(HandPresence hand)
+    {
+        hand.Channeling = true;
+        GameObject laser = PhotonNetwork.Instantiate("Laser", hand.transform.position, hand.transform.rotation);
+    }
+
     public void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)
     {
         Vector3 position = Tools.foundClosestMiddlePointBetweenTwoLists(p1, p2);

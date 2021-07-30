@@ -6,4 +6,5 @@
     <Spell Name="grenade" Description="A ball of energy that the player can grab and throw with the grip command. Explodes on collision."/>
     <Spell Name="dash left" Description="Move quickly to your left."/>
     <Spell Name="dash right" Description="Move quickly to your right."/>
+    <Spell Name="laser" Description="Channel a laser that deals damages over a duration."/>
 </Spells>

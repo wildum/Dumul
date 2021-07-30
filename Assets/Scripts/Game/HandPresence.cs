@@ -57,6 +57,8 @@ public class HandPresence : MonoBehaviour
     private GameObject pausePopupInstantiated;
     private int team = -1;
 
+    bool channeling = false;
+
     private float headAngley = 0.0f;
 
     void Awake()
@@ -200,6 +202,7 @@ public class HandPresence : MonoBehaviour
 
         if (grip.pressing())
         {
+            channeling = false;
             if (customRecognizerData.points == null || customRecognizerData.rotations == null)
             {
                 customRecognizerData.points = new List<CustomPoint>();
@@ -223,5 +226,6 @@ public class HandPresence : MonoBehaviour
     public List<CustomPoint> LoadedPoints { get { return loadedPoints; } set { loadedPoints = value; } }
     public float HeadAngley {get {return headAngley;} set {headAngley = value;}}
     public Vector2 JoystickData { get { return joystickData; } }
+    public bool Channeling {get { return channeling; } set { channeling = value;}}
 
 }

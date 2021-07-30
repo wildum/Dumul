@@ -30,7 +30,9 @@ public class CustomGestureIO : ScriptableObject
         { "dashLeft", SpellRecognition.DashLeft },
         { "dashLeftOnePart", SpellRecognition.DashLeftOnePart },
         { "dashRight", SpellRecognition.DashRight },
-        { "dashRightOnePart", SpellRecognition.DashRightOnePart }
+        { "dashRightOnePart", SpellRecognition.DashRightOnePart },
+        { "laserLeft", SpellRecognition.LaserLeft },
+        { "laserRight", SpellRecognition.LaserRight }
     };
     public static CustomGestureIOData ReadGestureFromXML(string xml)
     {
