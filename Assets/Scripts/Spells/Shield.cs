@@ -6,9 +6,13 @@ using Photon.Pun;
 public class Shield : Spell
 {
     public const float SHIELD_CD = 6.0f;
+    public const float SHIELD_RADIUS = 1.0f; // not connected to asset, if model changes then this should be updated
+    public const int SHIELD_HEALTH = 30;
     private bool active = false;
     private bool wasActive = false;
     private bool destroyed = false;
+
+    private int health = SHIELD_HEALTH;
 
     void Start()
     {
@@ -57,9 +61,7 @@ public class Shield : Spell
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine)
         {
-            active = iactive;
-            gameObject.SetActive(iactive);
-            gameObject.GetComponent<MeshRenderer>().enabled = iactive;
+            updateShieldStats(iactive);
             photonView.RPC("updateActive", RpcTarget.Others, iactive);
         }
     }
@@ -69,12 +71,49 @@ public class Shield : Spell
         return active;
     }
 
-    [PunRPC]
-    public void updateActive(bool iactive)
+    private void updateShieldStats(bool iactive)
     {
         active = iactive;
         gameObject.SetActive(iactive);
         gameObject.GetComponent<MeshRenderer>().enabled = iactive;
+        if (iactive)
+        {
+            health = SHIELD_HEALTH;
+            updateColor();
+        }
+    }
+
+    [PunRPC]
+    public void updateActive(bool iactive)
+    {
+        updateShieldStats(iactive);
+    }
+
+    public void takeDamages(int amount)
+    {
+        PhotonView photonView = PhotonView.Get(this);
+        if (photonView.IsMine)
+        {
+            photonView.RPC("takeDamagesPun", RpcTarget.All, amount);
+        }
+    }
+
+    void updateColor()
+    {
+        Color c = this.GetComponent<MeshRenderer>().material.color;
+        c.a = 0.3f * (float) health / SHIELD_HEALTH;
+        this.GetComponent<MeshRenderer>().material.color = c;
+    }
+
+    [PunRPC]
+    private void takeDamagesPun(int amount)
+    {
+        health = Mathf.Max(0, health - amount);
+        updateColor();
+        if (health == 0)
+        {
+            updateActive(false);
+        }
     }
 
     public bool WasActive { get {return wasActive;} set {wasActive = value;}}

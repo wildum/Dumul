@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 1380347355559384727}
   - component: {fileID: 7870772695939838784}
   - component: {fileID: 1330832519774196939}
+  - component: {fileID: 4999328811458482194}
   m_Layer: 8
   m_Name: Hitbox
-  m_TagString: Thunder
+  m_TagString: Laser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -91,7 +92,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3369834949988453520}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5000001
   m_Height: 2
@@ -148,6 +149,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ee551969195b1240b13d00c6c73cfca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &4999328811458482194
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3369834949988453520}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7042345623582053859
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,9 +279,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 4f01579d6ccde9242b352204995d27eb, type: 3}
+  m_audioClip: {fileID: 8300000, guid: c96645ef4bfe2254693eea2bec617f7d, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.505
   m_Pitch: 1
   Loop: 0
   Mute: 0

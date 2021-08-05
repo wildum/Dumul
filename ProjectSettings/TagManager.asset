@@ -10,6 +10,8 @@ TagManager:
   - Arena
   - Ground
   - Cross
+  - Laser
+  - Hand
   layers:
   - Default
   - TransparentFX

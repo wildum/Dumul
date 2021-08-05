@@ -28,6 +28,9 @@ public class SpellCreator
     {
         hand.Channeling = true;
         GameObject laser = PhotonNetwork.Instantiate("Laser", hand.transform.position, hand.transform.rotation);
+        laser.GetComponentInChildren<Laser>().setHand(hand);
+        laser.GetComponentInChildren<Laser>().PlayerId = playerId;
+        laser.GetComponentInChildren<Renderer>().material.color = GameSettings.getTeamColor(team);
     }
 
     public void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)

@@ -6,17 +6,27 @@ using Photon.Pun;
 public class Laser : Spell
 {
     public const float LASER_CD = 10f;
-    public const float LASER_SCALE_SPEED = 2.0f;
-    public const int LASER_DAMAGE = 10;
+    public const float LASER_SCALE_SPEED = 4.0f;
+    public const int LASER_DAMAGE = 5;
     public const float LASER_DURATION = 6.0f;
+    public const float LASER_DAMAGE_TICK_FREQ = 0.5f;
+    public const float LASER_TIME_SHIELD_DESTRUCTION = 2.0f;
     public const float yStartingPosition = 5f;
 
     private const float TIME_BEFORE_SPAWN = 0.5f;
     private float t = 0;
-
+    private bool alived = true;
     private bool canScale = true;
 
     private HandPresence hand;
+    
+    private ArenaPlayer currentTarget;
+    private Dictionary<int, float> damageTicks = new Dictionary<int, float>();
+
+    private List<int> colliderIds = new List<int>();
+    
+    private Shield currentTargetShield;
+    private float tShieldTime = 0.0f;
 
     void Awake()
     {
@@ -25,25 +35,41 @@ public class Laser : Spell
         damage = LASER_DAMAGE;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         t += Time.deltaTime;
-        handleLifeTime();
-        handleScaling();
-        handleRotation();
+        if (alived && hand != null && handleLifeTime())
+        {
+            handleRotationAndPosition();
+            handleScaling();
+            handleDamageTicks();
+            handleDamages();
+        }
+    }
+
+    void handleDamageTicks()
+    {
+        List<int> keys = new List<int>(damageTicks.Keys);
+        foreach(var key in keys)
+        {
+            damageTicks[key] += Time.deltaTime;
+        }
+        tShieldTime += Time.deltaTime;
     }
 
     void handleScaling()
     {
-        if (t > TIME_BEFORE_SPAWN && canScale)
+        if (currentTargetShield != null)
         {
-            Vector3 v = transform.parent.transform.localScale;
-            v.y += Time.deltaTime * LASER_SCALE_SPEED;
-            transform.parent.transform.localScale = v;
+            scaleOnSchield();
+        }
+        else if (t > TIME_BEFORE_SPAWN && canScale)
+        {
+            setScale(transform.parent.transform.localScale.y + Time.deltaTime * LASER_SCALE_SPEED);
         }
     }
 
-    void handleLifeTime()
+    bool handleLifeTime()
     {
         if (t > LASER_DURATION || !hand.Channeling)
         {
@@ -52,18 +78,42 @@ public class Laser : Spell
             {
                 PhotonNetwork.Destroy(transform.parent.gameObject);
             }
+            alived = false;
         }
+        return alived;
     }
 
-    void handleRotation()
+    void handleRotationAndPosition()
     {
-        if (hand != null)
+        transform.parent.position = hand.transform.position;
+        Quaternion quaternion = hand.transform.rotation;
+        float offset = hand.side == HandSideEnum.Left ? -90 : 90;
+        quaternion.eulerAngles = new Vector3(quaternion.eulerAngles.x, quaternion.eulerAngles.y, quaternion.eulerAngles.z + offset);
+        transform.parent.rotation = quaternion;
+    }
+
+    void handleDamages()
+    {
+        if (currentTarget != null)
         {
-            gameObject.transform.rotation = hand.transform.rotation;
+            if (damageTicks[currentTarget.Id] >= LASER_DAMAGE_TICK_FREQ)
+            {
+                currentTarget.photonView.RPC("takeDamage", RpcTarget.All, damage, playerId);
+                damageTicks[currentTarget.Id] = 0;
+            }
+        }
+
+        if (currentTargetShield != null)
+        {
+            if (tShieldTime >= LASER_DAMAGE_TICK_FREQ)
+            {
+                currentTargetShield.takeDamages(damage);
+                tShieldTime = 0;
+            }
         }
     }
 
-    void setHand(HandPresence ihand)
+    public void setHand(HandPresence ihand)
     {
         hand = ihand;
     }
@@ -73,49 +123,93 @@ public class Laser : Spell
         hand.Channeling = false;
     }
 
-    void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider other)
     {
+        ReliableOnTriggerExit.NotifyTriggerExit(other, gameObject);
         PhotonView photonView = PhotonView.Get(this);
         if (photonView.IsMine)
         {
-            handleCollision(collision, false);
+            if (other.tag == "Shield")
+            {
+                currentTargetShield = null;
+            }
+            else if (other.tag == "Player") 
+            {
+                currentTarget = null;
+            }
+            colliderIds.Remove(other.gameObject.GetInstanceID());
+            canScale = colliderIds.Count == 0;
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        PhotonView photonView = PhotonView.Get(this);
-        if (photonView.IsMine)
+        if (other.tag != "Hand")
         {
-            //playerTakeDamage(collision);
-            handleCollision(collision, true);
+            ReliableOnTriggerExit.NotifyTriggerEnter(other, gameObject, OnTriggerExit);
+            colliderIds.Add(other.gameObject.GetInstanceID());
+            PhotonView photonView = PhotonView.Get(this);
+            if (photonView.IsMine)
+            {
+                canScale = false;
+                handleTarget(other);
+                handleCollision(other);
+            }
         }
     }
 
-    void playerTakeDamage(Collision collision)
+    void handleTarget(Collider collider)
     {
-        ArenaPlayer player = getPlayerFromCollision(collision);
+        ArenaPlayer player = getPlayerFromCollider(collider);
         if (player != null)
         {
-            player.photonView.RPC("takeDamage", RpcTarget.All, damage, playerId);
+            currentTarget = player;
+            if (!damageTicks.ContainsKey(currentTarget.Id))
+            {
+                damageTicks[currentTarget.Id] = LASER_DAMAGE_TICK_FREQ;
+            }
         }
     }
 
-    void handleCollision(Collision collision, bool touching)
+    void handleCollision(Collider collider)
     {
-        PhotonView photonView = PhotonView.Get(this);
-        if (photonView.IsMine)
+        if (collider.tag != "Shield")
         {
-            Debug.Log("Laser Touch!");
-            if (collision.collider.tag == "Player" ||
-                collision.collider.tag == "Shield")
-            {
-                canScale = !touching;
-            }
-            else 
-            {
-                canScale = true;
-            }
+            Vector3 p = collider.ClosestPoint(transform.parent.position);
+            float distance = Vector3.Distance(p, transform.parent.position) / 2.0f;
+            setScale(distance + 0.01f);
         }
+        else
+        {
+            if (currentTargetShield == null)
+            {
+                currentTargetShield = collider.gameObject.GetComponent<Shield>();
+            }
+            scaleOnSchield();
+        }
+    }
+
+    void scaleOnSchield()
+    {
+        Vector3 laserToShieldCenter = currentTargetShield.transform.position - transform.parent.position;
+        Vector3 projection = Vector3.Project(laserToShieldCenter, transform.parent.up);
+        Vector3 projectionPoint = projection + transform.parent.position;
+        // Debug.Log("Shield : " + currentTargetShield.transform.position + " hand : " + transform.parent.position + " proj : " + projectionPoint);
+        float projToShield = Vector3.Distance(currentTargetShield.transform.position, projectionPoint);
+        float projToShieldCorrection = Mathf.Min(1.0f, projToShield);
+        float distToContact = Mathf.Sqrt(Shield.SHIELD_RADIUS * Shield.SHIELD_RADIUS  - projToShieldCorrection * projToShieldCorrection);
+        // Debug.Log("dist[projP / contact] : " + distToContact + " / dist[projPoint / shield] : " + projToShield);
+        Vector3 contactPoint = projectionPoint + Vector3.Normalize(transform.parent.position - projectionPoint) * distToContact;
+        // Debug.Log( "Contactpoint : " + contactPoint);
+        float distance = Vector3.Distance(contactPoint, transform.parent.position) / 2.0f;
+        // Debug.Log(distance);
+        setScale(distance + 0.01f);
+    }
+
+    void setScale(float value)
+    {
+        Vector3 v = transform.parent.transform.localScale;
+        v.y = value;
+        transform.parent.transform.localScale = v;
     }
 }

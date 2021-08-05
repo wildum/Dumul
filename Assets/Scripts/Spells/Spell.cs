@@ -92,6 +92,23 @@ public class Spell : MonoBehaviour
         return null;
     }
 
+    protected ArenaPlayer getPlayerFromCollider(Collider collider)
+    {
+        if (collider.tag == "Player")
+        {
+            GameObject g = collider.transform.parent.gameObject;
+            if (g != null)
+            {
+                GameObject gp = g.transform.parent.gameObject;
+                if (gp != null)
+                {
+                   return gp.GetComponent<ArenaPlayer>();
+                }
+            }
+        }
+        return null;
+    }
+
     public float Cd { get { return cd; } }
     public int Speed { get { return speed; } }
     public int Damage { get { return damage; } }

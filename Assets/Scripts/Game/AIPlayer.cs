@@ -24,7 +24,9 @@ public class AIPlayer : ArenaPlayer
         { SpellCdEnum.Cross, new SpellCd(Cross.CROSS_CD, "Cross") },
         { SpellCdEnum.DashLeft, new SpellCd(SpellBook.DASH_CD, "DashLeft") },
         { SpellCdEnum.DashRight, new SpellCd(SpellBook.DASH_CD, "DashRight") },
-        { SpellCdEnum.Shield, new SpellCd(Shield.SHIELD_CD, "Shield") }
+        { SpellCdEnum.Shield, new SpellCd(Shield.SHIELD_CD, "Shield") },
+        { SpellCdEnum.LaserLeft, new SpellCd(Laser.LASER_CD, "LaserLeft") },
+        { SpellCdEnum.LaserRight, new SpellCd(Laser.LASER_CD, "LaserRight") }
     };
 
     private List<SpellCdEnum> spellCdHandled = new List<SpellCdEnum>
