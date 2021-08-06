@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public enum SpellRecognition
 {
@@ -68,12 +69,15 @@ public class SpellCd
     public string Name { get { return name; } }
 }
 
-public class Spell : MonoBehaviour
+public class Spell : MonoBehaviour, IPunInstantiateMagicCallback
 {
     protected float cd = 10f;
     protected int speed = 50;
     protected int damage = 150;
     protected int playerId = 0;
+    protected int team = 0;
+
+    virtual public void OnPhotonInstantiate(Photon.Pun.PhotonMessageInfo info){Debug.Log("method should be overrided");}
 
     protected ArenaPlayer getPlayerFromCollision(Collision collision)
     {
@@ -113,5 +117,6 @@ public class Spell : MonoBehaviour
     public int Speed { get { return speed; } }
     public int Damage { get { return damage; } }
     public int PlayerId { get { return playerId; } set { playerId = value;} }
+    public int Team { get { return team; } set { team  = value; }}
 }
 

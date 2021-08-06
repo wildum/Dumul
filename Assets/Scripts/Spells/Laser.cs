@@ -35,6 +35,13 @@ public class Laser : Spell
         damage = LASER_DAMAGE;
     }
 
+    public override void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        object[] instantiationData = info.photonView.InstantiationData;
+        team = (int) instantiationData[0];
+        GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
+    }
+
     void FixedUpdate()
     {
         t += Time.deltaTime;

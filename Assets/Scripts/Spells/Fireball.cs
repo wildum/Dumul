@@ -15,8 +15,6 @@ public class Fireball : Spell
     private float FORCEFREQUENCY = 0.2f;
     private float decrementForceFactor = 0.9f;
 
-    private int team = 0;
-
     private ArenaPlayer target;
 
     private void Awake()
@@ -24,6 +22,13 @@ public class Fireball : Spell
         cd = FIREBALL_CD;
         speed = FIREBALL_SPEED;
         damage = FIREBALL_DAMAGE;
+    }
+
+    public override void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        object[] instantiationData = info.photonView.InstantiationData;
+        team = (int) instantiationData[0];
+        GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
     }
 
     void Update()
@@ -39,11 +44,6 @@ public class Fireball : Spell
             }
             forceTime = 0;
         }
-    }
-
-    public void setTeam(int iteam)
-    {
-        team = iteam;
     }
 
     public void setTarget(ArenaPlayer arenaPlayer)
