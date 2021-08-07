@@ -8,7 +8,7 @@ public class Cross : Spell
     public const float CROSS_CD = 8.0f;
     public const int CROSS_SPEED = 10;
     public const int CROSS_DAMAGE = 100;
-    public const float CROSS_ROTATION_SPEED = 90.0f; // degree/second
+    public const float CROSS_ROTATION_SPEED = 0.0f; // degree/second
 
     // needed because the cross has two collider so we dont want to trigger both when dealing damage
     private bool alreadyTookDamage = false;
