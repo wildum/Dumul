@@ -55,9 +55,26 @@ static class GameSettings
     private static Color colorTeam1 = new Color(1.0f, 0.6f, 0.27f);
     private static Color colorTeam2 = new Color(0.39f, 0.64f, 0.73f);
 
+    private static Material electricalBlue;
+    private static Material electricalOrange;
+
     public static Color getTeamColor(int team)
     {
         return team == 0 ? colorTeam1 : colorTeam2;
+    }
+
+    public static Material getElectricalMaterial(int team)
+    {
+        if (electricalBlue == null)
+        {
+            electricalBlue = Resources.Load<Material>("Materials/ElectricalEffectBlue");
+            electricalOrange = Resources.Load<Material>("Materials/ElectricalEffectOrange");
+            if (electricalBlue == null)
+                Debug.Log("Error loading material");
+            if (electricalOrange == null)
+                Debug.Log("Error loading material 2");
+        }  
+        return team == 0 ? electricalOrange : electricalBlue;
     }
 
     public static PlayerInfo getPlayerInfo(int id)

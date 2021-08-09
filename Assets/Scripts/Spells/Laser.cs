@@ -35,13 +35,6 @@ public class Laser : Spell
         damage = LASER_DAMAGE;
     }
 
-    public override void OnPhotonInstantiate(PhotonMessageInfo info)
-    {
-        object[] instantiationData = info.photonView.InstantiationData;
-        team = (int) instantiationData[0];
-        GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
-    }
-
     void FixedUpdate()
     {
         t += Time.deltaTime;
@@ -127,7 +120,8 @@ public class Laser : Spell
 
     private void OnDestroy()
     {
-        hand.Channeling = false;
+        if (hand != null)
+            hand.Channeling = false;
     }
 
     private void OnTriggerExit(Collider other)

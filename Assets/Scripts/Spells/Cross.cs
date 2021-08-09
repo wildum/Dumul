@@ -25,8 +25,10 @@ public class Cross : Spell
     {
         object[] instantiationData = info.photonView.InstantiationData;
         team = (int) instantiationData[0];
-        transform.GetChild(0).GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
-        transform.GetChild(1).GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
+        GetComponentsInChildren<ParticleSystemRenderer>()[0].trailMaterial = GameSettings.getElectricalMaterial(team);
+        GetComponentsInChildren<ParticleSystemRenderer>()[1].trailMaterial = GameSettings.getElectricalMaterial(team);
+        GetComponentsInChildren<ParticleSystemRenderer>()[2].trailMaterial = GameSettings.getElectricalMaterial(team);
+        GetComponentsInChildren<ParticleSystemRenderer>()[3].trailMaterial = GameSettings.getElectricalMaterial(team);
     }
 
     private void FixedUpdate()

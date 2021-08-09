@@ -10,6 +10,6 @@ public class ThunderParent : MonoBehaviour, IPunInstantiateMagicCallback
         object[] instantiationData = info.photonView.InstantiationData;
         int team = (int) instantiationData[0];
         GetComponentInChildren<Thunder>().Team = team;
-        GetComponentInChildren<Renderer>().material.color = GameSettings.getTeamColor(team);
+        GetComponentInChildren<ParticleSystemRenderer>().trailMaterial = GameSettings.getElectricalMaterial(team);
     }
 }

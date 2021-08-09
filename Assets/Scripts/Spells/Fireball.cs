@@ -28,7 +28,7 @@ public class Fireball : Spell
     {
         object[] instantiationData = info.photonView.InstantiationData;
         team = (int) instantiationData[0];
-        GetComponent<Renderer>().material.color = GameSettings.getTeamColor(team);
+        GetComponentInChildren<ParticleSystemRenderer>().trailMaterial = GameSettings.getElectricalMaterial(team);
     }
 
     void Update()
