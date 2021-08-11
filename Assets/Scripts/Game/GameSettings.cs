@@ -63,17 +63,14 @@ static class GameSettings
         return team == 0 ? colorTeam1 : colorTeam2;
     }
 
+    public static void loadMaterials()
+    {
+        electricalBlue = Resources.Load<Material>("Materials/ElectricalEffectBlue");
+        electricalOrange = Resources.Load<Material>("Materials/ElectricalEffectOrange");
+    }
+
     public static Material getElectricalMaterial(int team)
     {
-        if (electricalBlue == null)
-        {
-            electricalBlue = Resources.Load<Material>("Materials/ElectricalEffectBlue");
-            electricalOrange = Resources.Load<Material>("Materials/ElectricalEffectOrange");
-            if (electricalBlue == null)
-                Debug.Log("Error loading material");
-            if (electricalOrange == null)
-                Debug.Log("Error loading material 2");
-        }  
         return team == 0 ? electricalOrange : electricalBlue;
     }
 

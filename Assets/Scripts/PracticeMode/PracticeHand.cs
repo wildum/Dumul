@@ -9,7 +9,7 @@ public class PracticeHand : MonoBehaviour
     int currentIndex = 0;
 
     float distanceTrigger = 0.1f;
-    float handMovementSpeed = 4.0f;
+    float handMovementSpeed = 8.0f;
     bool reset = true;
     bool movementFinished = true;
 

@@ -20,6 +20,7 @@ public class SpellPracticeMovement : MonoBehaviour
             timerBetweenMovement += Time.deltaTime;
             if (timerBetweenMovement > timeBetweenMovement)
             {
+                timerBetweenMovement = 0;
                 if (currentSpellTwoHanded)
                 {
                     handRight.gameObject.SetActive(true);

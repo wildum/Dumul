@@ -60,6 +60,7 @@ public class Main : MonoBehaviourPunCallbacks
         GameSettings.aiPositionCount = 0;
         InformationCenter.clearPlayers();
         CommunicationCenter.resetCommunicationCenter();
+        GameSettings.loadMaterials();
     }
 
     void ruleModeSpecific()

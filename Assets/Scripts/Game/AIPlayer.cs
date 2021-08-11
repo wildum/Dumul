@@ -48,6 +48,8 @@ public class AIPlayer : ArenaPlayer
     private Vector3 originPosition;
     private Vector3 targetPosition;
     private SpellCreator spellCreator = new SpellCreator();
+    private bool channelingLaser = false;
+    private float timerLaser = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -94,7 +96,20 @@ public class AIPlayer : ArenaPlayer
             {
                 ArenaPlayer enemy = InformationCenter.getRandomPlayerOppositeTeam(team);
                 updateAllSpellCds();
-                if (performingSpell())
+                if (channelingLaser)
+                {
+                    timerLaser += Time.deltaTime;
+                    if (timerLaser > Laser.LASER_DURATION)
+                    {
+                        channelingLaser = false;
+                        timerLaser = 0.0f;
+                    }
+                    moveAround();
+                    updateRotationToFixEnemy(enemy, head);
+                    updateRotationToFixEnemy(enemy, leftHand);
+                    updateRotationToFixEnemy(enemy, rightHand);
+                }
+                else if (performingSpell())
                 {
                     if (reachedFirstPosition(pointsLeftHand, currentPointInMovementLeft, leftHand, leftOriginLocalPosition))
                     {
@@ -203,7 +218,7 @@ public class AIPlayer : ArenaPlayer
 
     void updateRotationToFixEnemy(ArenaPlayer enemy, Transform bodypart)
     {
-        Vector3 direction = (enemy.getPosition() - bodypart.position).normalized;
+        Vector3 direction = enemy.getPosition() - bodypart.position;
         Quaternion rotation = Quaternion.LookRotation(direction);
         bodypart.rotation = Quaternion.Slerp(bodypart.rotation, rotation, Time.deltaTime * config.rotationSpeed);
     }
@@ -298,6 +313,12 @@ public class AIPlayer : ArenaPlayer
                 case SpellCdEnum.GrenadeRight:
                     pointsRightHand = new List<CustomPoint>(availableGestures[spellSelected].getCustomPoints());
                     break;
+                case SpellCdEnum.LaserLeft:
+                    pointsLeftHand = new List<CustomPoint>(availableGestures[spellSelected].getCustomPoints());
+                    break;
+                case SpellCdEnum.LaserRight:
+                    pointsRightHand = new List<CustomPoint>(availableGestures[spellSelected].getCustomPoints());
+                    break;
             }
         }
     }
@@ -362,6 +383,14 @@ public class AIPlayer : ArenaPlayer
                     if (isSpellAvailable(SpellCdEnum.GrenadeRight, Grenade.GRENADE_CD))
                         availableGestures.Add(SpellCdEnum.GrenadeRight, gesture);
                     break;
+                case SpellRecognition.LaserLeft:
+                    if (isSpellAvailable(SpellCdEnum.LaserLeft, Laser.LASER_CD))
+                        availableGestures.Add(SpellCdEnum.LaserLeft, gesture);
+                    break;
+                case SpellRecognition.LaserRight:
+                    if (isSpellAvailable(SpellCdEnum.LaserRight, Laser.LASER_CD))
+                        availableGestures.Add(SpellCdEnum.LaserRight, gesture);
+                    break;
             }
         }
     }
@@ -385,7 +414,8 @@ public class AIPlayer : ArenaPlayer
         Vector3 direction = enemy.getPosition() - grenade.transform.position;
         float heightBonus = Vector3.Distance(grenade.transform.position, enemy.getPosition()) / 2.0f;
         direction.y += heightBonus;
-        grenade.GetComponent<Rigidbody>().AddForce(direction * config.grenadeForce, ForceMode.Impulse);    }
+        grenade.GetComponent<Rigidbody>().AddForce(direction * config.grenadeForce, ForceMode.Impulse);
+    }
 
     void sendSpell(ArenaPlayer enemy)
     {
@@ -412,6 +442,14 @@ public class AIPlayer : ArenaPlayer
             case SpellCdEnum.GrenadeRight:
                 grenade = spellCreator.createGrenade(pointsRightRealWorld);
                 handleGrenade(grenade, enemy);
+                break;
+            case SpellCdEnum.LaserLeft:
+                spellCreator.createLaserAI(leftHand, true);
+                channelingLaser = true;
+                break;
+            case SpellCdEnum.LaserRight:
+                spellCreator.createLaserAI(rightHand, false);
+                channelingLaser = true;
                 break;
         }
         timeLastSpell = 0.0f;

@@ -33,6 +33,14 @@ public class SpellCreator
         laser.GetComponentInChildren<Laser>().Team = team;
     }
 
+    public void createLaserAI(Transform trans, bool leftSide)
+    {
+        GameObject laser = PhotonNetwork.Instantiate("Laser", trans.position, trans.rotation, 0, new object[]{team});
+        laser.GetComponentInChildren<Laser>().setAiParams(trans, true, leftSide);
+        laser.GetComponentInChildren<Laser>().PlayerId = playerId;
+        laser.GetComponentInChildren<Laser>().Team = team;
+    }
+
     public void createCross(Transform head, List<CustomPoint> p1, List<CustomPoint> p2)
     {
         Vector3 position = Tools.foundClosestMiddlePointBetweenTwoLists(p1, p2);

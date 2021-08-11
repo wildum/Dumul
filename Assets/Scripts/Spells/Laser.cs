@@ -19,6 +19,9 @@ public class Laser : Spell
     private bool canScale = true;
 
     private HandPresence hand;
+    private Transform aiHand;
+    private bool aiLaser = false;
+    private bool aiLeftHand = false;
     
     private ArenaPlayer currentTarget;
     private Dictionary<int, float> damageTicks = new Dictionary<int, float>();
@@ -38,9 +41,12 @@ public class Laser : Spell
     void FixedUpdate()
     {
         t += Time.deltaTime;
-        if (alived && hand != null && handleLifeTime())
+        if (alived && (aiLaser || hand != null) && handleLifeTime())
         {
-            handleRotationAndPosition();
+            if (aiLaser)
+                handleRotationAndPosition(aiHand, aiLeftHand ? -90 : 90, aiLeftHand ? -90 : 90);
+            else
+                handleRotationAndPosition(hand.transform, hand.side == HandSideEnum.Left ? -90 : 90, 0);
             handleScaling();
             handleDamageTicks();
             handleDamages();
@@ -71,7 +77,7 @@ public class Laser : Spell
 
     bool handleLifeTime()
     {
-        if (t > LASER_DURATION || !hand.Channeling)
+        if (t > LASER_DURATION || (!aiLaser && !hand.Channeling))
         {
             PhotonView photonView = PhotonView.Get(this);
             if (photonView.IsMine)
@@ -83,12 +89,13 @@ public class Laser : Spell
         return alived;
     }
 
-    void handleRotationAndPosition()
+    void handleRotationAndPosition(Transform trans, float offsetZ, float offsetY)
     {
-        transform.parent.position = hand.transform.position;
-        Quaternion quaternion = hand.transform.rotation;
-        float offset = hand.side == HandSideEnum.Left ? -90 : 90;
-        quaternion.eulerAngles = new Vector3(quaternion.eulerAngles.x, quaternion.eulerAngles.y, quaternion.eulerAngles.z + offset);
+        transform.parent.position = trans.position;
+        Quaternion quaternion = trans.rotation;
+        float rotaX = aiHand ?  quaternion.eulerAngles.z : quaternion.eulerAngles.x;
+        float rotaZ = aiHand ? (aiLeftHand ? -1 : 1) * quaternion.eulerAngles.x + offsetZ : quaternion.eulerAngles.z + offsetZ;
+        quaternion.eulerAngles = new Vector3(rotaX, quaternion.eulerAngles.y + offsetY, rotaZ);
         transform.parent.rotation = quaternion;
     }
 
@@ -116,6 +123,13 @@ public class Laser : Spell
     public void setHand(HandPresence ihand)
     {
         hand = ihand;
+    }
+
+    public void setAiParams(Transform iaiHand, bool iaiLaser, bool iaiLeftHand)
+    {
+        aiHand = iaiHand;
+        aiLaser = iaiLaser;
+        aiLeftHand = iaiLeftHand;
     }
 
     private void OnDestroy()
