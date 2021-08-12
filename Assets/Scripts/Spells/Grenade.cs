@@ -25,7 +25,7 @@ public class Grenade : Spell
         if (photonView.IsMine && alive)
         {
             alive = false;
-            GameObject explosion = PhotonNetwork.Instantiate("Explosion", gameObject.transform.position, Quaternion.identity);
+            GameObject explosion = PhotonNetwork.Instantiate("Spells/Explosion", gameObject.transform.position, Quaternion.identity);
             explosion.GetComponent<Explosion>().Damage = GRENADE_DAMAGE;
             explosion.GetComponent<Explosion>().PlayerId = playerId;
             photonView.RPC("resetInteractable", RpcTarget.All);

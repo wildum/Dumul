@@ -58,7 +58,7 @@ public class AIPlayer : ArenaPlayer
         {
             if (photonView.IsMine)
             {
-                shield = PhotonNetwork.Instantiate("Shield", transform.position, transform.rotation);
+                shield = PhotonNetwork.Instantiate("Spells/Shield", transform.position, transform.rotation);
             }
         }
         loadConfig();

@@ -19,7 +19,7 @@ public class SpellCreator
             my += p.y;
             mz += p.z;
         }
-        GameObject grenade = PhotonNetwork.Instantiate("Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity, 0, new object[]{team});
+        GameObject grenade = PhotonNetwork.Instantiate("Spells/Grenade", new Vector3(mx / points.Count, my / points.Count, mz / points.Count), Quaternion.identity, 0, new object[]{team});
         grenade.GetComponent<Grenade>().PlayerId = playerId;
         return grenade;
     }
@@ -27,7 +27,7 @@ public class SpellCreator
     public void createLaser(HandPresence hand)
     {
         hand.Channeling = true;
-        GameObject laser = PhotonNetwork.Instantiate("Laser", hand.transform.position, hand.transform.rotation, 0, new object[]{team});
+        GameObject laser = PhotonNetwork.Instantiate("Spells/Laser", hand.transform.position, hand.transform.rotation, 0, new object[]{team});
         laser.GetComponentInChildren<Laser>().setHand(hand);
         laser.GetComponentInChildren<Laser>().PlayerId = playerId;
         laser.GetComponentInChildren<Laser>().Team = team;
@@ -35,7 +35,7 @@ public class SpellCreator
 
     public void createLaserAI(Transform trans, bool leftSide)
     {
-        GameObject laser = PhotonNetwork.Instantiate("Laser", trans.position, trans.rotation, 0, new object[]{team});
+        GameObject laser = PhotonNetwork.Instantiate("Spells/Laser", trans.position, trans.rotation, 0, new object[]{team});
         laser.GetComponentInChildren<Laser>().setAiParams(trans, true, leftSide);
         laser.GetComponentInChildren<Laser>().PlayerId = playerId;
         laser.GetComponentInChildren<Laser>().Team = team;
@@ -47,7 +47,7 @@ public class SpellCreator
         Quaternion quaternion = head.rotation;
         quaternion.eulerAngles = new Vector3(0, quaternion.eulerAngles.y, 0);
         Vector3 direction = new Vector3(head.forward.x, 0, head.forward.z);
-        GameObject cross = PhotonNetwork.Instantiate("Cross", position, quaternion, 0, new object[]{team});
+        GameObject cross = PhotonNetwork.Instantiate("Spells/Cross", position, quaternion, 0, new object[]{team});
         cross.GetComponent<Rigidbody>().AddForce(direction * Cross.CROSS_SPEED, ForceMode.VelocityChange);
         cross.GetComponent<Cross>().Team = team;
         cross.GetComponent<Cross>().PlayerId = playerId;
@@ -62,7 +62,7 @@ public class SpellCreator
     public void createFireballWithDirection(List<CustomPoint> points, Vector3 direction)
     {   
         Vector3 position = points[points.Count - 1].toVector3();
-        GameObject fireball = PhotonNetwork.Instantiate("Fireball", position, Quaternion.identity, 0, new object[]{team});
+        GameObject fireball = PhotonNetwork.Instantiate("Spells/Fireball", position, Quaternion.identity, 0, new object[]{team});
         fireball.GetComponent<Rigidbody>().AddForce(direction.normalized * Fireball.FIREBALL_SPEED, ForceMode.Force);
         ArenaPlayer target = InformationCenter.getRelevantPlayerOppositeTeam(direction, position, team);
         fireball.GetComponent<Fireball>().setTarget(target);
@@ -80,7 +80,7 @@ public class SpellCreator
         Vector3 position = new Vector3(enemyPosition.x, Thunder.yStartingPosition, enemyPosition.z);
         Quaternion rotation = Quaternion.identity;
         rotation.eulerAngles = new Vector3(0,0,180);
-        GameObject thunder = PhotonNetwork.Instantiate("Thunder", position, rotation, 0, new object[]{team});
+        GameObject thunder = PhotonNetwork.Instantiate("Spells/Thunder", position, rotation, 0, new object[]{team});
         thunder.GetComponentInChildren<Thunder>().PlayerId = playerId;
     }
 
