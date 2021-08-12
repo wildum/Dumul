@@ -29,7 +29,8 @@ public class Shield : Spell
             spell = collision.collider.transform.GetParentComponent<Spell>();
         }
 
-        if (spell != null)
+        // no direct destruction when colliding with laser
+        if (spell != null && collision.collider.GetComponent<Laser>() == null)
         {
             if (active)
             {
@@ -113,6 +114,7 @@ public class Shield : Spell
         if (health == 0)
         {
             updateActive(false);
+            destroyed = true;
         }
     }
 
