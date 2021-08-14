@@ -67,6 +67,10 @@ static class GameSettings
     {
         electricalBlue = Resources.Load<Material>("Materials/ElectricalEffectBlue");
         electricalOrange = Resources.Load<Material>("Materials/ElectricalEffectOrange");
+        Grenade.orangeShellMat = Resources.Load<Material>("Materials/GrenadeOrange");
+        Grenade.blueShellMat = Resources.Load<Material>("Materials/GrenadeBlue");
+        Grenade.orangeTrailMat = Resources.Load<Material>("Materials/GrenadeTrailOrange");
+        Grenade.blueTrailMat = Resources.Load<Material>("Materials/GrenadeTrailBlue");
     }
 
     public static Material getElectricalMaterial(int team)

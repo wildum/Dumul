@@ -10,6 +10,11 @@ public class Grenade : Spell
     public const int GRENADE_SPEED = 0;
     public const int GRENADE_DAMAGE = 100;
 
+    public static Material orangeShellMat;
+    public static Material blueShellMat;
+    public static Material orangeTrailMat;
+    public static Material blueTrailMat;
+
     private bool alive = true;
 
     private void Awake()
@@ -17,6 +22,14 @@ public class Grenade : Spell
         cd = GRENADE_CD;
         speed = GRENADE_SPEED;
         damage = GRENADE_DAMAGE;
+    }
+
+    public override void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        object[] instantiationData = info.photonView.InstantiationData;
+        team = (int) instantiationData[0];
+        GetComponentInChildren<ParticleSystemRenderer>().trailMaterial = team == 0 ? orangeTrailMat : blueTrailMat;
+        GetComponent<Renderer>().material = team == 0 ? orangeShellMat : blueShellMat;
     }
 
     void OnCollisionEnter(Collision collision)

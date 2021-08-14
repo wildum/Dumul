@@ -60,8 +60,12 @@ public class Main : MonoBehaviourPunCallbacks
         GameSettings.aiPositionCount = 0;
         InformationCenter.clearPlayers();
         CommunicationCenter.resetCommunicationCenter();
+
+        // is this useful ?
         // preload prefabs
         Resources.LoadAll("Spells");
+        // change this
+        Resources.LoadAll("Materials");
         GameSettings.loadMaterials();
     }
 
