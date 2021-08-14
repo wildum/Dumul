@@ -309,7 +309,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 1.1709e-41, z: 0, w: NaN}
+  m_BoundingSphereOverride: {x: 0, y: 2.6103e-41, z: 0, w: -1}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -554,17 +554,17 @@ PrefabInstance:
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
@@ -644,7 +644,7 @@ PrefabInstance:
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: ForceModule.y.scalar
-      value: -100
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
@@ -694,17 +694,17 @@ PrefabInstance:
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
@@ -784,7 +784,7 @@ PrefabInstance:
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: ForceModule.y.scalar
-      value: -100
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
@@ -834,17 +834,17 @@ PrefabInstance:
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
@@ -924,7 +924,7 @@ PrefabInstance:
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: ForceModule.y.scalar
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
@@ -974,17 +974,17 @@ PrefabInstance:
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.045
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 7975361643550887076, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
@@ -1064,7 +1064,7 @@ PrefabInstance:
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
       propertyPath: ForceModule.y.scalar
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
