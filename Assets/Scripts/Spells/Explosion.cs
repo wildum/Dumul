@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class Explosion : MonoBehaviour
+public class Explosion : MonoBehaviour, IPunInstantiateMagicCallback
 {
 
     private int damage = 0;
@@ -14,6 +14,20 @@ public class Explosion : MonoBehaviour
     private int playerId;
 
     private List<int> playerTouched = new List<int>();
+
+    
+    public void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        object[] instantiationData = info.photonView.InstantiationData;
+        int team = (int) instantiationData[0];
+        ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
+        var col = ps.colorOverLifetime;
+        col.enabled = true;
+        Gradient grad = new Gradient();
+        Color teamColor = team == 0 ? new Color(1, 0.6f, 0.34f) : new Color(0.34f, 0.36f, 1);
+        grad.SetKeys( new GradientColorKey[] { new GradientColorKey(Color.white, 0.0f), new GradientColorKey(teamColor, 1.0f) }, new GradientAlphaKey[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(1.0f, 1.0f) } );
+        col.color = grad;
+    }
 
     private void Update()
     {

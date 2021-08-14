@@ -309,7 +309,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 8.3e-43, y: -1.4372445e-27, z: 8.3e-43, w: 1.28e-43}
+  m_BoundingSphereOverride: {x: 0, y: 1.1709e-41, z: 0, w: NaN}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1085,6 +1085,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ShapeModule.radiusThickness
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
+        type: 3}
+      propertyPath: TrailModule.dieWithParticles
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8689957828416554208, guid: e583a85c94d8e0045b902cc6c648e6c2,
         type: 3}
