@@ -46,15 +46,14 @@ public class Grenade : Spell
         }
     }
 
-    public void onGrabLeave()
-    {
-        if (alive)
-        {
-            // RPC ?
-            gameObject.GetComponent<Rigidbody>().useGravity = true;
-            Debug.Log("use gravity");
-        }
-    }
+    // public void onGrabLeave()
+    // {
+    //     if (alive)
+    //     {
+    //         // RPC ?
+    //         gameObject.GetComponent<Rigidbody>().useGravity = true;
+    //     }
+    // }
 
     [PunRPC]
     public void resetInteractable()

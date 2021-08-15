@@ -41,7 +41,7 @@ public class Laser : Spell
     void FixedUpdate()
     {
         t += Time.deltaTime;
-        if (alived && (aiLaser || hand != null) && handleLifeTime())
+        if (alived && (aiLaser || hand != null) && handleLifeTime() && transform != null && transform.parent != null)
         {
             if (aiLaser)
                 handleRotationAndPosition(aiHand, aiLeftHand ? -90 : 90, aiLeftHand ? -90 : 90);
