@@ -18,6 +18,7 @@ public class Main : MonoBehaviourPunCallbacks
     public InfoCanvas infoCanvas2;
 
     public SpectatorsManager spectatorsManager;
+    public GameObject ArenaShield;
 
     float startTime = 0f;
     float timeSinceStart = 0f;
@@ -157,6 +158,7 @@ public class Main : MonoBehaviourPunCallbacks
 
             if (currentState != State.Practice && checkGameEnd())
             {
+                ArenaShield.SetActive(false);
                 endTime += Time.deltaTime;
                 if (!loadingMenu && endTime > GameSettings.endGameTimer)
                 {

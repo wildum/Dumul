@@ -36,7 +36,7 @@ static class GameSettings
     public static int PLAYER_HEALTH = 1000;
     public static int nbPlayers = 2;
     public static float timeBeforeStart = 10.0f;
-    public const float endGameTimer = 5.0f;
+    public const float endGameTimer = 7.0f;
     public const float gameTimer = 300.0f;
     public const float pauseTimePopup = 3.0f;
 
