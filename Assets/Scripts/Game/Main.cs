@@ -17,6 +17,8 @@ public class Main : MonoBehaviourPunCallbacks
     public InfoCanvas infoCanvas1;
     public InfoCanvas infoCanvas2;
 
+    public SpectatorsManager spectatorsManager;
+
     float startTime = 0f;
     float timeSinceStart = 0f;
 
@@ -200,6 +202,7 @@ public class Main : MonoBehaviourPunCallbacks
                     playersTeamOneHealth += p.getHealth();
                 }
             }
+            int winningTeam = -1;
             // game end because of time.
             // Team with more health wins
             if (timeSinceStart > GameSettings.gameTimer + GameSettings.timeBeforeStart)
@@ -209,16 +212,19 @@ public class Main : MonoBehaviourPunCallbacks
                 {
                     infoCanvas1.updateEndGameText(EndGameStatus.Victory);
                     infoCanvas2.updateEndGameText(EndGameStatus.Defeat);
+                    winningTeam = 0;
                 }
                 else if (playersTeamOneHealth > playersTeamZeroHealth)
                 {
                     infoCanvas1.updateEndGameText(EndGameStatus.Defeat);
                     infoCanvas2.updateEndGameText(EndGameStatus.Victory);
+                    winningTeam = 1;
                 }
                 else
                 {
                     infoCanvas1.updateEndGameText(EndGameStatus.Draw);
                     infoCanvas2.updateEndGameText(EndGameStatus.Draw);
+                    winningTeam = -1;
                 }
             }
             else
@@ -228,20 +234,25 @@ public class Main : MonoBehaviourPunCallbacks
                     infoCanvas1.updateEndGameText(EndGameStatus.Draw);
                     infoCanvas2.updateEndGameText(EndGameStatus.Draw);
                     gameEnded = true;
+                    winningTeam = -1;
                 }
                 else if (playersTeamZeroHealth <= 0)
                 {
                     infoCanvas1.updateEndGameText(EndGameStatus.Defeat);
                     infoCanvas2.updateEndGameText(EndGameStatus.Victory);
                     gameEnded = true;
+                    winningTeam = 1;
                 }
                 else if (playersTeamOneHealth <= 0)
                 {
                     infoCanvas1.updateEndGameText(EndGameStatus.Victory);
                     infoCanvas2.updateEndGameText(EndGameStatus.Defeat);
                     gameEnded = true;
+                    winningTeam = 0;
                 }
             }
+            if (gameEnded)
+                spectatorsManager.endGameExcitement(winningTeam);
         }
         return gameEnded;
     }

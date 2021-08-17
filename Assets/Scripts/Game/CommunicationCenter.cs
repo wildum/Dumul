@@ -8,11 +8,13 @@ static class CommunicationCenter
 
     private static InfoCanvas infoCanvas1;
     private static InfoCanvas infoCanvas2;
+    private static SpectatorsManager spectatorsManager;
 
     public static void resetCommunicationCenter()
     {
         infoCanvas1 = null;
         infoCanvas2 = null;
+        spectatorsManager = null;
     }
 
     public static void updateHealth()
@@ -21,6 +23,7 @@ static class CommunicationCenter
         {
             infoCanvas1 = GameObject.Find("InfoCanvasP1").GetComponent<InfoCanvas>();
             infoCanvas2 = GameObject.Find("InfoCanvasP2").GetComponent<InfoCanvas>();
+            spectatorsManager = GameObject.Find("SpectatorsManager").GetComponent<SpectatorsManager>();
         }
 
         if (infoCanvas1 != null && infoCanvas2 != null)
@@ -57,6 +60,7 @@ static class CommunicationCenter
                     }
                 }
             }
+            spectatorsManager.currentTeamHealthUpdate(orangeHealth1 + orangeHealth2, blueHealth1 + blueHealth2);
             infoCanvas1.updateHealth(orangeHealth1, orangeHealth2, blueHealth1, blueHealth2);
             infoCanvas2.updateHealth(orangeHealth1, orangeHealth2, blueHealth1, blueHealth2);
         }

@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class SpectatorsManager : MonoBehaviour
 {
-    const float exitedTime = 5; // seconds
-    const float hysterese = 2; // seconds
-    const float probExitementBase = 0.2f;
-    const float freqExitement = 5;
+    const float excitedTime = 2; // seconds
+    const float hysterese = 1.5f; // seconds
+    const float probExcitementBase = 0.02f;
+    const float probExcitementMax = 0.1f;
+    const float freqExcitement = 1;
+    const float excitementDecaySecond = 0.75f;
 
     public GameObject prefab;
     public Material matBlue;
@@ -22,8 +25,15 @@ public class SpectatorsManager : MonoBehaviour
     private int specPerColumn = 5;
     private int sides = 2;
 
-    private float probExitementBlue = probExitementBase;
-    private float probExitementOrange = probExitementBase;
+    private float probExcitementBlue = probExcitementBase;
+    private float probExcitementOrange = probExcitementBase;
+
+    private float totalOrangeHealth;
+    private float totalBlueHealth;
+
+    private float maxHealthDiff;
+    private float excitementLevelBlue = 0;
+    private float excitementLevelOrange = 0;
 
     private float time = 0;
 
@@ -32,26 +42,92 @@ public class SpectatorsManager : MonoBehaviour
     void Start()
     {
         initSpectators();
+        initHealth();
     }
 
     void Update()
     {
         time += Time.deltaTime;
-        if (time > freqExitement)
+
+        excitementLevelBlue = decayExcitement(excitementLevelBlue);
+        excitementLevelOrange = decayExcitement(excitementLevelOrange);
+
+        if (time > freqExcitement)
         {
             time = 0;
-            exitSpectators(blueSpectators, probExitementBlue);
-            exitSpectators(orangeSpectators, probExitementOrange);
+
+            probExcitementBlue = computeExcitementProb(excitementLevelBlue);
+            probExcitementOrange = computeExcitementProb(excitementLevelOrange);
+
+            excitSpectators(blueSpectators, probExcitementBlue);
+            excitSpectators(orangeSpectators, probExcitementOrange);
+
+            Debug.Log("Blue excitement : " + probExcitementBlue + " Orange : " + probExcitementOrange);
         }
     }
 
-    void exitSpectators(List<Spectator> spectators, float probExitement)
+    public void endGameExcitement(int winningTeam)
+    {
+        if (winningTeam == 0)
+        {
+            exciteTeam(orangeSpectators, true);
+            exciteTeam(blueSpectators, false);
+        }
+        else if (winningTeam == 1)
+        {
+            exciteTeam(orangeSpectators, false);
+            exciteTeam(blueSpectators, true);
+        }
+        else
+        {
+            exciteTeam(orangeSpectators, false);
+            exciteTeam(blueSpectators, false);
+        }
+    }
+
+    private void exciteTeam(List<Spectator> spectators, bool positifExictement)
+    {
+        foreach (Spectator spec in spectators)
+        {
+            if (positifExictement)
+                spec.setExcitedState(GameSettings.endGameTimer);
+            else
+                spec.stopExcitement();
+        }
+    }
+
+    private float computeExcitementProb(float excitementLevel)
+    {
+        return probExcitementBase + probExcitementMax * excitementLevel * 3;
+    }
+
+    private float decayExcitement(float excitement)
+    {
+        return excitement - (excitement - excitement * excitementDecaySecond) * Time.deltaTime;
+    }
+
+    private void computeExcitementLevel(float blueDiff, float orangeDiff)
+    {
+        excitementLevelOrange += Mathf.Sqrt(blueDiff / maxHealthDiff);
+        excitementLevelBlue += Mathf.Sqrt(orangeDiff / maxHealthDiff);
+    }
+
+    public void currentTeamHealthUpdate(float orangeTeam, float blueTeam)
+    {
+        float orangeDiff = totalOrangeHealth - orangeTeam;
+        float blueDiff = totalBlueHealth - blueTeam;
+        totalBlueHealth = blueTeam;
+        totalOrangeHealth = orangeTeam;
+        computeExcitementLevel(blueDiff, orangeDiff);
+    }
+
+    void excitSpectators(List<Spectator> spectators, float probExcitement)
     {
         foreach (Spectator s in spectators)
         {
-            if (rnd.NextDouble() < probExitement)
+            if (rnd.NextDouble() < probExcitement)
             {
-                s.setExitedState(exitedTime + ((float) rnd.NextDouble() - 0.5f) * hysterese * 2.0f);
+                s.setExcitedState(excitedTime + ((float) rnd.NextDouble() - 0.5f) * hysterese * 2.0f);
             }
         }
     }
@@ -84,5 +160,23 @@ public class SpectatorsManager : MonoBehaviour
             }
         }
         Destroy(prefab);
+    }
+
+    void initHealth()
+    {
+        State currentState = State.Practice;
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(menu.RoomsHandler.stateProperty))
+        {
+            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[menu.RoomsHandler.stateProperty];
+        }
+        else
+        {
+            Debug.LogError("current state of the room not set");
+        }
+        int nbPlayers = currentState == State.TwoVsAI || currentState == State.TwoVsTwo ? 4 : 2;
+        maxHealthDiff = 2 * GameSettings.PLAYER_HEALTH / nbPlayers;
+        float totalHealth = nbPlayers == 2 ? GameSettings.PLAYER_HEALTH : GameSettings.PLAYER_HEALTH * 2;
+        totalOrangeHealth = totalHealth;
+        totalBlueHealth = totalHealth;
     }
 }

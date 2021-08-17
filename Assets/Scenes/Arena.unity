@@ -4515,6 +4515,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   infoCanvas1: {fileID: 548843467}
   infoCanvas2: {fileID: 185725862}
+  spectatorsManager: {fileID: 785592229}
 --- !u!4 &1858374737
 Transform:
   m_ObjectHideFlags: 0

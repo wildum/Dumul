@@ -12,8 +12,8 @@ public class Spectator : MonoBehaviour
     const float movementSpeedHand = 5;
     private int team;
     private float time = 0;
-    private float exitedTime = 0;
-    private bool exited = false;
+    private float excitedTime = 0;
+    private bool excited = false;
     private bool upDirection = true;
     private Vector3 initialPosition;
     private Vector3 movedPosition;
@@ -36,7 +36,7 @@ public class Spectator : MonoBehaviour
 
     void Update()
     {
-        if (exited)
+        if (excited)
         {
             lefthand.localPosition = Vector3.Lerp(lefthand.localPosition, leftHandMovedPosition, Time.deltaTime * movementSpeedHand);
             rightHand.localPosition = Vector3.Lerp(rightHand.localPosition, rightHandMovedPosition, Time.deltaTime * movementSpeedHand);
@@ -59,10 +59,10 @@ public class Spectator : MonoBehaviour
             }
 
             time += Time.deltaTime;
-            if (time > exitedTime)
+            if (time > excitedTime)
             {
                 time = 0;
-                exited = false;
+                excited = false;
             }
         }
         else
@@ -83,11 +83,18 @@ public class Spectator : MonoBehaviour
         return Mathf.Abs(v.y - u.y) < 0.1f;
     }
 
-    public void setExitedState(float iexitedTime)
+    public void setExcitedState(float iexcitedTime)
     {
-        exited = true;
+        excited = true;
         time = 0;
-        exitedTime = iexitedTime;
+        excitedTime = iexcitedTime;
+    }
+
+    public void stopExcitement()
+    {
+        excited = false;
+        time = 0;
+        excitedTime = 0;
     }
 
     public int Team { set { team = value; } get { return team;} }
