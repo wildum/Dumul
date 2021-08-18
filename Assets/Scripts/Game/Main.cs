@@ -158,7 +158,8 @@ public class Main : MonoBehaviourPunCallbacks
 
             if (currentState != State.Practice && checkGameEnd())
             {
-                ArenaShield.SetActive(false);
+                ArenaShield.transform.localScale = new Vector3(ArenaShield.transform.localScale.x, ArenaShield.transform.localScale.y, 0.1f);
+                ArenaShield.transform.position = new Vector3(ArenaShield.transform.position.x, 0, ArenaShield.transform.position.z);
                 endTime += Time.deltaTime;
                 if (!loadingMenu && endTime > GameSettings.endGameTimer)
                 {
