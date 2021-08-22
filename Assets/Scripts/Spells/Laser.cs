@@ -40,6 +40,7 @@ public class Laser : Spell
 
     void FixedUpdate()
     {
+
         t += Time.deltaTime;
         if (alived && (aiLaser && aiHand != null || hand != null) && handleLifeTime() && transform != null && transform.parent != null)
         {
@@ -77,7 +78,7 @@ public class Laser : Spell
 
     bool handleLifeTime()
     {
-        if (t > LASER_DURATION || (!aiLaser && !hand.Channeling))
+        if (Main.gameEnded || t > LASER_DURATION || (!aiLaser && !hand.Channeling))
         {
             PhotonView photonView = PhotonView.Get(this);
             if (photonView.IsMine)
