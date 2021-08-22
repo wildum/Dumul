@@ -11,10 +11,15 @@ public class SpectatorsManager : MonoBehaviour
     const float probExcitementMax = 0.1f;
     const float freqExcitement = 1;
     const float excitementDecaySecond = 0.75f;
+    const float cheeringThreshold = 0.5f;
+    const float booingThresholdDiff = -0.5f;
 
     public GameObject prefab;
     public Material matBlue;
     public Material matOrange;
+
+    public static int team = -1;
+    public SpectatorsAudio spectatorsAudio;
 
     private List<Spectator> blueSpectators = new List<Spectator>();
     private List<Spectator> orangeSpectators = new List<Spectator>();
@@ -37,12 +42,29 @@ public class SpectatorsManager : MonoBehaviour
 
     private float time = 0;
 
+    private bool gameEnded = false;
+
     private static System.Random rnd = new System.Random();
 
     void Start()
     {
-        initSpectators();
-        initHealth();
+        State currentState = State.Practice;
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(menu.RoomsHandler.stateProperty))
+        {
+            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[menu.RoomsHandler.stateProperty];
+        }
+        else
+        {
+            Debug.LogError("current state of the room not set");
+        }
+
+        if (currentState != State.Practice)
+        {
+            initSpectators();
+            initHealth(currentState);
+            spectatorsAudio.startBackSound();
+        }
+        Destroy(prefab);
     }
 
     void Update()
@@ -52,7 +74,7 @@ public class SpectatorsManager : MonoBehaviour
         excitementLevelBlue = decayExcitement(excitementLevelBlue);
         excitementLevelOrange = decayExcitement(excitementLevelOrange);
 
-        if (time > freqExcitement)
+        if (time > freqExcitement && !gameEnded)
         {
             time = 0;
 
@@ -62,12 +84,24 @@ public class SpectatorsManager : MonoBehaviour
             excitSpectators(blueSpectators, probExcitementBlue);
             excitSpectators(orangeSpectators, probExcitementOrange);
 
-            Debug.Log("Blue excitement : " + probExcitementBlue + " Orange : " + probExcitementOrange);
+            Debug.Log("Blue excitement : " + excitementLevelBlue + " Orange : " + excitementLevelOrange);
+
+            if (team == 0) handleAudio(excitementLevelOrange, excitementLevelBlue);
+            else handleAudio(excitementLevelBlue, excitementLevelOrange);
         }
+    }
+
+    private void handleAudio(float myExcitement, float enemyExcitement)
+    {
+        if (myExcitement > cheeringThreshold)
+            spectatorsAudio.startCheering();
+        else if (myExcitement - enemyExcitement < booingThresholdDiff)
+            spectatorsAudio.startBooing();
     }
 
     public void endGameExcitement(int winningTeam)
     {
+        gameEnded = true;
         if (winningTeam == 0)
         {
             exciteTeam(orangeSpectators, true);
@@ -82,6 +116,15 @@ public class SpectatorsManager : MonoBehaviour
         {
             exciteTeam(orangeSpectators, false);
             exciteTeam(blueSpectators, false);
+        }
+
+        if (winningTeam == team)
+        {
+            spectatorsAudio.startCheeringEndGame();
+        }
+        else
+        {
+            spectatorsAudio.startBooingEndGame();
         }
     }
 
@@ -159,20 +202,10 @@ public class SpectatorsManager : MonoBehaviour
                 }
             }
         }
-        Destroy(prefab);
     }
 
-    void initHealth()
+    void initHealth(State currentState)
     {
-        State currentState = State.Practice;
-        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(menu.RoomsHandler.stateProperty))
-        {
-            currentState = (State) PhotonNetwork.CurrentRoom.CustomProperties[menu.RoomsHandler.stateProperty];
-        }
-        else
-        {
-            Debug.LogError("current state of the room not set");
-        }
         int nbPlayers = currentState == State.TwoVsAI || currentState == State.TwoVsTwo ? 4 : 2;
         maxHealthDiff = 2 * GameSettings.PLAYER_HEALTH / nbPlayers;
         float totalHealth = nbPlayers == 2 ? GameSettings.PLAYER_HEALTH : GameSettings.PLAYER_HEALTH * 2;

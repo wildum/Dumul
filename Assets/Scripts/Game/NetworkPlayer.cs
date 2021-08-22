@@ -110,6 +110,7 @@ public class NetworkPlayer : ArenaPlayer
                 PlayerInfo playerInfo = GameSettings.getPlayerInfo(id);
                 rig.transform.position = playerInfo.position.position;
                 rig.transform.eulerAngles = playerInfo.position.rotation;
+                SpectatorsManager.team = playerInfo.team;
                 photonView.RPC("setTeamAndIdsRPC", RpcTarget.All, playerInfo.team, playerInfo.id, playerInfo.idInTeam);
             }
 
