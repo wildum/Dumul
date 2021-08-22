@@ -137,8 +137,16 @@ namespace menu
         {
             PhotonNetwork.GameVersion = "0.0.1";
             PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "eu";
-            PhotonNetwork.ConnectUsingSettings();
-            Debug.Log("Trying to connect to the server...");
+            bool result = PhotonNetwork.ConnectUsingSettings();
+            if (!result)
+            {
+                Debug.Log("Error connecting, try in again in a moment");
+                Invoke("ConnectedToServer", 2);
+            }
+            else
+            {
+                Debug.Log("Connection was a success...");
+            }
         }
 
         public override void OnConnectedToMaster()
@@ -203,6 +211,11 @@ namespace menu
                 AppState.MasterFriendId = "";
             }
             PhotonNetwork.LocalPlayer.CustomProperties = customPropertiesPlayer;
+        }
+
+        public override void OnCreateRoomFailed(short returnCode, string message)
+        {
+            Debug.LogError("Cant create room : " + message);
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
