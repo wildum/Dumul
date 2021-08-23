@@ -16,7 +16,6 @@ namespace menu
         public ButtonManager buttonManager;
         public Text roomName;
         private GameObject spawnedPlayerPrefab;
-        public const byte StartGameTextEventCode = 1;
         public const string masterTeamMateProp = "masterTeamMate";
 
         private const float timeDelayStartGame = 5;
@@ -70,7 +69,7 @@ namespace menu
         {
             byte eventCode = photonEvent.Code;
 
-            if (eventCode == RoomsHandler.WaitForGameTextEventCode)
+            if (eventCode == Events.WaitForGameTextEventCode)
             {
                 buttonManager.WaitingForFriend = true;
                 PhotonNetwork.LeaveRoom();
@@ -112,7 +111,7 @@ namespace menu
                 // if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 // {
                     RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-                    PhotonNetwork.RaiseEvent(StartGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
+                    PhotonNetwork.RaiseEvent(Events.StartGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
                     buttonManager.buttonConfigAllDeactivate();
                     Invoke("loadArena", timeDelayStartGame);
                 // }
@@ -125,7 +124,13 @@ namespace menu
 
         void loadArena()
         {
-            roomHandler.loadArena();
+            bool sucess = roomHandler.loadArena();
+            if (!sucess)
+            {
+                RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                PhotonNetwork.RaiseEvent(Events.CancelGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
+                updateButtonsWithRoomType();
+            }
         }
 
         void spawnWithDelay()
@@ -137,16 +142,7 @@ namespace menu
         {
             PhotonNetwork.GameVersion = "0.0.1";
             PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "eu";
-            bool result = PhotonNetwork.ConnectUsingSettings();
-            if (!result)
-            {
-                Debug.Log("Error connecting, try in again in a moment");
-                Invoke("ConnectedToServer", 2);
-            }
-            else
-            {
-                Debug.Log("Connection was a success...");
-            }
+            PhotonNetwork.ConnectUsingSettings();
         }
 
         public override void OnConnectedToMaster()

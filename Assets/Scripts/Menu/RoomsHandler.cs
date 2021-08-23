@@ -36,7 +36,6 @@ namespace menu
         public const string stateProperty = "currentState";
         public const string roomTypeProperty = "roomType";
         public const string aiDifficultyProperty = "aiDifficulty";
-        public const byte WaitForGameTextEventCode = 2;
 
         public void handle1v1Matchmaking()
         {
@@ -105,14 +104,23 @@ namespace menu
         private void tellFriendsToWaitForARoom()
         {
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others };
-            PhotonNetwork.RaiseEvent(WaitForGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
+            PhotonNetwork.RaiseEvent(Events.WaitForGameTextEventCode, null, raiseEventOptions, SendOptions.SendReliable);
         }
 
-        public void loadArena()
+        public bool loadArena()
         {
-            roomState = RoomState.Started;
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-            PhotonNetwork.LoadLevel("Arena");
+            if (PhotonNetwork.CurrentRoom.PlayerCount == numberOfPlayerExpected)
+            {
+                roomState = RoomState.Started;
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                PhotonNetwork.LoadLevel("Arena");
+                return true;
+            }
+            roomState = RoomState.Chill;
+            myCustomProperties[roomTypeProperty] = RoomType.Waiting;
+            myCustomProperties[stateProperty] = State.WaitingRoom;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(myCustomProperties);
+            return false;
         }
 
         public void joinRandomRoom()
@@ -182,7 +190,9 @@ namespace menu
             roomOptions.CustomRoomProperties = myCustomProperties;
             roomOptions.PublishUserId = true;
             Debug.Log("Create a waiting room with properties " + myCustomProperties[stateProperty]);
-            PhotonNetwork.CreateRoom(getRandomRoomName(), roomOptions, TypedLobby.Default);
+            bool result = PhotonNetwork.CreateRoom(getRandomRoomName(), roomOptions, TypedLobby.Default);
+            if(!result)
+                Debug.LogError("creating room fail?");
             PhotonNetwork.AutomaticallySyncScene = true;
         }
 

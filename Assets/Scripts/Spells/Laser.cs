@@ -42,7 +42,7 @@ public class Laser : Spell
     {
 
         t += Time.deltaTime;
-        if (alived && (aiLaser && aiHand != null || hand != null) && handleLifeTime() && transform != null && transform.parent != null)
+        if (alived && handleLifeTime() && (aiLaser && aiHand != null || hand != null) && transform != null && transform.parent != null)
         {
             if (aiLaser)
                 handleRotationAndPosition(aiHand, aiLeftHand ? -90 : 90, aiLeftHand ? -90 : 90);

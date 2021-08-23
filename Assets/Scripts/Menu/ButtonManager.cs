@@ -53,10 +53,14 @@ namespace menu
         {
             byte eventCode = photonEvent.Code;
 
-            if (eventCode == NetworkManager.StartGameTextEventCode)
+            if (eventCode == Events.StartGameTextEventCode)
             {
                 lobbyText.gameObject.SetActive(true);
                 lobbyText.text = "The game is about to start";
+            }
+            else if (eventCode == Events.CancelGameTextEventCode)
+            {
+                lobbyText.gameObject.SetActive(false);
             }
         }
 
