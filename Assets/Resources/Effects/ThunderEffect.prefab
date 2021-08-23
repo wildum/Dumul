@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5050378298371004235
+--- !u!1 &584839874867392010
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7657918056013501447}
-  - component: {fileID: 8483238367581897002}
+  - component: {fileID: 3787443307996883350}
+  - component: {fileID: 5929112280457330761}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7657918056013501447
+--- !u!4 &3787443307996883350
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5050378298371004235}
+  m_GameObject: {fileID: 584839874867392010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,13 +31,13 @@ Transform:
   m_Father: {fileID: 2238300296561004179}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!108 &8483238367581897002
+--- !u!108 &5929112280457330761
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5050378298371004235}
+  m_GameObject: {fileID: 584839874867392010}
   m_Enabled: 1
   serializedVersion: 10
   m_Type: 0
@@ -88,7 +88,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 1.2679e-41, z: 0, w: -1}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -119,9 +119,9 @@ Transform:
   m_GameObject: {fileID: 5422680556891395400}
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.185}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.4}
   m_Children:
-  - {fileID: 7657918056013501447}
+  - {fileID: 3787443307996883350}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
@@ -133,14 +133,14 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5422680556891395400}
   serializedVersion: 6
-  lengthInSec: 5
+  lengthInSec: 30
   simulationSpeed: 4
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 1
-  prewarm: 1
+  looping: 0
+  prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
@@ -208,7 +208,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 15
       minScalar: 0.8
       maxCurve:
         serializedVersion: 2
@@ -261,7 +261,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -14
+      scalar: -2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -760,7 +760,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 4, y: 4, z: 4}
+    m_Scale: {x: 4, y: 4, z: 5}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -958,7 +958,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 2
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -2876,7 +2876,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     separateAxes: 0
-    frequency: 50
+    frequency: 10
     damping: 0
     octaves: 1
     octaveMultiplier: 0.5
@@ -3857,7 +3857,7 @@ ParticleSystem:
   LightsModule:
     enabled: 1
     ratio: 1
-    light: {fileID: 8483238367581897002}
+    light: {fileID: 5929112280457330761}
     randomDistribution: 1
     color: 1
     range: 1
@@ -3971,7 +3971,7 @@ ParticleSystem:
     maxLights: 20
   TrailModule:
     enabled: 1
-    mode: 0
+    mode: 1
     ratio: 1
     lifetime:
       serializedVersion: 2
@@ -4028,10 +4028,10 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0
     textureMode: 0
-    ribbonCount: 1
+    ribbonCount: 2
     shadowBias: 0.5
     worldSpace: 0
-    dieWithParticles: 0
+    dieWithParticles: 1
     sizeAffectsWidth: 1
     sizeAffectsLifetime: 0
     inheritParticleColor: 0
@@ -4104,7 +4104,7 @@ ParticleSystem:
     widthOverTrail:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
